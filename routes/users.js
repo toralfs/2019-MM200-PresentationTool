@@ -9,7 +9,7 @@ route.get("/", (req, res, next) => {
 
 route.get('/:userID', function(req, res){
     
-    let test = db.getUser([req.params.uesrID]);
+    let test = db.getUser([req.params.userID]);
 
     //let user = db.getUser(req.body.userID);
     // function name/ structure to change based on the db module
