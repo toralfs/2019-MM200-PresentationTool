@@ -29,4 +29,4 @@ route.post('/', function(req,res){
 });
 */
 
-module.export = route;
+module.exports = route;
