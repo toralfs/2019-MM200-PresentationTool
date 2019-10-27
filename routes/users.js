@@ -4,11 +4,13 @@ const route = express.Router();
 // endpoint GET---------------------------------
 route.get('/:userID', function(req, res){
     
-    let user = db.getUser(req.body.userID);
+    let test = db.getUser(2);
+
+    //let user = db.getUser(req.body.userID);
     // function name/ structure to change based on the db module
 
     if(user){
-        res.status(200).json(user);
+        res.status(200).json(test);
     }
     else{
         res.status(404).end();
