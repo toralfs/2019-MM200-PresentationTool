@@ -1,6 +1,7 @@
 const express = require('express');
 const route = express.Router();
 const db = require("../modules/db")(process.env.dbconnection);
+console.log(process.env.dbconnection);
 
 // endpoint GET---------------------------------
 route.get("/", (req, res, next) => {
