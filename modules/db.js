@@ -5,6 +5,7 @@ const db = function(dbConnectionString) {
 
     async function runQuery(query) {
         const client = new pg.Client(connectionString);
+        console.log(client);
         await client.connect();
         const res = await client.query(query);
         let response = res.rows[0];
@@ -13,7 +14,6 @@ const db = function(dbConnectionString) {
     }
 
     const getUserByID = async function(userID) {
-        console.log(userID);
         let userData = null;
         try {
             userData = await runQuery(`SELECT * FROM users`);

@@ -9,7 +9,6 @@ route.get("/", (req, res, next) => {
 
 route.get('/:userID', function(req, res, next){
     let user = req.params.userID;
-    console.log(user);
     let test = db.getUser(user);
 
     //let user = db.getUser(req.body.userID);
