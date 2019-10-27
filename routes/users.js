@@ -4,7 +4,7 @@ const route = express.Router();
 // endpoint GET---------------------------------
 route.get('/:userID', function(req, res){
     
-    let test = db.getUser(2);
+    let test = db.getUser([req.params.uesrID]);
 
     //let user = db.getUser(req.body.userID);
     // function name/ structure to change based on the db module
@@ -20,6 +20,7 @@ route.get('/:userID', function(req, res){
 });
 
 // endpoint POST--------------------------------
+/*
 route.post('/', function(req,res){
 
     let username = req.body.username;
@@ -28,6 +29,6 @@ route.post('/', function(req,res){
     //to be tested after creating the user
 
 });
-
+*/
 
 module.export = route;

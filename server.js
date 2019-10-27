@@ -8,6 +8,10 @@ app.set('port', (process.env.PORT || DEFAULT_PORT));
 const userRoutes = require('./routes/users');
 app.use('/user', userRoutes);
 
+app.get('/', (req, res, next) => {
+    res.status(200).json("test");
+})
+
 
 // start server------------------------------
 app.listen(app.get('port'), function(){
