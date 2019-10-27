@@ -12,10 +12,11 @@ const db = function(dbConnectionString) {
         return response;
     }
 
-    const getUserByID = async function() {
+    const getUserByID = async function(userID) {
         let userData = null;
         try {
             userData = await runQuery(`SELECT * FROM users WHERE userID=$1`, [userID]);
+            console.log(userData);
         } catch(error) {
             console.error("someting wrong");
         }
