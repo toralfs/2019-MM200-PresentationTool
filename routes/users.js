@@ -2,20 +2,18 @@ const express = require('express');
 const route = express.Router();
 
 // endpoint GET---------------------------------
+route.get("/", (req, res, next) => {
+    res.status(200).json("OK");
+})
+
 route.get('/:userID', function(req, res){
     
     let test = db.getUser([req.params.uesrID]);
 
     //let user = db.getUser(req.body.userID);
     // function name/ structure to change based on the db module
-
-    if(user){
-        res.status(200).json(test);
-    }
-    else{
-        res.status(404).end();
-        //more complex error handling to come
-    }
+    
+    res.status(200).json(test);
 
 });
 
