@@ -13,6 +13,7 @@ const db = function(dbConnectionString) {
     }
 
     const getUserByID = async function(userID) {
+        console.log(userID);
         let userData = null;
         try {
             userData = await runQuery(`SELECT * FROM users WHERE userID=$1`, [userID]);

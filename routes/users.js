@@ -7,9 +7,10 @@ route.get("/", (req, res, next) => {
     res.status(200).json("OK");
 })
 
-route.get('/:userID', function(req, res){
-    
-    let test = db.getUser([req.params.userID]);
+route.get('/:userID', function(req, res, next){
+    let user = req.params.userID;
+    console.log(user);
+    let test = db.getUser(user);
 
     //let user = db.getUser(req.body.userID);
     // function name/ structure to change based on the db module
