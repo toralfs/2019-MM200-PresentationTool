@@ -26,7 +26,7 @@ const db = function(dbConnectionString) {
         try {
             userData = await runQuery(`SELECT * FROM users WHERE userID=$1`, [userID]);
         } catch(error) {
-            console.error("someting wrong", error);
+            console.error(error);
         }
         return userData;
     }
@@ -39,9 +39,18 @@ const db = function(dbConnectionString) {
         }
     }
 
+    const deleteUser = async function(userID) {
+        try {
+            await insertData(`DELETE FROM users WHERE userID=$1`, [userID]);
+        } catch(error) {
+            console.error(error);
+        }
+    }
+
     return {
         getUser: getUserByID,
-        insertNewUser: insertUser
+        insertNewUser: insertUser,
+        deleteExistingUser: deleteUser
     }
 }
 
