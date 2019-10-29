@@ -8,7 +8,13 @@ const db = require("../modules/db")(process.env.DATABASE_URL || DATABASE_URI);
 // endpoint GET---------------------------------
 route.get('/:userID', async function(req, res, next){
     let user = await db.getUser(req.params.userID);
-    res.status(200).json(user);
+    if(user) {
+        res.status(200).json(user);
+    } else {
+        res.status(404).end();
+        //more complex error handling to come
+    }
+    
 });
 
 // endpoint POST--------------------------------
