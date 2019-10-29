@@ -47,10 +47,19 @@ const db = function(dbConnectionString) {
         }
     }
 
+    const updateUser = async function(userID, userName, userEmail, userPassword) {
+        try {
+            await insertData(`UPDATE users SET name=$2, email=$3, password=$4 WHERE userID=$1`, [userID, userName, userEmail, userPassword]);
+        } catch(error) {
+            console.error(error);
+        }
+    }
+
     return {
         getUser: getUserByID,
         insertNewUser: insertUser,
-        deleteExistingUser: deleteUser
+        deleteExistingUser: deleteUser,
+        updateExitingUser: updateUser
     }
 }
 
