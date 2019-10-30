@@ -20,6 +20,15 @@ const db = function(dbConnectionString) {
     }
 
 
+    const getUserByName = async function(userName) {
+        let userData = null;
+        try {
+            userData = await runQuery('SELECT * FROM users WHERE name=$1', [userName]);
+        } catch(error) {
+            console.error(error);
+        }
+        return userData;
+    }
     
     const getUserByID = async function(userID) {
         let userData = null;
@@ -57,6 +66,7 @@ const db = function(dbConnectionString) {
 
     return {
         getUser: getUserByID,
+        getUserByName: getUserByName,
         insertNewUser: insertUser,
         deleteExistingUser: deleteUser,
         updateExitingUser: updateUser
