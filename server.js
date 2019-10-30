@@ -9,6 +9,7 @@ app.set('port', (process.env.PORT || DEFAULT_PORT));
 
 app.use(bodyParser.json());
 app.use('/user', userRoutes);
+app.use('/',express.static('public'));
 
 app.get('/', (req, res, next) => {
     res.status(200).json("test");
