@@ -11,7 +11,7 @@ route.get('/:userID', async function(req, res, next){
     if(user) {
         res.status(200).json(user);
     } else {
-        res.status(404).end();
+        res.status(404).json("User not found");
         //more complex error handling to come
     }
     
