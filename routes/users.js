@@ -39,12 +39,15 @@ route.get('/:userID', async function(req, res, next){
 // endpoint POST--------------------------------
 route.post('/', async function(req, res, next){
     if(req.body.password && req.body.name && req.body.email){
-
         let hashPssw = crypto.createHash('sha256')
             .update(req.body.password)
             .digest('hex');
-        await db.insertNewUser(req.body.name, req.body.email, hashPssw);
-        res.status(201).json({msg: "New user created!"});
+        let insertedUser = await db.insertNewUser(req.body.name, req.body.email, hashPssw);
+        if(insertedUser) {
+            res.status(201).json({msg: "New user created!"});   
+        } else {
+            res.status(409).json({msg: "Username or email already exists!"});
+        }
     }
     else{
         res.status(400).json({msg: "Invalid credentials"});
@@ -78,7 +81,7 @@ route.put('/:userID', async function(req, res, next) {
         if(updatedUser) {
             res.status(200).json({msg: `User with userID=${req.params.userID} updated`});
         } else {
-            res.status(404).json({msg: "This user does not exist"});
+            res.status(404).json({msg: "This user does not exist, OR username or email already exist"});
         }
     }
     else{
