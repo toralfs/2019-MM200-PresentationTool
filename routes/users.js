@@ -1,11 +1,9 @@
 const express = require('express');
 const route = express.Router();
 const crypto = require('crypto');
-const dbSecret = require('../secret/secrets');
+const secrets = require('../secret/secrets');
 
-
-//DATABASE_URI from Heroku is not static, needs to be updated once in a while
-const DATABASE_URI = dbSecret.DATABASE_URI;
+const DATABASE_URI = secrets.DATABASE_URI;
 const db = require("../modules/db")(process.env.DATABASE_URL || DATABASE_URI);
 
 
@@ -22,7 +20,6 @@ route.post('/auth', async function (req, res, next) {
         } else {
             res.status(404).json({msg: "Username not found"});
         }
-        
     } else {
         res.status(400).json({msg: "You need to enter username and password"});
     }
@@ -36,9 +33,7 @@ route.get('/:userID', async function(req, res, next){
         res.status(200).json({user: user.name, email: user.email});
     } else {
         res.status(404).end();
-        //more complex error handling to come
     }
-    
 });
 
 // endpoint POST--------------------------------
@@ -49,38 +44,46 @@ route.post('/', async function(req, res, next){
             .update(req.body.password)
             .digest('hex');
         await db.insertNewUser(req.body.name, req.body.email, hashPssw);
-        res.status(201).json("New user created!");
-        
+        res.status(201).json({msg: "New user created!"});
     }
     else{
-        res.status(404).json("Invalid credentials");
+        res.status(400).json({msg: "Invalid credentials"});
     }
-    
-    
 });
 
 
 // endpoint DELETE -----------------------------
 route.delete('/:userID', async function(req, res, next) {
-    await db.deleteExistingUser(req.params.userID);
-    res.status(200).json(`User with userID=${req.params.userID} deleted.`);
+    if(req.params.userID) {
+        let deletedUser = await db.deleteExistingUser(req.params.userID);
+        if(deletedUser) {
+            res.status(200).json({msg: `User with userID=${req.params.userID} deleted.`});
+        } else {
+            res.status(404).json({msg: "This user does not exist"});
+        }
+        
+    } else {
+        res.status(400).end();
+    }
 });
 
 
 // endpoint PUT --------------------------------
 route.put('/:userID', async function(req, res, next) {
-
     if(req.params.userID && req.body.name && req.body.email && req.body.password){
         let hashPssw = crypto.createHash('sha256')
             .update(req.body.password)
             .digest('hex');
-        await db.updateExitingUser(req.params.userID, req.body.name, req.body.email, hashPssw);
-        res.status(200).json(`User with userID=${req.params.userID} updated`);
+        let updatedUser = await db.updateExitingUser(req.params.userID, req.body.name, req.body.email, hashPssw);
+        if(updatedUser) {
+            res.status(200).json({msg: `User with userID=${req.params.userID} updated`});
+        } else {
+            res.status(404).json({msg: "This user does not exist"});
+        }
     }
     else{
-        res.status(404).json(`User not found. Wrong credentials.`);
+        res.status(404).json({msg: `User not found. Wrong credentials.`});
     }
-    
 });
 
 

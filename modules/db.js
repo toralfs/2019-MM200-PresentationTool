@@ -19,7 +19,6 @@ const db = function(dbConnectionString) {
         await client.end();
     }
 
-
     const getUserByName = async function(userName) {
         let userData = null;
         try {
@@ -49,18 +48,28 @@ const db = function(dbConnectionString) {
     }
 
     const deleteUser = async function(userID) {
-        try {
-            await insertData(`DELETE FROM users WHERE userID=$1`, [userID]);
-        } catch(error) {
-            console.error(error);
+        if(await getUserByID(userID)) {
+            try {
+                await insertData(`DELETE FROM users WHERE userID=$1`, [userID]);
+                return true;
+            } catch(error) {
+                console.error(error);
+            }
+        } else {
+            return false;
         }
     }
 
     const updateUser = async function(userID, userName, userEmail, userPassword) {
-        try {
-            await insertData(`UPDATE users SET name=$2, email=$3, password=$4 WHERE userID=$1`, [userID, userName, userEmail, userPassword]);
-        } catch(error) {
-            console.error(error);
+        if(await getUserByID(userID)) {
+            try {
+                await insertData(`UPDATE users SET name=$2, email=$3, password=$4 WHERE userID=$1`, [userID, userName, userEmail, userPassword]);
+                return true;
+            } catch(error) {
+                console.error(error);
+            }
+        } else {
+            return false;
         }
     }
 
