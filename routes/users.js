@@ -1,11 +1,14 @@
 const express = require('express');
 const route = express.Router();
 const crypto = require('crypto');
-const secrets = require('../secret/secrets');
 
-const DATABASE_URI = secrets.DATABASE_URI;
-const db = require("../modules/db")(process.env.DATABASE_URL || DATABASE_URI);
+const db = require("../modules/db")(process.env.DATABASE_URL || databaseRunLocal());
 
+function databaseRunLocal() {
+    const secrets = require('../secret/secrets');
+    const DATABASE_URI = secrets.DATABASE_URI;
+    return DATABASE_URI;
+}
 
 // Authenticate user
 route.post('/auth', async function (req, res, next) {
