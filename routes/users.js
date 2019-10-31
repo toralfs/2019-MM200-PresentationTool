@@ -40,8 +40,13 @@ route.post('/', async function(req, res){
 
 // endpoint DELETE -----------------------------
 route.delete('/:userID', async function(req, res) {
-    await db.deleteExistingUser(req.params.userID);
-    res.status(200).json(`User with userID=${req.params.userID} deleted.`);
+    if(req.params.userID && db.getUser(req.params.userID)){
+        await db.deleteExistingUser(req.params.userID);
+        res.status(200).json(`User with userID=${req.params.userID} deleted.`);
+    }
+    else{
+        res.status(404).json(`User not found`);
+    }
 });
 
 
