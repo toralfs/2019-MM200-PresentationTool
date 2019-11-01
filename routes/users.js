@@ -2,39 +2,65 @@ const express = require('express');
 const route = express.Router();
 const crypto = require('crypto');
 
+const db = require("../modules/db")(process.env.DATABASE_URL || databaseRunLocal());
 
-//DATABASE_URI from Heroku is not static, needs to be updated once in a while
-const DATABASE_URI = "postgres://llzfhhyusdgmpl:26a7e2ec01f9aa91408db062a1483f56fcc1f660908813e9bfcd52fd07b09841@ec2-46-137-173-221.eu-west-1.compute.amazonaws.com:5432/d96els5b4aedqt" + "?ssl=true";
-const db = require("../modules/db")(process.env.DATABASE_URL || DATABASE_URI);
+function databaseRunLocal() {
+    const secrets = require('../secret/secrets');
+    const DATABASE_URI = secrets.DATABASE_URI;
+    return DATABASE_URI;
+}
+
+const DB_RESPONSES = {
+    OK: "OK",
+    NOT_EXIST: "NOT_EXIST",
+    ALREADY_EXIST: "ALREADY_EXIST"
+};
+
+// Authenticate user
+route.post('/auth', async function (req, res, next) {
+    if(req.body.password && req.body.name){
+        let user = await db.getUserByName(req.body.name);
+        if(user) {
+            if(user.password === crypto.createHash('sha256').update(req.body.password).digest('hex')){
+                res.status(200).json({msg: `Successfully logged in!`, userID: user.userid, userName: user.name, userEmail: user.email});
+            } else {
+                res.status(400).json({msg: "Wrong password"});
+            }
+        } else {
+            res.status(404).json({msg: "Username not found"});
+        }
+    } else {
+        res.status(400).json({msg: "You need to enter username and password"});
+    }
+});
+
 
 // endpoint GET---------------------------------
 route.get('/:userID', async function(req, res, next){
     let user = await db.getUser(req.params.userID);
     if(user) {
-        res.status(200).json(user);
+        res.status(200).json({user: user.name, email: user.email});
     } else {
         res.status(404).end();
-        //more complex error handling to come
     }
-    
 });
 
 // endpoint POST--------------------------------
-route.post('/', async function(req, res){
+route.post('/', async function(req, res, next){
     if(req.body.password && req.body.name && req.body.email){
-
         let hashPssw = crypto.createHash('sha256')
             .update(req.body.password)
             .digest('hex');
-        await db.insertNewUser(req.body.name, req.body.email, hashPssw);
-        res.status(200).json("New user created!");
-        
+        let insertedUser = await db.insertNewUser(req.body.name, req.body.email, hashPssw);
+        if(insertedUser === DB_RESPONSES.OK) {
+            res.status(201).json({msg: "New user created!"});   
+        } else if (insertedUser === DB_RESPONSES.ALREADY_EXIST){
+            res.status(409).json({msg: "Username or email already exists!"});
+        }
     }
-    else{
-        res.status(404).json("Invalid credentials");
+    else {
+        res.status(400).json({msg: "Invalid credentials"});
     }
-    
-    
 });
 
 
@@ -51,19 +77,23 @@ route.delete('/:userID', async function(req, res) {
 
 
 // endpoint PUT --------------------------------
-route.put('/:userID', async function(req, res) {
-
+route.put('/:userID', async function(req, res, next) {
     if(req.params.userID && req.body.name && req.body.email && req.body.password){
         let hashPssw = crypto.createHash('sha256')
             .update(req.body.password)
             .digest('hex');
-        await db.updateExitingUser(req.params.userID, req.body.name, req.body.email, hashPssw);
-        res.status(200).json(`User with userID=${req.params.userID} updated`);
+        let updatedUser = await db.updateExitingUser(req.params.userID, req.body.name, req.body.email, hashPssw);
+        if(updatedUser === DB_RESPONSES.OK) {
+            res.status(200).json({msg: `User with userID=${req.params.userID} updated`});
+        } else if(updatedUser === DB_RESPONSES.ALREADY_EXIST){
+            res.status(409).json({msg: "Username or email already exist"});
+        } else if(updatedUser === DB_RESPONSES.NOT_EXIST) {
+            res.status(404).json({msg: "This user does not exist"});
+        }
     }
     else{
-        res.status(404).json(`User not found. Wrong credentials.`);
+        res.status(404).json({msg: `Wrong credentials.`});
     }
-    
 });
 
 
