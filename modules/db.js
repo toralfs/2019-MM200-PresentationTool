@@ -1,5 +1,11 @@
 const pg = require('pg');
 
+const DB_RESPONSES = {
+    OK: "OK",
+    NOT_EXIST: "NOT_EXIST",
+    ALREADY_EXIST: "ALREADY_EXIST"
+};
+
 const db = function (dbConnectionString) {
     const connectionString = dbConnectionString;
 
@@ -50,46 +56,58 @@ const db = function (dbConnectionString) {
     }
 
     const insertUser = async function (userName, userEmail, userPassword) {
+        let response = null;
         if (await getUserByName(userName) || await getUserByEmail(userEmail)) {
-            return false;
+            response = DB_RESPONSES.ALREADY_EXIST;
         } else {
             try {
                 await insertData(`INSERT INTO users(name, email, password) VALUES ($1, $2, $3)`, [userName, userEmail, userPassword]);
-                return true;
+                response = DB_RESPONSES.OK;
             } catch (error) {
                 console.error(error);
             }
         }
+        return response;
     }
 
     const deleteUser = async function (userID) {
+        let response = null;
         if (await getUserByID(userID)) {
             try {
                 await insertData(`DELETE FROM users WHERE userID=$1`, [userID]);
-                return true;
+                response = DB_RESPONSES.OK;
             } catch (error) {
                 console.error(error);
             }
         } else {
-            return false;
+            response = DB_RESPONSES.NOT_EXIST;
         }
+        return response;
     }
 
     const updateUser = async function (userID, userName, userEmail, userPassword) {
-        if (await getUserByID(userID)) {
-            if (await getUserByName(userName) || await getUserByEmail(userEmail)) {
-                return false;
+        let response = null;
+        let userToUpdate = await getUserByID(userID);
+        if (userToUpdate) {
+            let usernameCheck = await getUserByName(userName);
+            let useremailCheck = await getUserByEmail(userEmail);
+
+            if (usernameCheck && usernameCheck.name !== userToUpdate.name) {
+                response = DB_RESPONSES.ALREADY_EXIST;
+            } else if(useremailCheck && useremailCheck.email !== userToUpdate.email) {
+                response = DB_RESPONSES.ALREADY_EXIST;
             } else {
                 try {
                     await insertData(`UPDATE users SET name=$2, email=$3, password=$4 WHERE userID=$1`, [userID, userName, userEmail, userPassword]);
-                    return true;
+                    response = DB_RESPONSES.OK;
                 } catch (error) {
                     console.error(error);
                 }
             }
         } else {
-            return false;
+            response = DB_RESPONSES.NOT_EXIST;
         }
+        return response;
     }
 
     return {
