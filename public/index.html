@@ -9,12 +9,12 @@
 
 <body>
     <div id="register">
-        <input type="text" id="inpUser" placeholder="Username">
-        <input type="text" id="inpEmail" placeholder="E-mail">    
-        <input type="password" id="inpPassword" placeholder="Password">
+        <input type="text" id="inpUserCreate" placeholder="Username">
+        <input type="text" id="inpEmailCreate" placeholder="E-mail">    
+        <input type="password" id="inpPasswordCreate" placeholder="Password">
         <br><br>
         <button id="btnCreate">Create user</button>
-        <h3 id="txtResult"></h3>
+        <h3 id="txtResultCreate"></h3>
     </div>
 
     <div id="login">
@@ -28,11 +28,11 @@
 </body>
 
 <script>
-    let inpUser = document.getElementById('inpUser');
-    let inpEmail = document.getElementById('inpEmail');    
-    let inpPassword = document.getElementById('inpPassword');
+    let inpUserCreate = document.getElementById('inpUserCreate');
+    let inpEmailCreate = document.getElementById('inpEmailCreate');    
+    let inpPasswordCreate = document.getElementById('inpPasswordCreate');
     let btnCreate = document.getElementById('btnCreate');
-    let txtResult = document.getElementById('txtResult');
+    let txtResultCreate = document.getElementById('txtResultCreate');
 
     let inpEmailLogin = document.getElementById('inpEmailLogin');
     let inpPasswordLogin = document.getElementById('inpPasswordLogin');
@@ -40,11 +40,30 @@
     let txtResultLogin = document.getElementById('txtResultLogin');
 
     btnCreate.addEventListener('click', function(evt) {
-        createUser();
+        if(!validUsername(inpUserCreate)){
+            txtResultCreate.innerHTML = "Wrong username format. Use only letters, digits and underscores.";
+        }
+        else if(!validEmail(inpEmailCreate)){
+            txtResultCreate.innerHTML = "Wrong email format.";
+        }
+        else if(!validPassword(inpPasswordCreate)){
+            txtResultCreate.innerHTML = "Wrong password format. Password must be at least 4 characters long and should not contain empty spaces";
+        }
+        else{
+            createUser();
+        }
     });
     
     btnLogin.addEventListener('click', function(evt){
-        loginUser();
+        if(!validEmail(inpEmailLogin)){
+            txtResultLogin.innerHTML = "Wrong format for email.";
+        }
+        else if(!validPassword(inpPasswordLogin)){
+            txtResultLogin.innerHTML = "Wrong password format. Password must be at least 4 characters long and should not contain empty spaces";
+        }
+        else{
+            loginUser();
+        }
     });
 
     async function createUser(){
@@ -52,9 +71,9 @@
         let url = "/user";
 
         let updata = {
-            name: inpUser.value,
-            email: inpEmail.value,
-            password: inpPassword.value            
+            name: inpUserCreate.value,
+            email: inpEmailCreate.value,
+            password: inpPasswordCreate.value            
         }
 
         let cfg = {
@@ -66,7 +85,7 @@
         try {
             let resp = await fetch(url, cfg);
             let data = await resp.json();
-            txtResult.innerHTML = data.msg; 
+            txtResultCreate.innerHTML = data.msg; 
         }
         catch (err) {
             console.log(err);
@@ -75,10 +94,10 @@
 
     async function loginUser(){
 
-        let url = "/auth"; //check again with server when the API is finished
+        let url = "/auth"; //check url again with server when the API is finished
 
         let updata = {
-            emailLogin: inpEmailLogin.value,
+            emailLogin: inpEmailLogin.value, //also check with server if Email or Username is used
             passwordLogin: inpPasswordLogin.value            
         }
 
@@ -91,11 +110,41 @@
         try{
             let resp = await fetch(url, cfg);
             let data = await resp.json();
-            txtResultLogin = data.msg;
+            txtResultLogin.innerHTML = data.msg;
         }
         catch(err){
             console.log(err);
         }
+    }
+
+    function validUsername(username){
+        //username must be at least 3 characters long, consisting only of letters, numbers and underscores
+        let regexUser = /^[^\W]{3,}$/;
+
+        if(!regexUser.test(username)){
+            return false;
+        }
+        return true;
+    }
+
+    function validEmail(email){
+        //email starts with a letter, has letters/digits/'.'/'-'/'_', the last character before '@' is letter/digit
+        //between '@' and '.' there are letters/digits/'.'/'-'/'_', first and last character are letter/digit
+        //2 or 3 letters after '.', case intensive match (flagged with 'i')
+        let regexEmail = /^[a-z][a-z0-9\.\_\-]+[a-z0-9]@[a-z0-9][a-z0-9\.\_\-]+[a-z0-9]\.[a-z]{2,3}$/i;
+        if(!regexEmail.test(email)){
+            return false;
+        }
+        return true;
+    }
+
+    function validPassword(password){
+        //password must be at least 4 characters long; any character is allowed, except for empty space
+        let regexPassword = /^[^\s]{4,}$/
+        if(!regexPassword.test(password)){
+            return false;
+        }
+        return true;
     }
 
 
