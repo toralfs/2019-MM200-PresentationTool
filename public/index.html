@@ -8,12 +8,23 @@
 </head>
 
 <body>
-    <input type="text" id="inpUser" placeholder="Username">
-    <input type="text" id="inpEmail" placeholder="E-mail">    
-    <input type="password" id="inpPassword" placeholder="Password">
-    <br><br>
-    <button id="btnCreate">Create user</button>
-    <h3 id="txtResult"></h3>
+    <div id="register">
+        <input type="text" id="inpUser" placeholder="Username">
+        <input type="text" id="inpEmail" placeholder="E-mail">    
+        <input type="password" id="inpPassword" placeholder="Password">
+        <br><br>
+        <button id="btnCreate">Create user</button>
+        <h3 id="txtResult"></h3>
+    </div>
+
+    <div id="login">
+        <input type="text" id="inpEmailLogin" placeholder="E-mail">
+        <input type="text" id="inpPasswordLogin" placeholder="Password">
+        <br><br>
+        <button id="btnLogin">Login</button>
+        <h3 id="txtResultLogin"></h3>
+    </div>
+    
 </body>
 
 <script>
@@ -23,31 +34,69 @@
     let btnCreate = document.getElementById('btnCreate');
     let txtResult = document.getElementById('txtResult');
 
-    btnCreate.addEventListener('click', async function(evt) {
+    let inpEmailLogin = document.getElementById('inpEmailLogin');
+    let inpPasswordLogin = document.getElementById('inpPasswordLogin');
+    let btnLogin = document.getElementById('btnLogin');
+    let txtResultLogin = document.getElementById('txtResultLogin');
 
-let url = "/user";
+    btnCreate.addEventListener('click', function(evt) {
+        createUser();
+    });
+    
+    btnLogin.addEventListener('click', function(evt){
+        loginUser();
+    });
 
-let updata = {
-    name: inpUser.value,
-    email: inpEmail.value,
-    password: inpPassword.value            
-}
+    async function createUser(){
 
-let cfg = {
-    method: "POST",
-    headers: {"Content-Type":"application/json"},
-    body: JSON.stringify(updata)
-}
+        let url = "/user";
 
-try {
-    var resp = await fetch(url, cfg);
-    var data = await resp.json();
-    txtResult.innerHTML = data.msg; 
-}
-catch (err) {
-    console.log(err);
-}
-});   
+        let updata = {
+            name: inpUser.value,
+            email: inpEmail.value,
+            password: inpPassword.value            
+        }
+
+        let cfg = {
+            method: "POST",
+            headers: {"Content-Type":"application/json"},
+            body: JSON.stringify(updata)
+        }
+
+        try {
+            let resp = await fetch(url, cfg);
+            let data = await resp.json();
+            txtResult.innerHTML = data.msg; 
+        }
+        catch (err) {
+            console.log(err);
+        }
+    }
+
+    async function loginUser(){
+
+        let url = "/auth"; //check again with server when the API is finished
+
+        let updata = {
+            emailLogin: inpEmailLogin.value,
+            passwordLogin: inpPasswordLogin.value            
+        }
+
+        let cfg = {
+            method: "POST",
+            headers: {"Content-Type":"application/json"},
+            body: JSON.stringify(updata)
+        }
+
+        try{
+            let resp = await fetch(url, cfg);
+            let data = await resp.json();
+            txtResultLogin = data.msg;
+        }
+        catch(err){
+            console.log(err);
+        }
+    }
 
 
 </script>
