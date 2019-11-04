@@ -19,7 +19,7 @@
 
     <div id="login">
         <input type="text" id="inpEmailLogin" placeholder="E-mail">
-        <input type="text" id="inpPasswordLogin" placeholder="Password">
+        <input type="password" id="inpPasswordLogin" placeholder="Password">
         <br><br>
         <button id="btnLogin">Login</button>
         <h3 id="txtResultLogin"></h3>
@@ -121,7 +121,7 @@
         //username must be at least 3 characters long, consisting only of letters, numbers and underscores
         let regexUser = /^[^\W]{3,}$/;
 
-        if(!regexUser.test(username)){
+        if(!regexUser.test(username.value)){
             return false;
         }
         return true;
@@ -132,7 +132,7 @@
         //between '@' and '.' there are letters/digits/'.'/'-'/'_', first and last character are letter/digit
         //2 or 3 letters after '.', case intensive match (flagged with 'i')
         let regexEmail = /^[a-z][a-z0-9\.\_\-]+[a-z0-9]@[a-z0-9][a-z0-9\.\_\-]+[a-z0-9]\.[a-z]{2,3}$/i;
-        if(!regexEmail.test(email)){
+        if(!regexEmail.test(email.value)){
             return false;
         }
         return true;
@@ -141,7 +141,7 @@
     function validPassword(password){
         //password must be at least 4 characters long; any character is allowed, except for empty space
         let regexPassword = /^[^\s]{4,}$/
-        if(!regexPassword.test(password)){
+        if(!regexPassword.test(password.value)){
             return false;
         }
         return true;
