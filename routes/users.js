@@ -10,6 +10,14 @@ function databaseRunLocal() {
     return DATABASE_URI;
 }
 
+const HTTP_CODES = {
+    OK: 200,
+    CREATED: 201,
+    BAD_REQUEST: 400,
+    NOT_FOUND: 404,
+    CONFLICT: 409
+}
+
 const DB_RESPONSES = {
     OK: "OK",
     NOT_EXIST: "NOT_EXIST",
@@ -22,15 +30,15 @@ route.post('/auth', async function (req, res, next) {
         let user = await db.getUserByName(req.body.name);
         if(user) {
             if(user.password === crypto.createHash('sha256').update(req.body.password).digest('hex')){
-                res.status(200).json({msg: `Successfully logged in!`, userID: user.userid, userName: user.name, userEmail: user.email});
+                res.status(HTTP_CODES.OK).json({msg: `Successfully logged in!`, userID: user.userid, userName: user.name, userEmail: user.email});
             } else {
-                res.status(400).json({msg: "Wrong password"});
+                res.status(HTTP_CODES.BAD_REQUEST).json({msg: "Wrong password"});
             }
         } else {
-            res.status(404).json({msg: "Username not found"});
+            res.status(HTTP_CODES.NOT_FOUND).json({msg: "Username not found"});
         }
     } else {
-        res.status(400).json({msg: "You need to enter username and password"});
+        res.status(HTTP_CODES.BAD_REQUEST).json({msg: "You need to enter username and password"});
     }
 });
 
@@ -39,9 +47,9 @@ route.post('/auth', async function (req, res, next) {
 route.get('/:userID', async function(req, res, next){
     let user = await db.getUser(req.params.userID);
     if(user) {
-        res.status(200).json({user: user.name, email: user.email});
+        res.status(HTTP_CODES.OK).json({user: user.name, email: user.email});
     } else {
-        res.status(404).end();
+        res.status(HTTP_CODES.NOT_FOUND).end();
     }
 });
 
@@ -53,13 +61,13 @@ route.post('/', async function(req, res, next){
             .digest('hex');
         let insertedUser = await db.insertNewUser(req.body.name, req.body.email, hashPssw);
         if(insertedUser === DB_RESPONSES.OK) {
-            res.status(201).json({msg: "New user created!"});   
+            res.status(HTTP_CODES.CREATED).json({msg: "New user created!"});   
         } else if (insertedUser === DB_RESPONSES.ALREADY_EXIST){
-            res.status(409).json({msg: "Username or email already exists!"});
+            res.status(HTTP_CODES.CONFLICT).json({msg: "Username or email already exists!"});
         }
     }
     else {
-        res.status(400).json({msg: "Invalid credentials"});
+        res.status(HTTP_CODES.BAD_REQUEST).json({msg: "Invalid credentials"});
     }
 });
 
@@ -69,13 +77,13 @@ route.delete('/:userID', async function(req, res) {
     if(req.params.userID) {
         let deletedUser = await db.deleteExistingUser(req.params.userID);
         if(deletedUser === DB_RESPONSES.OK) {
-            res.status(200).json(`User with userID=${req.params.userID} deleted.`);
+            res.status(HTTP_CODES.OK).json(`User with userID=${req.params.userID} deleted.`);
         } else if(deletedUser === DB_RESPONSES.NOT_EXIST) {
-            res.status(404).json({msg: "This user does not exist"});
+            res.status(HTTP_CODES.NOT_FOUND).json({msg: "This user does not exist"});
         }
     }
     else{
-        res.status(400).end();
+        res.status(HTTP_CODES.BAD_REQUEST).end();
     }
 });
 
@@ -88,15 +96,15 @@ route.put('/:userID', async function(req, res, next) {
             .digest('hex');
         let updatedUser = await db.updateExitingUser(req.params.userID, req.body.name, req.body.email, hashPssw);
         if(updatedUser === DB_RESPONSES.OK) {
-            res.status(200).json({msg: `User with userID=${req.params.userID} updated`});
+            res.status(HTTP_CODES.OK).json({msg: `User with userID=${req.params.userID} updated`});
         } else if(updatedUser === DB_RESPONSES.ALREADY_EXIST){
-            res.status(409).json({msg: "Username or email already exist"});
+            res.status(HTTP_CODES.CONFLICT).json({msg: "Username or email already exist"});
         } else if(updatedUser === DB_RESPONSES.NOT_EXIST) {
-            res.status(404).json({msg: "This user does not exist"});
+            res.status(HTTP_CODES.NOT_FOUND).json({msg: "This user does not exist"});
         }
     }
     else{
-        res.status(404).json({msg: `Wrong credentials.`});
+        res.status(HTTP_CODES.BAD_REQUEST).json({msg: `Wrong credentials.`});
     }
 });
 
