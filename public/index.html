@@ -24,6 +24,15 @@
         <button id="btnLogin">Login</button>
         <h3 id="txtResultLogin"></h3>
     </div>
+
+    <div id="update">
+        <input type="text" id="inpUserUpdate" placeholder="Update username">
+        <input type="text" id="inpEmailUpdate" placeholder="Update email">
+        <input type="text" id="inpPassUpdate" placeholder="Update password">
+        <br><br>
+        <button id="btnUpdate">Update</button>
+        <h3 id="txtResultUpdate"></h3>
+    </div>
     
 </body>
 
@@ -38,6 +47,12 @@
     let inpPasswordLogin = document.getElementById('inpPasswordLogin');
     let btnLogin = document.getElementById('btnLogin');
     let txtResultLogin = document.getElementById('txtResultLogin');
+
+    let inpUserUpdate = document.getElementById('inpUserUpdate');
+    let inpEmailUpdate = document.getElementById('inpEmailUpdate');    
+    let inpPasswordUpdate = document.getElementById('inpPasswordUpdate');
+    let btnUpdate = document.getElementById('btnUpdate');
+    let txtResultUpdate = document.getElementById('txtResultUpdate');
 
     btnCreate.addEventListener('click', function(evt) {
         if(!validUsername(inpUserCreate)){
@@ -66,6 +81,22 @@
         }
     });
 
+    btnUpdate.addEventListener('click', function(evt){
+        if(!validUsername(inpUserUpdate)){
+            txtResultUpdate.innerHTML = "Wrong username format. Use only letters, digits and underscores.";
+        }
+        else if(!validEmail(inpEmailUpdate)){
+            txtResultUpdate.innerHTML = "Wrong email format.";
+        }
+        else if(!validPassword(inpPasswordUpdate)){
+            txtResultUpdate.innerHTML = "Wrong password format. Password must be at least 4 characters long and should not contain empty spaces";
+        }
+        else{
+            updateUser();
+        }
+    });
+
+    //-----------------------------------------
     async function createUser(){
 
         let url = "/user";
@@ -92,6 +123,7 @@
         }
     }
 
+    //-----------------------------------------
     async function loginUser(){
 
         let url = "/auth"; //check url again with server when the API is finished
@@ -111,6 +143,32 @@
             let resp = await fetch(url, cfg);
             let data = await resp.json();
             txtResultLogin.innerHTML = data.msg;
+        }
+        catch(err){
+            console.log(err);
+        }
+    }
+
+    //-----------------------------------------
+    async function updateUser(){
+        let url = "/user"; //need to get the userID from the server?
+        
+        let updata = {
+            name: inpUserUpdate.value,
+            email: inpEmailUpdate.value,
+            password: inpPasswordUpdate.value
+        }
+
+        let cfg = {
+            method: "PUT",
+            headers: {"Content-Type":"application/json"},
+            body: JSON.stringify(updata)
+        }
+
+        try{
+            let resp = await fetch(url, cfg);
+            let data = await resp.json();
+            txtResultUpdate = data.msg;
         }
         catch(err){
             console.log(err);
