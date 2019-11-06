@@ -28,10 +28,15 @@
     <div id="update">
         <input type="text" id="inpUserUpdate" placeholder="Update username">
         <input type="text" id="inpEmailUpdate" placeholder="Update email">
-        <input type="text" id="inpPassUpdate" placeholder="Update password">
+        <input type="text" id="inpPasswordUpdate" placeholder="Update password">
         <br><br>
         <button id="btnUpdate">Update</button>
         <h3 id="txtResultUpdate"></h3>
+    </div>
+
+    <div id="delete">
+        <button id="btnDelete">Delete</button>
+        <h3 id="txtResultDelete"></h3>
     </div>
     
 </body>
@@ -53,6 +58,15 @@
     let inpPasswordUpdate = document.getElementById('inpPasswordUpdate');
     let btnUpdate = document.getElementById('btnUpdate');
     let txtResultUpdate = document.getElementById('txtResultUpdate');
+
+    let btnDelete = document.getElementById('btnDelete');
+    let txtResultDelete = document.getElementById('txtResultDelete');
+
+    let currentUser = {
+        userID: "",
+        userName: "",
+        userEmail: ""
+    }
 
     btnCreate.addEventListener('click', function(evt) {
         if(!validUsername(inpUserCreate)){
@@ -96,6 +110,10 @@
         }
     });
 
+    btnDelete.addEventListener('click', function(evt){
+        deleteUser();
+    });
+
     //-----------------------------------------
     async function createUser(){
 
@@ -116,7 +134,8 @@
         try {
             let resp = await fetch(url, cfg);
             let data = await resp.json();
-            txtResultCreate.innerHTML = data.msg; 
+            txtResultCreate.innerHTML = data.msg;
+            
         }
         catch (err) {
             console.log(err);
@@ -126,7 +145,7 @@
     //-----------------------------------------
     async function loginUser(){
 
-        let url = "/auth"; //check url again with server when the API is finished
+        let url = "user/auth"; //check url again with server when the API is finished
 
         let updata = {
             name: inpUserLogin.value,
@@ -143,6 +162,9 @@
             let resp = await fetch(url, cfg);
             let data = await resp.json();
             txtResultLogin.innerHTML = data.msg;
+            currentUser.userID = data.userID; 
+            currentUser.userName = data.userName;
+            currentUser.userEmail = data.userEmail;
         }
         catch(err){
             console.log(err);
@@ -150,8 +172,10 @@
     }
 
     //-----------------------------------------
-    async function updateUser(){
-        let url = "/user"; //need to get the userID from the server?
+    async function updateUser(){ 
+        //option to update should only appear when the user is logged in
+        //only works if the user logs in first
+        let url = `/user/${currentUser.userID}`;
         
         let updata = {
             name: inpUserUpdate.value,
@@ -168,7 +192,27 @@
         try{
             let resp = await fetch(url, cfg);
             let data = await resp.json();
-            txtResultUpdate = data.msg;
+            txtResultUpdate.innerHTML = data.msg;
+            
+        }
+        catch(err){
+            console.log(err);
+        }
+    }
+
+    async function deleteUser(){
+        let url = `/user/${currentUser.userID}`;
+
+        let cfg = {
+            method: "DELETE",
+            headers: {"Content-Type":"application/json"},
+        }
+
+        try{
+            let resp = await fetch(url, cfg);
+            let data = await resp.json();
+            txtResultDelete.innerHTML = data.msg;
+            
         }
         catch(err){
             console.log(err);
