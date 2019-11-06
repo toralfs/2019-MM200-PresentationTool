@@ -1,15 +1,16 @@
 const express = require('express');
 const route = express.Router();
 const crypto = require('crypto');
-
+const userAuth = require('../modules/auth');
+ 
 const db = require("../modules/db")(process.env.DATABASE_URL || databaseRunLocal());
-
+ 
 function databaseRunLocal() {
     const secrets = require('../secret/secrets');
     const DATABASE_URI = secrets.DATABASE_URI;
     return DATABASE_URI;
 }
-
+ 
 const HTTP_CODES = {
     OK: 200,
     CREATED: 201,
@@ -17,32 +18,17 @@ const HTTP_CODES = {
     NOT_FOUND: 404,
     CONFLICT: 409
 }
-
+ 
 const DB_RESPONSES = {
     OK: "OK",
     NOT_EXIST: "NOT_EXIST",
     ALREADY_EXIST: "ALREADY_EXIST"
 };
-
+ 
 // Authenticate user
-route.post('/auth', async function (req, res, next) {
-    if(req.body.password && req.body.name){
-        let user = await db.getUserByName(req.body.name);
-        if(user) {
-            if(user.password === crypto.createHash('sha256').update(req.body.password).digest('hex')){
-                res.status(HTTP_CODES.OK).json({msg: `Successfully logged in!`, userID: user.userid, userName: user.name, userEmail: user.email});
-            } else {
-                res.status(HTTP_CODES.BAD_REQUEST).json({msg: "Wrong password"});
-            }
-        } else {
-            res.status(HTTP_CODES.NOT_FOUND).json({msg: "Username not found"});
-        }
-    } else {
-        res.status(HTTP_CODES.BAD_REQUEST).json({msg: "You need to enter username and password"});
-    }
-});
-
-
+route.post('/auth', userAuth.auth);
+ 
+ 
 // endpoint GET---------------------------------
 route.get('/:userID', async function(req, res, next){
     let user = await db.getUser(req.params.userID);
@@ -52,7 +38,7 @@ route.get('/:userID', async function(req, res, next){
         res.status(HTTP_CODES.NOT_FOUND).end();
     }
 });
-
+ 
 // endpoint POST--------------------------------
 route.post('/', async function(req, res, next){
     if(req.body.password && req.body.name && req.body.email){
@@ -70,8 +56,8 @@ route.post('/', async function(req, res, next){
         res.status(HTTP_CODES.BAD_REQUEST).json({msg: "Invalid credentials"});
     }
 });
-
-
+ 
+ 
 // endpoint DELETE -----------------------------
 route.delete('/:userID', async function(req, res) {
     if(req.params.userID) {
@@ -86,8 +72,8 @@ route.delete('/:userID', async function(req, res) {
         res.status(HTTP_CODES.BAD_REQUEST).end();
     }
 });
-
-
+ 
+ 
 // endpoint PUT --------------------------------
 route.put('/:userID', async function(req, res, next) {
     if(req.params.userID && req.body.name && req.body.email && req.body.password){
@@ -107,6 +93,6 @@ route.put('/:userID', async function(req, res, next) {
         res.status(HTTP_CODES.BAD_REQUEST).json({msg: `Wrong credentials.`});
     }
 });
-
-
+ 
+ 
 module.exports = route;
