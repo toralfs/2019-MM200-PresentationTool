@@ -18,7 +18,7 @@
     </div>
 
     <div id="login">
-        <input type="text" id="inpEmailLogin" placeholder="E-mail">
+        <input type="text" id="inpUserLogin" placeholder="Username">
         <input type="password" id="inpPasswordLogin" placeholder="Password">
         <br><br>
         <button id="btnLogin">Login</button>
@@ -43,7 +43,7 @@
     let btnCreate = document.getElementById('btnCreate');
     let txtResultCreate = document.getElementById('txtResultCreate');
 
-    let inpEmailLogin = document.getElementById('inpEmailLogin');
+    let inpUserLogin = document.getElementById('inpUserLogin');
     let inpPasswordLogin = document.getElementById('inpPasswordLogin');
     let btnLogin = document.getElementById('btnLogin');
     let txtResultLogin = document.getElementById('txtResultLogin');
@@ -70,8 +70,8 @@
     });
     
     btnLogin.addEventListener('click', function(evt){
-        if(!validEmail(inpEmailLogin)){
-            txtResultLogin.innerHTML = "Wrong format for email.";
+        if(!validUsername(inpUserLogin)){
+            txtResultLogin.innerHTML = "Wrong username format. Use only letters, digits and underscores.";
         }
         else if(!validPassword(inpPasswordLogin)){
             txtResultLogin.innerHTML = "Wrong password format. Password must be at least 4 characters long and should not contain empty spaces";
@@ -129,8 +129,8 @@
         let url = "/auth"; //check url again with server when the API is finished
 
         let updata = {
-            emailLogin: inpEmailLogin.value, //also check with server if Email or Username is used
-            passwordLogin: inpPasswordLogin.value            
+            name: inpUserLogin.value,
+            password: inpPasswordLogin.value            
         }
 
         let cfg = {
