@@ -77,7 +77,7 @@ route.delete('/:userID', async function(req, res) {
     if(req.params.userID) {
         let deletedUser = await db.deleteExistingUser(req.params.userID);
         if(deletedUser === DB_RESPONSES.OK) {
-            res.status(HTTP_CODES.OK).json(`User with userID=${req.params.userID} deleted.`);
+            res.status(HTTP_CODES.OK).json({msg: `User with userID=${req.params.userID} deleted.`});
         } else if(deletedUser === DB_RESPONSES.NOT_EXIST) {
             res.status(HTTP_CODES.NOT_FOUND).json({msg: "This user does not exist"});
         }
@@ -107,6 +107,5 @@ route.put('/:userID', async function(req, res, next) {
         res.status(HTTP_CODES.BAD_REQUEST).json({msg: `Wrong credentials.`});
     }
 });
-
 
 module.exports = route;
