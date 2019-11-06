@@ -7,6 +7,7 @@ const DEFAULT_PORT = 8080;
 const app = express();
 app.set('port', (process.env.PORT || DEFAULT_PORT));
 
+app.use('/', express.static('public'));
 app.use(bodyParser.json());
 app.use('/user', userRoutes);
 app.use('/',express.static('public'));
