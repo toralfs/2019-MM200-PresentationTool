@@ -9,9 +9,9 @@
 
 <body>
     <div id="register">
-        <input type="text" id="inpUserCreate" placeholder="Username">
-        <input type="text" id="inpEmailCreate" placeholder="E-mail">    
-        <input type="password" id="inpPasswordCreate" placeholder="Password">
+        <input type="text" minlength="3" id="inpUserCreate" pattern="[A-Za-z0-9]+" placeholder="Username"><br>
+        <input type="email" id="inpEmailCreate" placeholder="E-mail"><br>
+        <input type="password" minlength="4" id="inpPasswordCreate" placeholder="Password">
         <br><br>
         <button id="btnCreate">Create user</button>
         <h3 id="txtResultCreate"></h3>
@@ -26,9 +26,9 @@
     </div>
 
     <div id="update">
-        <input type="text" id="inpUserUpdate" placeholder="Update username">
-        <input type="text" id="inpEmailUpdate" placeholder="Update email">
-        <input type="text" id="inpPasswordUpdate" placeholder="Update password">
+        <input type="text" minlength="3" id="inpUserUpdate" pattern="[A-Za-z0-9]+" placeholder="Update username">
+        <input type="email" id="inpEmailUpdate" placeholder="Update email">
+        <input type="text" minlength="4" id="inpPasswordUpdate" placeholder="Update password">
         <br><br>
         <button id="btnUpdate">Update</button>
         <h3 id="txtResultUpdate"></h3>
@@ -68,45 +68,23 @@
         userEmail: ""
     }
 
+    
     btnCreate.addEventListener('click', function(evt) {
-        if(!validUsername(inpUserCreate)){
-            txtResultCreate.innerHTML = "Wrong username format. Use only letters, digits and underscores.";
-        }
-        else if(!validEmail(inpEmailCreate)){
-            txtResultCreate.innerHTML = "Wrong email format.";
-        }
-        else if(!validPassword(inpPasswordCreate)){
-            txtResultCreate.innerHTML = "Wrong password format. Password must be at least 4 characters long and should not contain empty spaces";
-        }
-        else{
+        if(validUsername(txtResultCreate, inpUserCreate) && validEmail(txtResultCreate,inpEmailCreate) 
+            && validPassword(txtResultCreate, inpPasswordCreate)){
             createUser();
         }
+
     });
     
     btnLogin.addEventListener('click', function(evt){
-        if(!validUsername(inpUserLogin)){
-            txtResultLogin.innerHTML = "Wrong username format. Use only letters, digits and underscores.";
-        }
-        else if(!validPassword(inpPasswordLogin)){
-            txtResultLogin.innerHTML = "Wrong password format. Password must be at least 4 characters long and should not contain empty spaces";
-        }
-        else{
-            loginUser();
-        }
+        loginUser();
     });
 
     btnUpdate.addEventListener('click', function(evt){
-        if(!validUsername(inpUserUpdate)){
-            txtResultUpdate.innerHTML = "Wrong username format. Use only letters, digits and underscores.";
-        }
-        else if(!validEmail(inpEmailUpdate)){
-            txtResultUpdate.innerHTML = "Wrong email format.";
-        }
-        else if(!validPassword(inpPasswordUpdate)){
-            txtResultUpdate.innerHTML = "Wrong password format. Password must be at least 4 characters long and should not contain empty spaces";
-        }
-        else{
-            updateUser();
+        if(validUsername(txtResultUpdate,inpUserUpdate) && validEmail(txtResultUpdate,inpEmailUpdate)
+            && validPassword(txtResultUpdate,inpPasswordUpdate)){
+                updateUser();
         }
     });
 
@@ -219,32 +197,60 @@
         }
     }
 
-    function validUsername(username){
-        //username must be at least 3 characters long, consisting only of letters, numbers and underscores
-        let regexUser = /^[^\W]{3,}$/;
-
-        if(!regexUser.test(username.value)){
+    //--------------------------------------
+    function validUsername(txt,username){
+        
+        if(!username.value){
+            txt.innerHTML = "Username is missing";
             return false;
+        }
+        let validityState = username.validity;
+        if(validityState.patternMismatch){
+            txt.innerHTML = "Use only letters and digits";
+            return false;
+        }
+        else if(validityState.tooShort){
+            txt.innerHTML = "Username must be at least 3 characters long";
+            return false;
+        }
+        else{
+            txt.innerHTML = "";
         }
         return true;
     }
 
-    function validEmail(email){
-        //email starts with a letter, has letters/digits/'.'/'-'/'_', the last character before '@' is letter/digit
-        //between '@' and '.' there are letters/digits/'.'/'-'/'_', first and last character are letter/digit
-        //2 or 3 letters after '.', case intensive match (flagged with 'i')
-        let regexEmail = /^[a-z][a-z0-9\.\_\-]+[a-z0-9]@[a-z0-9][a-z0-9\.\_\-]+[a-z0-9]\.[a-z]{2,3}$/i;
-        if(!regexEmail.test(email.value)){
+    //---------------------------------------
+    function validEmail(txt,email){
+        
+        if(!email.value){
+            txt.innerHTML = "Email is missing";
             return false;
+        }
+        let validityState = email.validity;
+        if(!validityState.valid){
+            txt.innerHTML = "Wrong email format";
+            return false;
+        }
+        else{
+            txt.innerHTML = "";
         }
         return true;
     }
 
-    function validPassword(password){
-        //password must be at least 4 characters long; any character is allowed, except for empty space
-        let regexPassword = /^[^\s]{4,}$/
-        if(!regexPassword.test(password.value)){
+    //--------------------------------------
+    function validPassword(txt,password){
+        
+        if(!password.value){
+            txt.innerHTML = "Password is missing";
             return false;
+        }
+        let validityState = password.validity;
+        if(validityState.tooShort){
+            txt.innerHTML = "Password must be at least 4 characters long"
+            return false;
+        }
+        else{
+            txt.innerHTML = "";
         }
         return true;
     }
