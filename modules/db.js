@@ -87,6 +87,19 @@ const db = function (dbConnectionString) {
         return response;
     }
 
+    const deletePresentation = async function (presentationID) {
+        let response = null;
+        
+            try {
+                await insertData(`DELETE FROM presentations WHERE presentationID=$1`, [presentationID]);
+                response = DB_RESPONSES.OK;
+            } catch (error) {
+                console.error(error);
+            }
+        
+        return response;
+    }
+
     const updateUser = async function (userID, userName, userEmail, userPassword) {
         let response = null;
         let userToUpdate = await getUserByID(userID);
@@ -113,6 +126,8 @@ const db = function (dbConnectionString) {
     }
 
 
+
+
     // ----------------------- Presentations ---------------------------------
     const insertPresentation = async function (presentationName, ownerID, theme) {
         let response = null;
@@ -126,13 +141,18 @@ const db = function (dbConnectionString) {
         return response;
     }
 
+
     return {
         getUser: getUserByID,
         getUserByName: getUserByName,
         insertNewUser: insertUser,
         deleteExistingUser: deleteUser,
         updateExitingUser: updateUser,
+
+        deleteExistingPresentation: deletePresentation
+
         insertNewPresentation: insertPresentation
+
     }
 }
 

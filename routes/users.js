@@ -94,5 +94,4 @@ route.put('/:userID', async function(req, res, next) {
     }
 });
  
- 
 module.exports = route;
