@@ -93,6 +93,5 @@ route.put('/:userID', async function(req, res, next) {
         res.status(HTTP_CODES.BAD_REQUEST).json({msg: `Wrong credentials.`});
     }
 });
- 
- 
+
 module.exports = route;
