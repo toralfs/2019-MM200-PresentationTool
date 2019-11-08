@@ -98,7 +98,7 @@ const db = function (dbConnectionString) {
 
     const updateUser = async function (userID, userName, userEmail, userPassword) {
         let response = null;
-        let userToUpdate = await getUsserByID(userID);
+        let userToUpdate = await getUserByID(userID);
         if (userToUpdate) {
             let usernameCheck = await getUserByName(userName);
             let useremailCheck = await getUserByEmail(userEmail);
