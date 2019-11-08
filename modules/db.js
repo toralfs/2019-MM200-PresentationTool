@@ -30,8 +30,10 @@ const db = function (dbConnectionString) {
     async function insertData(query, params) {
         const client = new pg.Client(connectionString);
         await client.connect();
-        await client.query(query, params);
+        const res = await client.query(query, params);
+        let response = res.rows[0];
         await client.end();
+        return response;
     }
 
 
@@ -96,20 +98,6 @@ const db = function (dbConnectionString) {
         return response;
     }
 
-
-    const deleteSlide = async function (slideID) {
-        let response = null;
-            
-            try{
-                await insertData(`DELETE FROM slides WHERE slideID=$1`, [slideID]);
-                response = DB_RESPONSES.OK;
-            } catch (error){
-                console.log(error);
-            }
-            return response;
-    }
-    
-
     const updateUser = async function (userID, userName, userEmail, userPassword) {
         let response = null;
         let userToUpdate = await getUserByID(userID);
@@ -139,9 +127,9 @@ const db = function (dbConnectionString) {
     // ----------------------- Presentations ---------------------------------
     const getPresentationsByUserID = async function (ownerID) {
         let presentationData = null;
-        try{
+        try {
             presentationData = await runQueryAll(`SELECT * FROM presentations WHERE ownerID=$1`, [ownerID]);
-        } catch(error) {
+        } catch (error) {
             console.error(error);
         }
         return presentationData;
@@ -161,14 +149,14 @@ const db = function (dbConnectionString) {
 
     const deletePresentation = async function (presentationID) {
         let response = null;
-        
-            try {
-                await insertData(`DELETE FROM presentations WHERE presentationID=$1`, [presentationID]);
-                response = DB_RESPONSES.OK;
-            } catch (error) {
-                console.error(error);
-            }
-        
+
+        try {
+            await insertData(`DELETE FROM presentations WHERE presentationID=$1`, [presentationID]);
+            response = DB_RESPONSES.OK;
+        } catch (error) {
+            console.error(error);
+        }
+
         return response;
     }
 
@@ -177,8 +165,34 @@ const db = function (dbConnectionString) {
         try {
             await insertData(`UPDATE presentations SET name=$1, theme=$2 WHERE presentationID=$3`, [presentationName, theme, presentationID]);
             response = DB_RESPONSES.OK;
-        } catch(error) {
+        } catch (error) {
             console.error(error);
+        }
+        return response;
+    }
+
+    // -------------------- Slides --------------------
+    const insertSlide = async function (data, presentationID) {
+        let response = null;
+        try {
+            let insertedSlide = await insertData(`INSERT INTO slides (data, presentationID) VALUES ($1, $2) RETURNING slideID`, [data, presentationID]);
+            let slideID = insertedSlide.slideid;
+            await insertData(`UPDATE presentations SET slides = slides || $1::int WHERE presentationID = $2`, [slideID, presentationID]);
+            response = DB_RESPONSES.OK;
+        } catch (error) {
+            console.error(error);
+        }
+        return response;
+    }
+
+    const deleteSlide = async function (slideID, presentationID) {
+        let response = null;
+        try {
+            await insertData(`DELETE FROM slides WHERE slideID=$1`, [slideID, presentationID]);
+            await insertData(`UPDATE  presentations SET slides = array_remove(slides, $1) WHERE presentationID = $2;`, [slideID, presentationID]);
+            response = DB_RESPONSES.OK;
+        } catch (error) {
+            console.log(error);
         }
         return response;
     }
@@ -189,11 +203,14 @@ const db = function (dbConnectionString) {
         insertNewUser: insertUser,
         deleteExistingUser: deleteUser,
         updateExitingUser: updateUser,
+
         insertNewPresentation: insertPresentation,
         deleteExistingPresentation: deletePresentation,
         updateExitingPresentation: udpatePresentation,
         getPresentations: getPresentationsByUserID,
-        deleteExistingSlide: deleteSlide
+
+        insertNewSlide: insertSlide,
+        deleteExistingSlide: deleteSlide,
     }
 }
 
