@@ -21,10 +21,10 @@ const DB_RESPONSES = {
 };
 
 // endpoint GET---------------------------------
-route.get('/:presentationID', async function(req, res){
-    let presentation = await db.getPresentation(req.params.presentationID);
+route.get('/:userID', async function(req, res){
+    let presentation = await db.getPresentations(req.params.userID);
     if(presentation) {
-        res.status(HTTP_CODES.OK).json({name: presentation.name, owner: presentation.owner});
+        res.status(HTTP_CODES.OK).json({ID: presentation.presentationID, name: presentation.name, owner: presentation.ownerID, theme: presentation.theme});
     } else {
         res.status(HTTP_CODES.NOT_FOUND).json({msg: "This presentation does not exist"});
     }
