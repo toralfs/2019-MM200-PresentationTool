@@ -10,7 +10,7 @@
 
 <body>
     <div id="register">
-        <input type="text" minlength="3" id="inpUserCreate" pattern="[A-Za-z0-9]+" placeholder="Username"><br>
+        <input type="text" minlength="3" id="inpNameCreate" pattern="[A-Za-z0-9]+" placeholder="Username"><br>
         <input type="email" id="inpEmailCreate" placeholder="E-mail"><br>
         <input type="password" minlength="4" id="inpPasswordCreate" placeholder="Password">
         <br><br>
@@ -19,7 +19,7 @@
     </div>
 
     <div id="login">
-        <input type="text" id="inpUserLogin" placeholder="Username">
+        <input type="text" id="inpNameLogin" placeholder="Username"><br>
         <input type="password" id="inpPasswordLogin" placeholder="Password">
         <br><br>
         <button id="btnLogin">Login</button>
@@ -27,9 +27,9 @@
     </div>
 
     <div id="update">
-        <input type="text" minlength="3" id="inpUserUpdate" pattern="[A-Za-z0-9]+" placeholder="Update username">
-        <input type="email" id="inpEmailUpdate" placeholder="Update email">
-        <input type="password" minlength="4" id="inpPasswordUpdate" placeholder="Update password">
+        <input type="text" minlength="3" id="inpNameUpdate" pattern="[A-Za-z0-9]+" placeholder="Update username"><br>
+        <input type="email" id="inpEmailUpdate" placeholder="Update email"><br>
+        <input type="text" minlength="4" id="inpPasswordUpdate" placeholder="Update password">
         <br><br>
         <button id="btnUpdate">Update</button>
         <h3 id="txtResultUpdate"></h3>
@@ -43,18 +43,18 @@
 </body>
 
 <script>
-    let inpUserCreate = document.getElementById('inpUserCreate');
+    let inpNameCreate = document.getElementById('inpNameCreate');
     let inpEmailCreate = document.getElementById('inpEmailCreate');    
     let inpPasswordCreate = document.getElementById('inpPasswordCreate');
     let btnCreate = document.getElementById('btnCreate');
     let txtResultCreate = document.getElementById('txtResultCreate');
 
-    let inpUserLogin = document.getElementById('inpUserLogin');
+    let inpNameLogin = document.getElementById('inpNameLogin');
     let inpPasswordLogin = document.getElementById('inpPasswordLogin');
     let btnLogin = document.getElementById('btnLogin');
     let txtResultLogin = document.getElementById('txtResultLogin');
 
-    let inpUserUpdate = document.getElementById('inpUserUpdate');
+    let inpNameUpdate = document.getElementById('inpNameUpdate');
     let inpEmailUpdate = document.getElementById('inpEmailUpdate');    
     let inpPasswordUpdate = document.getElementById('inpPasswordUpdate');
     let btnUpdate = document.getElementById('btnUpdate');
@@ -63,64 +63,42 @@
     let btnDelete = document.getElementById('btnDelete');
     let txtResultDelete = document.getElementById('txtResultDelete');
 
-    let currentUserID = "";
-
+    let currentUser = {
+        ID: "",
+        username: "",
+        email: ""
+    }
     userClient = new UserClient();
 
-    
+    //------------------------------------------
     btnCreate.addEventListener('click', function(evt) {
-        if(validUsername(txtResultCreate, inpUserCreate) && validEmail(txtResultCreate,inpEmailCreate) 
+        if(validUsername(txtResultCreate, inpNameCreate) && validEmail(txtResultCreate,inpEmailCreate) 
             && validPassword(txtResultCreate, inpPasswordCreate)){
-            userClient.createUser(txtResultCreate, "/user", inpUserCreate.value, inpEmailCreate.value, inpPasswordCreate.value);
+            userClient.createUser(txtResultCreate, "/user", inpNameCreate.value, inpEmailCreate.value, inpPasswordCreate.value);
         }
 
     });
     
+    //----------------------------------------
     btnLogin.addEventListener('click', async function(evt){
-        currentUserID = await userClient.loginUser(txtResultLogin, "/user/auth", inpUserLogin.value, inpPasswordLogin.value);
+        let currentData = await userClient.loginUser(txtResultLogin, "/user/auth", inpNameLogin.value, inpPasswordLogin.value);
+        currentUser.ID = currentData.userID;
+        currentUser.username = currentData.userName;
+        currentUser.email = currentData.userEmail;
     });
 
+    //---------------------------------------
     btnUpdate.addEventListener('click', function(evt){
-        if(validUsername(txtResultUpdate,inpUserUpdate) && validEmail(txtResultUpdate,inpEmailUpdate)
+        if(validUsername(txtResultUpdate,inpNameUpdate) && validEmail(txtResultUpdate,inpEmailUpdate)
             && validPassword(txtResultUpdate,inpPasswordUpdate)){
-            userClient.updateUser(txtResultUpdate, `/user/${currentUserID}`, inpUserUpdate, inpEmailUpdate, inpPasswordUpdate);
-            console.log(txtResultUpdate.innerHTML);
-                //updateUser();
-                //NOT WORKING RN!!!!
+            userClient.updateUser(txtResultUpdate, `/user/${currentUser.ID}`, inpNameUpdate.value, inpEmailUpdate.value, inpPasswordUpdate.value);
         }
     });
 
+    //------------------------------------------
     btnDelete.addEventListener('click', function(evt){
-        userClient.deleteUser(txtResultDelete, `/user/${currentUserID}`);
+        userClient.deleteUser(txtResultDelete, `/user/${currentUser.ID}`);
     });
-
-    //-----------------------------------------
-    /*async function updateUser(){ 
-        let url = `/user/${currentUserID}`;
-        
-        let updata = {
-            name: inpUserUpdate.value,
-            email: inpEmailUpdate.value,
-            password: inpPasswordUpdate.value
-        }
-
-        let cfg = {
-            method: "PUT",
-            headers: {"Content-Type":"application/json"},
-            body: JSON.stringify(updata)
-        }
-
-        try{
-            let resp = await fetch(url, cfg);
-            let data = await resp.json();
-            txtResultUpdate.innerHTML = data.msg;
-            
-        }
-        catch(err){
-            console.log(err);
-        }
-    }
-    */
 
     //--------------------------------------
     function validUsername(txt,username){
