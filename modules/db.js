@@ -25,6 +25,8 @@ const db = function (dbConnectionString) {
         await client.end();
     }
 
+
+    // ------------------------ Users --------------------------------
     const getUserByName = async function (userName) {
         let userData = null;
         try {
@@ -107,7 +109,7 @@ const db = function (dbConnectionString) {
 
             if (usernameCheck && usernameCheck.name !== userToUpdate.name) {
                 response = DB_RESPONSES.ALREADY_EXIST;
-            } else if(useremailCheck && useremailCheck.email !== userToUpdate.email) {
+            } else if (useremailCheck && useremailCheck.email !== userToUpdate.email) {
                 response = DB_RESPONSES.ALREADY_EXIST;
             } else {
                 try {
@@ -124,13 +126,33 @@ const db = function (dbConnectionString) {
     }
 
 
+
+
+    // ----------------------- Presentations ---------------------------------
+    const insertPresentation = async function (presentationName, ownerID, theme) {
+        let response = null;
+        try {
+            await insertData(`INSERT INTO presentations(name, slides, ownerID, sharedUsers, theme) VALUES ($1, '{}', $2, '{}', $3)`, [presentationName, ownerID, theme]);
+            response = DB_RESPONSES.OK;
+        } catch (error) {
+            console.error(error);
+        }
+
+        return response;
+    }
+
+
     return {
         getUser: getUserByID,
         getUserByName: getUserByName,
         insertNewUser: insertUser,
         deleteExistingUser: deleteUser,
         updateExitingUser: updateUser,
+
         deleteExistingPresentation: deletePresentation
+
+        insertNewPresentation: insertPresentation
+
     }
 }
 
