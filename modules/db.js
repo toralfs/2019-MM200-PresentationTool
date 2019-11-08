@@ -18,6 +18,15 @@ const db = function (dbConnectionString) {
         return response;
     }
 
+    async function runQueryAll(query, params) {
+        const client = new pg.Client(connectionString);
+        await client.connect();
+        const res = await client.query(query, params);
+        let response = res.rows;
+        await client.end();
+        return response;
+    }
+
     async function insertData(query, params) {
         const client = new pg.Client(connectionString);
         await client.connect();
@@ -89,7 +98,7 @@ const db = function (dbConnectionString) {
 
     const updateUser = async function (userID, userName, userEmail, userPassword) {
         let response = null;
-        let userToUpdate = await getUserByID(userID);
+        let userToUpdate = await getUsserByID(userID);
         if (userToUpdate) {
             let usernameCheck = await getUserByName(userName);
             let useremailCheck = await getUserByEmail(userEmail);
@@ -114,6 +123,16 @@ const db = function (dbConnectionString) {
 
 
     // ----------------------- Presentations ---------------------------------
+    const getPresentationsByUserID = async function (ownerID) {
+        let presentationData = null;
+        try{
+            presentationData = await runQueryAll(`SELECT * FROM presentations WHERE ownerID=$1`, [ownerID]);
+        } catch(error) {
+            console.error(error);
+        }
+        return presentationData;
+    }
+
     const insertPresentation = async function (presentationName, ownerID, theme) {
         let response = null;
         try {
@@ -158,7 +177,8 @@ const db = function (dbConnectionString) {
         updateExitingUser: updateUser,
         insertNewPresentation: insertPresentation,
         deleteExistingPresentation: deletePresentation,
-        updateExitingPresentation: udpatePresentation
+        updateExitingPresentation: udpatePresentation,
+        getPresentations: getPresentationsByUserID
     }
 }
 
