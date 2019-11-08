@@ -172,6 +172,16 @@ const db = function (dbConnectionString) {
     }
 
     // -------------------- Slides --------------------
+    const getSlidesByPresID = async function (presentationID) {
+        let slideData = null;
+        try {
+            slideData = await runQueryAll(`SELECT * FROM slides WHERE presentationID=$1`, [presentationID]);
+        } catch (error) {
+            console.error(error);
+        }
+        return slideData;
+    }
+    
     const insertSlide = async function (data, presentationID) {
         let response = null;
         try {
@@ -211,6 +221,7 @@ const db = function (dbConnectionString) {
 
         insertNewSlide: insertSlide,
         deleteExistingSlide: deleteSlide,
+        getSlides: getSlidesByPresID
     }
 }
 
