@@ -5,50 +5,67 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Presentation</title>
+    <link rel="stylesheet" type="text/css" href="css/user-style.css">
     <script src = "js/userClient.js"></script>
     <script src = "js/inputValidation.js"></script>
 </head>
 
 <body>
-    <div id="register">
-        <input type="text" minlength="3" id="inpNameCreate" pattern="[A-Za-z0-9]+" placeholder="Username"><br>
-        <input type="email" id="inpEmailCreate" placeholder="E-mail"><br>
-        <input type="password" minlength="4" id="inpPasswordCreate" placeholder="Password">
-        <br><br>
-        <button id="btnCreate">Create user</button>
-        <h3 id="txtResultCreate"></h3>
-    </div>
+    <div id="container">
+        <div id="startPage">
+            <h1 id="startPageTitle">PRESENTATION TOOL</h1>
+            <div id="register" class="start">
+                <h3>Create a new user account</h3>
+                <input type="text" minlength="3" id="inpNameCreate" pattern="[A-Za-z0-9]+" placeholder="Username"><br>
+                <input type="email" id="inpEmailCreate" placeholder="E-mail"><br>
+                <input type="password" minlength="4" id="inpPasswordCreate" placeholder="Password">
+                <br><br>
+                <button class="userButtons" id="btnCreate">Create user</button>
+                <h3 id="txtResultCreate"></h3>
+            </div>
 
-    <div id="login">
-        <input type="text" id="inpNameLogin" placeholder="Username"><br>
-        <input type="password" id="inpPasswordLogin" placeholder="Password">
-        <br><br>
-        <button id="btnLogin">Login</button>
-        <h3 id="txtResultLogin"></h3>
-    </div>
+            <div id="login" class="start">
+                <h3>Already have an account?<br>Log in here!</h3>
+                <input type="text" id="inpNameLogin" placeholder="Username"><br>
+                <input type="password" id="inpPasswordLogin" placeholder="Password">
+                <br><br>
+                <button class="userButtons" id="btnLogin">Login</button>
+                <h3 id="txtResultLogin"></h3>
+            </div>
+        </div>
 
-    <div id="update">
-        <input type="text" minlength="3" id="inpNameUpdate" pattern="[A-Za-z0-9]+" placeholder="Update username"><br>
-        <input type="email" id="inpEmailUpdate" placeholder="Update email"><br>
-        <input type="text" minlength="4" id="inpPasswordUpdate" placeholder="Update password">
-        <br><br>
-        <button id="btnUpdate">Update</button>
-        <h3 id="txtResultUpdate"></h3>
-    </div>
+        <div id="logout" style="display:none">
+                <button class="userButtons" id="btnLogout">Logout</button>
+                <h3 id="txtResultLogout"></h3>
+        </div>
 
-    <div id="delete">
-        <button id="btnDelete">Delete</button>
-        <h3 id="txtResultDelete"></h3>
-    </div>
+        <div id="userPage" style="display:none">
+            <h2>User profile</h2>
+            <div id="update" class="userEdit">
+                <h3>Update user</h3>
+                <input type="text" minlength="3" id="inpNameUpdate" pattern="[A-Za-z0-9]+" placeholder="Update username"><br>
+                <input type="email" id="inpEmailUpdate" placeholder="Update email"><br>
+                <input type="text" minlength="4" id="inpPasswordUpdate" placeholder="Update password">
+                <br><br>
+                <button class="userButtons" id="btnUpdate">Update user</button>
+                <h3 id="txtResultUpdate"></h3>
+            </div>
 
-    <div id="logout">
-        <button id="btnLogout">Logout</button>
-        <h3 id="txtResultLogout"></h3>
+            <div id="delete" class="userEdit">
+                <button class="userButtons" id="btnDelete">Delete user</button>
+            </div>
+        </div>
+
     </div>
     
 </body>
 
 <script>
+
+    let startPage = document.getElementById('startPage');
+    let userPage = document.getElementById('userPage');
+    let logoutDiv = document.getElementById('logout');
+
     let inpNameCreate = document.getElementById('inpNameCreate');
     let inpEmailCreate = document.getElementById('inpEmailCreate');    
     let inpPasswordCreate = document.getElementById('inpPasswordCreate');
@@ -70,7 +87,6 @@
     let txtResultDelete = document.getElementById('txtResultDelete');
 
     let btnLogout = document.getElementById('btnLogout');
-    let txtResultLogout = document.getElementById('txtResultLogout');
 
     let currentUser = {
         ID: "",
@@ -79,7 +95,6 @@
     }
     let userClient = new UserClient();
     let inputValidation = new InputValidation();
-    console.log(userClient);
 
     //------------------------------------------
     btnCreate.addEventListener('click', function(evt) {
@@ -95,6 +110,10 @@
         currentUser.ID = currentData.userID;
         currentUser.username = currentData.userName;
         currentUser.email = currentData.userEmail;
+        startPage.style = "display:none";
+        userPage.style = "display:flex";
+        logoutDiv.style = "display:flex";
+        
     });
 
     //---------------------------------------
@@ -115,7 +134,10 @@
         currentUser.ID = "";
         currentUser.username = "";
         currentUser.email = "";
-        txtResultLogout.innerHTML = "Successfully logged out";
+        txtResultLogin.innerHTML = "Successfully logged out";
+        startPage.style = "display:flex";
+        userPage.style = "display:none";
+        logoutDiv.style = "display:none";
     });
 
 </script>
