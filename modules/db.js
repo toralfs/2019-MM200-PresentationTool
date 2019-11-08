@@ -96,6 +96,20 @@ const db = function (dbConnectionString) {
         return response;
     }
 
+
+    const deleteSlide = async function (slideID) {
+        let response = null;
+            
+            try{
+                await insertData(`DELETE FROM slides WHERE slideID=$1`, [slideID]);
+                response = DB_RESPONSES.OK;
+            } catch (error){
+                console.log(error);
+            }
+            return response;
+    }
+    
+
     const updateUser = async function (userID, userName, userEmail, userPassword) {
         let response = null;
         let userToUpdate = await getUserByID(userID);
@@ -178,7 +192,8 @@ const db = function (dbConnectionString) {
         insertNewPresentation: insertPresentation,
         deleteExistingPresentation: deletePresentation,
         updateExitingPresentation: udpatePresentation,
-        getPresentations: getPresentationsByUserID
+        getPresentations: getPresentationsByUserID,
+        deleteExistingSlide: deleteSlide
     }
 }
 
