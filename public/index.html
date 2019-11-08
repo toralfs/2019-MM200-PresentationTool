@@ -5,20 +5,21 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Presentation</title>
+    <script src = "js/userClient.js"></script>
 </head>
 
 <body>
     <div id="register">
-        <input type="text" id="inpUserCreate" placeholder="Username">
-        <input type="text" id="inpEmailCreate" placeholder="E-mail">    
-        <input type="password" id="inpPasswordCreate" placeholder="Password">
+        <input type="text" minlength="3" id="inpNameCreate" pattern="[A-Za-z0-9]+" placeholder="Username"><br>
+        <input type="email" id="inpEmailCreate" placeholder="E-mail"><br>
+        <input type="password" minlength="4" id="inpPasswordCreate" placeholder="Password">
         <br><br>
         <button id="btnCreate">Create user</button>
         <h3 id="txtResultCreate"></h3>
     </div>
 
     <div id="login">
-        <input type="text" id="inpUserLogin" placeholder="Username">
+        <input type="text" id="inpNameLogin" placeholder="Username"><br>
         <input type="password" id="inpPasswordLogin" placeholder="Password">
         <br><br>
         <button id="btnLogin">Login</button>
@@ -26,9 +27,9 @@
     </div>
 
     <div id="update">
-        <input type="text" id="inpUserUpdate" placeholder="Update username">
-        <input type="text" id="inpEmailUpdate" placeholder="Update email">
-        <input type="text" id="inpPasswordUpdate" placeholder="Update password">
+        <input type="text" minlength="3" id="inpNameUpdate" pattern="[A-Za-z0-9]+" placeholder="Update username"><br>
+        <input type="email" id="inpEmailUpdate" placeholder="Update email"><br>
+        <input type="text" minlength="4" id="inpPasswordUpdate" placeholder="Update password">
         <br><br>
         <button id="btnUpdate">Update</button>
         <h3 id="txtResultUpdate"></h3>
@@ -38,22 +39,27 @@
         <button id="btnDelete">Delete</button>
         <h3 id="txtResultDelete"></h3>
     </div>
+
+    <div id="logout">
+        <button id="btnLogout">Logout</button>
+        <h3 id="txtResultLogout"></h3>
+    </div>
     
 </body>
 
 <script>
-    let inpUserCreate = document.getElementById('inpUserCreate');
+    let inpNameCreate = document.getElementById('inpNameCreate');
     let inpEmailCreate = document.getElementById('inpEmailCreate');    
     let inpPasswordCreate = document.getElementById('inpPasswordCreate');
     let btnCreate = document.getElementById('btnCreate');
     let txtResultCreate = document.getElementById('txtResultCreate');
 
-    let inpUserLogin = document.getElementById('inpUserLogin');
+    let inpNameLogin = document.getElementById('inpNameLogin');
     let inpPasswordLogin = document.getElementById('inpPasswordLogin');
     let btnLogin = document.getElementById('btnLogin');
     let txtResultLogin = document.getElementById('txtResultLogin');
 
-    let inpUserUpdate = document.getElementById('inpUserUpdate');
+    let inpNameUpdate = document.getElementById('inpNameUpdate');
     let inpEmailUpdate = document.getElementById('inpEmailUpdate');    
     let inpPasswordUpdate = document.getElementById('inpPasswordUpdate');
     let btnUpdate = document.getElementById('btnUpdate');
@@ -62,189 +68,108 @@
     let btnDelete = document.getElementById('btnDelete');
     let txtResultDelete = document.getElementById('txtResultDelete');
 
-    let currentUser = {
-        userID: "",
-        userName: "",
-        userEmail: ""
-    }
+    let btnLogout = document.getElementById('btnLogout');
+    let txtResultLogout = document.getElementById('txtResultLogout');
 
+    let currentUser = {
+        ID: "",
+        username: "",
+        email: ""
+    }
+    userClient = new UserClient();
+
+    //------------------------------------------
     btnCreate.addEventListener('click', function(evt) {
-        if(!validUsername(inpUserCreate)){
-            txtResultCreate.innerHTML = "Wrong username format. Use only letters, digits and underscores.";
+        if(validUsername(txtResultCreate, inpNameCreate) && validEmail(txtResultCreate,inpEmailCreate) 
+            && validPassword(txtResultCreate, inpPasswordCreate)){
+            userClient.createUser(txtResultCreate, "/user", inpNameCreate.value, inpEmailCreate.value, inpPasswordCreate.value);
         }
-        else if(!validEmail(inpEmailCreate)){
-            txtResultCreate.innerHTML = "Wrong email format.";
-        }
-        else if(!validPassword(inpPasswordCreate)){
-            txtResultCreate.innerHTML = "Wrong password format. Password must be at least 4 characters long and should not contain empty spaces";
-        }
-        else{
-            createUser();
-        }
+
     });
     
-    btnLogin.addEventListener('click', function(evt){
-        if(!validUsername(inpUserLogin)){
-            txtResultLogin.innerHTML = "Wrong username format. Use only letters, digits and underscores.";
-        }
-        else if(!validPassword(inpPasswordLogin)){
-            txtResultLogin.innerHTML = "Wrong password format. Password must be at least 4 characters long and should not contain empty spaces";
-        }
-        else{
-            loginUser();
-        }
+    //----------------------------------------
+    btnLogin.addEventListener('click', async function(evt){
+        let currentData = await userClient.loginUser(txtResultLogin, "/user/auth", inpNameLogin.value, inpPasswordLogin.value);
+        currentUser.ID = currentData.userID;
+        currentUser.username = currentData.userName;
+        currentUser.email = currentData.userEmail;
     });
 
+    //---------------------------------------
     btnUpdate.addEventListener('click', function(evt){
-        if(!validUsername(inpUserUpdate)){
-            txtResultUpdate.innerHTML = "Wrong username format. Use only letters, digits and underscores.";
+        if(validUsername(txtResultUpdate,inpNameUpdate) && validEmail(txtResultUpdate,inpEmailUpdate)
+            && validPassword(txtResultUpdate,inpPasswordUpdate)){
+            userClient.updateUser(txtResultUpdate, `/user/${currentUser.ID}`, inpNameUpdate.value, inpEmailUpdate.value, inpPasswordUpdate.value);
         }
-        else if(!validEmail(inpEmailUpdate)){
-            txtResultUpdate.innerHTML = "Wrong email format.";
+    });
+
+    //------------------------------------------
+    btnDelete.addEventListener('click', function(evt){
+        userClient.deleteUser(txtResultDelete, `/user/${currentUser.ID}`);
+    });
+
+    //-----------------------------------------
+    btnLogout.addEventListener('click', function(evt){
+        currentUser.ID = "";
+        currentUser.username = "";
+        currentUser.email = "";
+        txtResultLogout.innerHTML = "Successfully logged out";
+    });
+
+    //--------------------------------------
+    function validUsername(txt,username){
+        
+        if(!username.value){
+            txt.innerHTML = "Username is missing";
+            return false;
         }
-        else if(!validPassword(inpPasswordUpdate)){
-            txtResultUpdate.innerHTML = "Wrong password format. Password must be at least 4 characters long and should not contain empty spaces";
+        let validityState = username.validity;
+        if(validityState.patternMismatch){
+            txt.innerHTML = "Use only letters and digits";
+            return false;
+        }
+        else if(validityState.tooShort){
+            txt.innerHTML = "Username must be at least 3 characters long";
+            return false;
         }
         else{
-            updateUser();
+            txt.innerHTML = "";
         }
-    });
-
-    btnDelete.addEventListener('click', function(evt){
-        deleteUser();
-    });
-
-    //-----------------------------------------
-    async function createUser(){
-
-        let url = "/user";
-
-        let updata = {
-            name: inpUserCreate.value,
-            email: inpEmailCreate.value,
-            password: inpPasswordCreate.value            
-        }
-
-        let cfg = {
-            method: "POST",
-            headers: {"Content-Type":"application/json"},
-            body: JSON.stringify(updata)
-        }
-
-        try {
-            let resp = await fetch(url, cfg);
-            let data = await resp.json();
-            txtResultCreate.innerHTML = data.msg;
-            
-        }
-        catch (err) {
-            console.log(err);
-        }
+        return true;
     }
 
-    //-----------------------------------------
-    async function loginUser(){
-
-        let url = "user/auth"; //check url again with server when the API is finished
-
-        let updata = {
-            name: inpUserLogin.value,
-            password: inpPasswordLogin.value            
-        }
-
-        let cfg = {
-            method: "POST",
-            headers: {"Content-Type":"application/json"},
-            body: JSON.stringify(updata)
-        }
-
-        try{
-            let resp = await fetch(url, cfg);
-            let data = await resp.json();
-            txtResultLogin.innerHTML = data.msg;
-            currentUser.userID = data.userID; 
-            currentUser.userName = data.userName;
-            currentUser.userEmail = data.userEmail;
-        }
-        catch(err){
-            console.log(err);
-        }
-    }
-
-    //-----------------------------------------
-    async function updateUser(){ 
-        //option to update should only appear when the user is logged in
-        //only works if the user logs in first
-        let url = `/user/${currentUser.userID}`;
+    //---------------------------------------
+    function validEmail(txt,email){
         
-        let updata = {
-            name: inpUserUpdate.value,
-            email: inpEmailUpdate.value,
-            password: inpPasswordUpdate.value
-        }
-
-        let cfg = {
-            method: "PUT",
-            headers: {"Content-Type":"application/json"},
-            body: JSON.stringify(updata)
-        }
-
-        try{
-            let resp = await fetch(url, cfg);
-            let data = await resp.json();
-            txtResultUpdate.innerHTML = data.msg;
-            
-        }
-        catch(err){
-            console.log(err);
-        }
-    }
-
-    async function deleteUser(){
-        let url = `/user/${currentUser.userID}`;
-
-        let cfg = {
-            method: "DELETE",
-            headers: {"Content-Type":"application/json"},
-        }
-
-        try{
-            let resp = await fetch(url, cfg);
-            let data = await resp.json();
-            txtResultDelete.innerHTML = data.msg;
-            
-        }
-        catch(err){
-            console.log(err);
-        }
-    }
-
-    function validUsername(username){
-        //username must be at least 3 characters long, consisting only of letters, numbers and underscores
-        let regexUser = /^[^\W]{3,}$/;
-
-        if(!regexUser.test(username.value)){
+        if(!email.value){
+            txt.innerHTML = "Email is missing";
             return false;
+        }
+        let validityState = email.validity;
+        if(!validityState.valid){
+            txt.innerHTML = "Wrong email format";
+            return false;
+        }
+        else{
+            txt.innerHTML = "";
         }
         return true;
     }
 
-    function validEmail(email){
-        //email starts with a letter, has letters/digits/'.'/'-'/'_', the last character before '@' is letter/digit
-        //between '@' and '.' there are letters/digits/'.'/'-'/'_', first and last character are letter/digit
-        //2 or 3 letters after '.', case intensive match (flagged with 'i')
-        let regexEmail = /^[a-z][a-z0-9\.\_\-]+[a-z0-9]@[a-z0-9][a-z0-9\.\_\-]+[a-z0-9]\.[a-z]{2,3}$/i;
-        if(!regexEmail.test(email.value)){
+    //--------------------------------------
+    function validPassword(txt,password){
+        
+        if(!password.value){
+            txt.innerHTML = "Password is missing";
             return false;
         }
-        return true;
-    }
-
-    function validPassword(password){
-        //password must be at least 4 characters long; any character is allowed, except for empty space
-        let regexPassword = /^[^\s]{4,}$/
-        if(!regexPassword.test(password.value)){
+        let validityState = password.validity;
+        if(validityState.tooShort){
+            txt.innerHTML = "Password must be at least 4 characters long"
             return false;
+        }
+        else{
+            txt.innerHTML = "";
         }
         return true;
     }
