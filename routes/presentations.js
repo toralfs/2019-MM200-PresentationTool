@@ -60,8 +60,8 @@ route.delete('/:presentationID', async function(req, res) {
 
 // endpoint PUT --------------------------------
 route.put('/:presentationID', async function(req, res) {
-    if(req.params.presentationID && req.body.name){
-        let updatedPresentation = await db.updateExitingPresentation(req.params.presentationID, req.body.name);
+    if(req.params.presentationID && req.body.name && req.body.theme){
+        let updatedPresentation = await db.updateExitingPresentation(req.body.name, req.body.theme, req.params.presentationID);
         if(updatedPresentation === DB_RESPONSES.OK) {
             res.status(HTTP_CODES.OK).json({msg: `Presentation with presentationID=${req.params.presentationID} updated`});
         } else if(updatedPresentation === DB_RESPONSES.NOT_EXIST) {
