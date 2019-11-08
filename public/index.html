@@ -36,7 +36,6 @@
 
         <div id="logout" style="display:none">
                 <button class="userButtons" id="btnLogout">Logout</button>
-                <h3 id="txtResultLogout"></h3>
         </div>
 
         <div id="userPage" style="display:none">
@@ -53,6 +52,7 @@
 
             <div id="delete" class="userEdit">
                 <button class="userButtons" id="btnDelete">Delete user</button>
+                <h3 id="txtResultDelete"></h3>
             </div>
         </div>
 
@@ -107,13 +107,14 @@
     //----------------------------------------
     btnLogin.addEventListener('click', async function(evt){
         let currentData = await userClient.loginUser(txtResultLogin, "/user/auth", inpNameLogin.value, inpPasswordLogin.value);
-        currentUser.ID = currentData.userID;
-        currentUser.username = currentData.userName;
-        currentUser.email = currentData.userEmail;
-        startPage.style = "display:none";
-        userPage.style = "display:flex";
-        logoutDiv.style = "display:flex";
-        
+        if(currentData.msg == `Successfully logged in!`){ //not the best verification
+            currentUser.ID = currentData.userID;
+            currentUser.username = currentData.userName;
+            currentUser.email = currentData.userEmail;
+            startPage.style = "display:none";
+            userPage.style = "display:flex";
+            logoutDiv.style = "display:flex";
+        }        
     });
 
     //---------------------------------------
