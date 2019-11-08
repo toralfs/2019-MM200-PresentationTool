@@ -39,6 +39,11 @@
         <button id="btnDelete">Delete</button>
         <h3 id="txtResultDelete"></h3>
     </div>
+
+    <div id="logout">
+        <button id="btnLogout">Logout</button>
+        <h3 id="txtResultLogout"></h3>
+    </div>
     
 </body>
 
@@ -62,6 +67,9 @@
 
     let btnDelete = document.getElementById('btnDelete');
     let txtResultDelete = document.getElementById('txtResultDelete');
+
+    let btnLogout = document.getElementById('btnLogout');
+    let txtResultLogout = document.getElementById('txtResultLogout');
 
     let currentUser = {
         ID: "",
@@ -98,6 +106,14 @@
     //------------------------------------------
     btnDelete.addEventListener('click', function(evt){
         userClient.deleteUser(txtResultDelete, `/user/${currentUser.ID}`);
+    });
+
+    //-----------------------------------------
+    btnLogout.addEventListener('click', function(evt){
+        currentUser.ID = "";
+        currentUser.username = "";
+        currentUser.email = "";
+        txtResultLogout.innerHTML = "Successfully logged out";
     });
 
     //--------------------------------------
