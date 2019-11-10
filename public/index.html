@@ -6,6 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Presentation</title>
     <script src = "js/userClient.js"></script>
+    <script src = "js/presentationClient.js"></script>
 </head>
 
 <body>
@@ -44,6 +45,27 @@
         <button id="btnLogout">Logout</button>
         <h3 id="txtResultLogout"></h3>
     </div>
+
+    <div id="presentation" style="display: none;">
+        <div id="createPres">
+            <input type="text" minlength="3" id="inpPresNameCreate" pattern="^[A-Za-z0-9\s]+$" placeholder="Presentation name">
+            
+            <!-- We'll only need more themes later
+            <input type="radio" id="defaultThemeCreate" name="themesCreate" value="defaultTheme" checked>
+            <label for="defaultThemeCreate">Default Theme</label>
+            <input type="radio" id="darkThemeCreate" name="themesCreate" value="darkTheme">
+            <label for="darkThemeCreate">Dark Theme</label>
+            -->
+
+            <button id="btnCreatePres">Create new presentation!</button>
+            <h3 id="txtResultCreatePres"></h3>
+        </div>
+
+        <div id="deletePres">
+            <button id="btnDeletePres">Delete presentation</button>
+            <h3 id="txtResultDeletePres"></h3>
+        </div>
+    </div>
     
 </body>
 
@@ -76,7 +98,22 @@
         username: "",
         email: ""
     }
+
+    let currentPres = {
+        ID: "",
+        owner: "",
+        theme: ""
+    }
+
+    let inpPresNameCreate = document.getElementById('inpPresNameCreate');
+    let btnCreatePres = document.getElementById('btnCreatePres');
+    let txtResultCreatePres = document.getElementById('txtResultCreatePres');
+
+    let btnDeletePres = document.getElementById('btnDeletePres');
+    let txtResultDeletePres = document.getElementById('txtResultDeletePres');
+
     userClient = new UserClient();
+    presentationClient = new PresentationClient();
 
     //------------------------------------------
     btnCreate.addEventListener('click', function(evt) {
@@ -114,6 +151,16 @@
         currentUser.username = "";
         currentUser.email = "";
         txtResultLogout.innerHTML = "Successfully logged out";
+    });
+
+    //-----------------------------------
+    btnCreatePres.addEventListener('click', function(evt){
+        
+    });
+
+    //-------------------------------------
+    btnDeletePres.addEventListener('click', function(evt){
+        presentationClient.deletePresentation(txtResultDeletePres, `/presentation/${currentPres.ID}`);
     });
 
     //--------------------------------------
