@@ -8,6 +8,7 @@
     <link rel="stylesheet" type="text/css" href="css/user-style.css">
     <script src = "js/userClient.js"></script>
     <script src = "js/inputValidation.js"></script>
+    <script src = "js/presentationClient.js"></script>
 </head>
 
 <body>
@@ -61,6 +62,27 @@
         </div>
 
     </div>
+
+    <div id="presentation" style="display: none;">
+        <div id="createPres">
+            <input type="text" minlength="3" id="inpPresNameCreate" pattern="^[A-Za-z0-9\s]+$" placeholder="Presentation name">
+            
+            <!-- We'll only need more themes later
+            <input type="radio" id="defaultThemeCreate" name="themesCreate" value="defaultTheme" checked>
+            <label for="defaultThemeCreate">Default Theme</label>
+            <input type="radio" id="darkThemeCreate" name="themesCreate" value="darkTheme">
+            <label for="darkThemeCreate">Dark Theme</label>
+            -->
+
+            <button id="btnCreatePres">Create new presentation!</button>
+            <h3 id="txtResultCreatePres"></h3>
+        </div>
+
+        <div id="deletePres">
+            <button id="btnDeletePres">Delete presentation</button>
+            <h3 id="txtResultDeletePres"></h3>
+        </div>
+    </div>
     
 </body>
 
@@ -105,8 +127,22 @@
         username: "",
         email: ""
     }
-    let userClient = new UserClient();
-    let inputValidation = new InputValidation();
+
+    let currentPres = {
+        ID: "",
+        owner: "",
+        theme: ""
+    }
+
+    let inpPresNameCreate = document.getElementById('inpPresNameCreate');
+    let btnCreatePres = document.getElementById('btnCreatePres');
+    let txtResultCreatePres = document.getElementById('txtResultCreatePres');
+
+    let btnDeletePres = document.getElementById('btnDeletePres');
+    let txtResultDeletePres = document.getElementById('txtResultDeletePres');
+
+    userClient = new UserClient();
+    presentationClient = new PresentationClient();
 
     //------------------------------------------
     btnCreate.addEventListener('click', async function(evt) {
@@ -163,10 +199,36 @@
         logoutUser();
     });
 
-    function showStartPage(){
-        startPage.style = "display:flex";
-        userPage.style = "display:none";
-        logoutDiv.style = "display:none";
+    //-----------------------------------
+    btnCreatePres.addEventListener('click', function(evt){
+        
+    });
+
+    //-------------------------------------
+    btnDeletePres.addEventListener('click', function(evt){
+        presentationClient.deletePresentation(txtResultDeletePres, `/presentation/${currentPres.ID}`);
+    });
+
+    //--------------------------------------
+    function validUsername(txt,username){
+        
+        if(!username.value){
+            txt.innerHTML = "Username is missing";
+            return false;
+        }
+        let validityState = username.validity;
+        if(validityState.patternMismatch){
+            txt.innerHTML = "Use only letters and digits";
+            return false;
+        }
+        else if(validityState.tooShort){
+            txt.innerHTML = "Username must be at least 3 characters long";
+            return false;
+        }
+        else{
+            txt.innerHTML = "";
+        }
+        return true;
     }
 
     function showUserPage(){
