@@ -61,6 +61,12 @@
             <h3 id="txtResultCreatePres"></h3>
         </div>
 
+        <div id="updatePres">
+            <input type="text" minlength="3" id="inpPresNameUpdate" pattern="^[A-Za-z0-9\s-]+$" placeholder="Presentation name">
+            <button id="btnUpdatePres">Update presentation</button>
+            <h3 id="txtResultUpdatePres">
+        </div>
+
         <div id="deletePres">
             <button id="btnDeletePres">Delete presentation</button>
             <h3 id="txtResultDeletePres"></h3>
@@ -99,18 +105,22 @@
         email: ""
     }
 
+    let inpPresNameCreate = document.getElementById('inpPresNameCreate');
+    let btnCreatePres = document.getElementById('btnCreatePres');
+    let txtResultCreatePres = document.getElementById('txtResultCreatePres');
+
+    let inpPresNameUpdate = document.getElementById('inpPresNameUpdate');
+    let btnUpdatePres = document.getElementById('btnUpdatePres');
+    let txtResultUpdatePres = document.getElementById('txtResultUpdatePres');
+
+    let btnDeletePres = document.getElementById('btnDeletePres');
+    let txtResultDeletePres = document.getElementById('txtResultDeletePres');
+
     let currentPres = {
         ID: "",
         owner: "",
         theme: ""
     }
-
-    let inpPresNameCreate = document.getElementById('inpPresNameCreate');
-    let btnCreatePres = document.getElementById('btnCreatePres');
-    let txtResultCreatePres = document.getElementById('txtResultCreatePres');
-
-    let btnDeletePres = document.getElementById('btnDeletePres');
-    let txtResultDeletePres = document.getElementById('txtResultDeletePres');
 
     userClient = new UserClient();
     presentationClient = new PresentationClient();
@@ -155,7 +165,11 @@
 
     //-----------------------------------
     btnCreatePres.addEventListener('click', function(evt){
-        
+        //need to figure out how to send the theme as a parameter
+    });
+
+    btnUpdatePres.addEventListener('click', function(evt){
+        //need to figure out how to send the theme as a parameter
     });
 
     //-------------------------------------
