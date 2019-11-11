@@ -21,15 +21,15 @@ async function auth(req, res, next) {
             let user = await db.getUserByName(req.body.name);
             if (user) {
                 if (user.password === crypto.createHash('sha256').update(req.body.password).digest('hex')) {
-                    res.status(HTTP_CODES.OK).json({ msg: `Successfully logged in!`, userID: user.userid, userName: user.name, userEmail: user.email });
+                    res.status(HTTP_CODES.OK).json({code: HTTP_CODES.OK, msg: `Successfully logged in!`, userID: user.userid, userName: user.name, userEmail: user.email });
                 } else {
-                    res.status(HTTP_CODES.BAD_REQUEST).json({ msg: "Wrong password" });
+                    res.status(HTTP_CODES.BAD_REQUEST).json({code: HTTP_CODES.BAD_REQUEST, msg: "Wrong password" });
                 }
             } else {
-                res.status(HTTP_CODES.NOT_FOUND).json({ msg: "Username not found" });
+                res.status(HTTP_CODES.NOT_FOUND).json({code: HTTP_CODES.NOT_FOUND, msg: "Username not found" });
             }
         } else {
-            res.status(HTTP_CODES.BAD_REQUEST).json({ msg: "You need to enter username and password" });
+            res.status(HTTP_CODES.BAD_REQUEST).json({code: HTTP_CODES.BAD_REQUEST, msg: "You need to enter username and password" });
         }
     } catch(error) {
         console.log(error);
