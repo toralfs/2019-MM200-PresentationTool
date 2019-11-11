@@ -14,6 +14,7 @@
     <div id="container">
         <div id="startPage">
             <h1 id="startPageTitle">PRESENTATION TOOL</h1>
+            <h3 id="startWelcomeMessage">Welcome to our new presentation tool! Please create an account or log in to proceed.</h3>
             <div id="register" class="start">
                 <h3>Create a new user account</h3>
                 <input type="text" minlength="3" id="inpNameCreate" pattern="[A-Za-z0-9]+" placeholder="Username"><br>
@@ -97,23 +98,28 @@
     let inputValidation = new InputValidation();
 
     //------------------------------------------
-    btnCreate.addEventListener('click', function(evt) {
+    btnCreate.addEventListener('click', async function(evt) {
         if(inputValidation.validName(txtResultCreate, inpNameCreate) && inputValidation.validEmail(txtResultCreate,inpEmailCreate) 
             && inputValidation.validPassword(txtResultCreate, inpPasswordCreate)){
-            userClient.createUser(txtResultCreate, "/user", inpNameCreate.value, inpEmailCreate.value, inpPasswordCreate.value);
+            let currentData = await userClient.createUser(txtResultCreate, "/user", inpNameCreate.value, inpEmailCreate.value, inpPasswordCreate.value);
+            console.log(currentData);
+            if(currentData.userID && currentData.userName && currentData.userEmail){
+                currentUser.ID = currentData.userID;
+                currentUser.username = currentData.userName;
+                currentUser.email = currentData.userEmail;
+                showUserPage();
+            }
         }
     });
     
     //----------------------------------------
     btnLogin.addEventListener('click', async function(evt){
         let currentData = await userClient.loginUser(txtResultLogin, "/user/auth", inpNameLogin.value, inpPasswordLogin.value);
-        if(currentData.msg == `Successfully logged in!`){ //not the best verification
+        if(currentData.userID && currentData.userName && currentData.userEmail){
             currentUser.ID = currentData.userID;
             currentUser.username = currentData.userName;
             currentUser.email = currentData.userEmail;
-            startPage.style = "display:none";
-            userPage.style = "display:flex";
-            logoutDiv.style = "display:flex";
+            showUserPage();
         }        
     });
 
@@ -136,10 +142,26 @@
         currentUser.username = "";
         currentUser.email = "";
         txtResultLogin.innerHTML = "Successfully logged out";
+        
+        //Empty the input fields
+        let inputs = document.querySelectorAll("input");
+        for (let i of inputs){
+            i.value = "";
+        }
+        showStartPage();
+    });
+
+    function showStartPage(){
         startPage.style = "display:flex";
         userPage.style = "display:none";
         logoutDiv.style = "display:none";
-    });
+    }
+
+    function showUserPage(){
+        startPage.style = "display:none";
+        userPage.style = "display:flex";
+        logoutDiv.style = "display:flex";
+    }
 
 </script>
 

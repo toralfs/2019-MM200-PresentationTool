@@ -47,7 +47,8 @@ route.post('/', async function(req, res, next){
             .digest('hex');
         let insertedUser = await db.insertNewUser(req.body.name, req.body.email, hashPssw);
         if(insertedUser === DB_RESPONSES.OK) {
-            res.status(HTTP_CODES.CREATED).json({msg: "New user created!"});   
+            let user = await db.getUserByName(req.body.name);
+            res.status(HTTP_CODES.CREATED).json({msg: "New user created!", userID: user.userid, userName: user.name, userEmail: user.email});   
         } else if (insertedUser === DB_RESPONSES.ALREADY_EXIST){
             res.status(HTTP_CODES.CONFLICT).json({msg: "Username or email already exists!"});
         }
