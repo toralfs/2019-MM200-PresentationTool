@@ -22,11 +22,11 @@ const DB_RESPONSES = {
 
 // endpoint GET---------------------------------
 route.get('/:userID', async function(req, res){
-    let presentation = await db.getPresentations(req.params.userID);
-    if(presentation) {
-        res.status(HTTP_CODES.OK).json({ID: presentation.presentationID, name: presentation.name, owner: presentation.ownerID, theme: presentation.theme});
+    let presentations = await db.getPresentations(req.params.userID);
+    if(presentations) {
+        res.status(HTTP_CODES.OK).json({code: HTTP_CODES.OK, presentations: presentations});
     } else {
-        res.status(HTTP_CODES.NOT_FOUND).json({msg: "This presentation does not exist"});
+        res.status(HTTP_CODES.NOT_FOUND).json({code: HTTP_CODES.NOT_FOUND, msg: "This presentation does not exist"});
     }
 });
 
@@ -35,11 +35,11 @@ route.post('/', async function(req, res){
     if(req.body.name && req.body.ownerID && req.body.theme){
         let insertedPresentation = await db.insertNewPresentation(req.body.name, req.body.ownerID, req.body.theme);
         if(insertedPresentation === DB_RESPONSES.OK) {
-            res.status(HTTP_CODES.CREATED).json({msg: "New presentation created!"});   
+            res.status(HTTP_CODES.CREATED).json({code: HTTP_CODES.CREATED, msg: "New presentation created!"});   
         }
     }
     else {
-        res.status(HTTP_CODES.BAD_REQUEST).json({msg: "Invalid credentials"});
+        res.status(HTTP_CODES.BAD_REQUEST).json({code: HTTP_CODES.BAD_REQUEST, msg: `Error ${HTTP_CODES.BAD_REQUEST} Bad Request`});
     }
 });
 
@@ -48,13 +48,13 @@ route.delete('/:presentationID', async function(req, res) {
     if(req.params.presentationID) {
         let deletedPresentation = await db.deleteExistingPresentation(req.params.presentationID);
         if(deletedPresentation === DB_RESPONSES.OK) {
-            res.status(HTTP_CODES.OK).json({msg: `Presentation with presentationID=${req.params.presentationID} deleted.`});
+            res.status(HTTP_CODES.OK).json({code: HTTP_CODES.OK, msg: `Presentation with presentationID=${req.params.presentationID} deleted.`});
         } else if(deletedPresentation === DB_RESPONSES.NOT_EXIST) {
-            res.status(HTTP_CODES.NOT_FOUND).json({msg: "This presentation does not exist"});
+            res.status(HTTP_CODES.NOT_FOUND).json({code: HTTP_CODES.NOT_FOUND, msg: "This presentation does not exist"});
         }
     }
     else{
-        res.status(HTTP_CODES.BAD_REQUEST).end();
+        res.status(HTTP_CODES.BAD_REQUEST).json({code: HTTP_CODES.BAD_REQUEST, msg: `Error ${HTTP_CODES.BAD_REQUEST} Bad Request`});
     }
 });
 
@@ -63,13 +63,13 @@ route.put('/:presentationID', async function(req, res) {
     if(req.params.presentationID && req.body.name && req.body.theme){
         let updatedPresentation = await db.updateExitingPresentation(req.body.name, req.body.theme, req.params.presentationID);
         if(updatedPresentation === DB_RESPONSES.OK) {
-            res.status(HTTP_CODES.OK).json({msg: `Presentation with presentationID=${req.params.presentationID} updated`});
+            res.status(HTTP_CODES.OK).json({code: HTTP_CODES.OK, msg: `Changes saved`});
         } else if(updatedPresentation === DB_RESPONSES.NOT_EXIST) {
-            res.status(HTTP_CODES.NOT_FOUND).json({msg: "This presentation does not exist"});
+            res.status(HTTP_CODES.NOT_FOUND).json({code: HTTP_CODES.NOT_FOUND, msg: "This presentation does not exist"});
         }
     }
     else{
-        res.status(HTTP_CODES.BAD_REQUEST).json({msg: `Wrong credentials.`});
+        res.status(HTTP_CODES.BAD_REQUEST).json({code: HTTP_CODES.BAD_REQUEST, msg: `Error ${HTTP_CODES.BAD_REQUEST} Bad Request`});
     }
 });
 
