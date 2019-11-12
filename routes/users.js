@@ -48,13 +48,13 @@ route.post('/', async function(req, res, next){
         let insertedUser = await db.insertNewUser(req.body.name, req.body.email, hashPssw);
         if(insertedUser === DB_RESPONSES.OK) {
             let user = await db.getUserByName(req.body.name);
-            res.status(HTTP_CODES.CREATED).json({msg: "New user created!", userID: user.userid, userName: user.name, userEmail: user.email});   
+            res.status(HTTP_CODES.CREATED).json({code: HTTP_CODES.CREATED, msg: "New user created!", , userID: user.userid, userName: user.name, userEmail: user.email}); 
         } else if (insertedUser === DB_RESPONSES.ALREADY_EXIST){
-            res.status(HTTP_CODES.CONFLICT).json({msg: "Username or email already exists!"});
+            res.status(HTTP_CODES.CONFLICT).json({code: HTTP_CODES.CONFLICT, msg: "Username or email already exists!"});
         }
     }
     else {
-        res.status(HTTP_CODES.BAD_REQUEST).json({msg: "Invalid credentials"});
+        res.status(HTTP_CODES.BAD_REQUEST).json({code: HTTP_CODES.BAD_REQUEST, msg: "Invalid credentials"});
     }
 });
  
@@ -64,13 +64,13 @@ route.delete('/:userID', async function(req, res) {
     if(req.params.userID) {
         let deletedUser = await db.deleteExistingUser(req.params.userID);
         if(deletedUser === DB_RESPONSES.OK) {
-            res.status(HTTP_CODES.OK).json({msg: `User with userID=${req.params.userID} deleted.`});
+            res.status(HTTP_CODES.OK).json({code: HTTP_CODES.OK, msg: `User with userID=${req.params.userID} deleted.`});
         } else if(deletedUser === DB_RESPONSES.NOT_EXIST) {
-            res.status(HTTP_CODES.NOT_FOUND).json({msg: "This user does not exist"});
+            res.status(HTTP_CODES.NOT_FOUND).json({code: HTTP_CODES.NOT_FOUND, msg: "This user does not exist"});
         }
     }
     else{
-        res.status(HTTP_CODES.BAD_REQUEST).end();
+        res.status(HTTP_CODES.BAD_REQUEST).json({code: HTTP_CODES.BAD_REQUEST, msg: `Error ${HTTP_CODES.BAD_REQUEST} Bad Request`});
     }
 });
  
@@ -84,16 +84,17 @@ route.put('/:userID', async function(req, res, next) {
         let updatedUser = await db.updateExitingUser(req.params.userID, req.body.name, req.body.email, hashPssw);
         if(updatedUser === DB_RESPONSES.OK) {
             let user = await db.getUserByName(req.body.name);
-            res.status(HTTP_CODES.OK).json({msg: `User with userID=${req.params.userID} updated`, userName: user.name, userEmail: user.email});
+            res.status(HTTP_CODES.OK).json({code: HTTP_CODES.OK, msg: `User with userID=${req.params.userID} updated`, userName: user.name, userEmail: user.email});
         } else if(updatedUser === DB_RESPONSES.ALREADY_EXIST){
-            res.status(HTTP_CODES.CONFLICT).json({msg: "Username or email already exist"});
+            res.status(HTTP_CODES.CONFLICT).json({code: HTTP_CODES.CONFLICT, msg: "Username or email already exist"});
         } else if(updatedUser === DB_RESPONSES.NOT_EXIST) {
-            res.status(HTTP_CODES.NOT_FOUND).json({msg: "This user does not exist"});
+            res.status(HTTP_CODES.NOT_FOUND).json({code: HTTP_CODES.NOT_FOUND, msg: "This user does not exist"});
         }
     }
     else{
-        res.status(HTTP_CODES.BAD_REQUEST).json({msg: `Wrong credentials.`});
+        res.status(HTTP_CODES.BAD_REQUEST).json({code: HTTP_CODES.BAD_REQUEST, msg: `Wrong credentials.`});
     }
 });
+
 
 module.exports = route;
