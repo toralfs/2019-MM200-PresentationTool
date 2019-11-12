@@ -47,7 +47,8 @@ route.post('/', async function(req, res, next){
             .digest('hex');
         let insertedUser = await db.insertNewUser(req.body.name, req.body.email, hashPssw);
         if(insertedUser === DB_RESPONSES.OK) {
-            res.status(HTTP_CODES.CREATED).json({code: HTTP_CODES.CREATED, msg: "New user created!"});   
+            let user = await db.getUserByName(req.body.name);
+            res.status(HTTP_CODES.CREATED).json({code: HTTP_CODES.CREATED, msg: "New user created!", , userID: user.userid, userName: user.name, userEmail: user.email}); 
         } else if (insertedUser === DB_RESPONSES.ALREADY_EXIST){
             res.status(HTTP_CODES.CONFLICT).json({code: HTTP_CODES.CONFLICT, msg: "Username or email already exists!"});
         }
@@ -82,7 +83,8 @@ route.put('/:userID', async function(req, res, next) {
             .digest('hex');
         let updatedUser = await db.updateExitingUser(req.params.userID, req.body.name, req.body.email, hashPssw);
         if(updatedUser === DB_RESPONSES.OK) {
-            res.status(HTTP_CODES.OK).json({code: HTTP_CODES.OK, msg: `User with userID=${req.params.userID} updated`});
+            let user = await db.getUserByName(req.body.name);
+            res.status(HTTP_CODES.OK).json({code: HTTP_CODES.OK, msg: `User with userID=${req.params.userID} updated`, userName: user.name, userEmail: user.email});
         } else if(updatedUser === DB_RESPONSES.ALREADY_EXIST){
             res.status(HTTP_CODES.CONFLICT).json({code: HTTP_CODES.CONFLICT, msg: "Username or email already exist"});
         } else if(updatedUser === DB_RESPONSES.NOT_EXIST) {
