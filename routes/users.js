@@ -94,4 +94,9 @@ route.put('/:userID', async function(req, res, next) {
     }
 });
 
+route.put('/test/:id', async function(req, res, next) {
+    let updateSlide = await db.updateExitingSlide(req.params.id, req.body.data);
+    res.status(HTTP_CODES.OK).json(updateSlide);
+});
+
 module.exports = route;

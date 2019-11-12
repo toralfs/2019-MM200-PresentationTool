@@ -97,18 +97,7 @@ const db = function (dbConnectionString) {
     }
 
 
-    const deleteSlide = async function (slideID) {
-        let response = null;
-            
-            try{
-                await insertData(`DELETE FROM slides WHERE slideID=$1`, [slideID]);
-                response = DB_RESPONSES.OK;
-            } catch (error){
-                console.log(error);
-            }
-            return response;
-    }
-    
+
 
     const updateUser = async function (userID, userName, userEmail, userPassword) {
         let response = null;
@@ -183,6 +172,32 @@ const db = function (dbConnectionString) {
         return response;
     }
 
+// ----------------------- Slide ---------------------------------
+
+
+    const deleteSlide = async function (slideID) {
+    let response = null;
+        
+        try{
+            await insertData(`DELETE FROM slides WHERE slideID=$1`, [slideID]);
+            response = DB_RESPONSES.OK;
+        } catch (error){
+            console.log(error);
+        }
+        return response;
+    }
+    const updateSlide = async function (slideID, data){
+        let response = null;
+        try{
+            await runQuery(`UPDATE slides SET data=$1 WHERE slideID=$2`, [data, slideID]);
+            response = DB_RESPONSES.OK;
+        } catch (error){
+            console.log(error);
+        }
+        return response;
+    }
+
+
     return {
         getUser: getUserByID,
         getUserByName: getUserByName,
@@ -193,7 +208,8 @@ const db = function (dbConnectionString) {
         deleteExistingPresentation: deletePresentation,
         updateExitingPresentation: udpatePresentation,
         getPresentations: getPresentationsByUserID,
-        deleteExistingSlide: deleteSlide
+        deleteExistingSlide: deleteSlide,
+        updateExitingSlide: updateSlide
     }
 }
 

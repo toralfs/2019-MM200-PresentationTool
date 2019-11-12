@@ -41,12 +41,12 @@ CREATE TABLE slides (
 );
 
 -- Insert new Slide
-INSERT INTO slides (data, presentationID) VALUES ('{"type": "1", "title":"New Title", "bgColor": "white"}', 1) RETURNING slideID;
+INSERT INTO slides (data, presentationID) VALUES ('{"type": "1", "title":"New Title", "bgColor": "white"}', 9) RETURNING slideID;
 
 -- Add slide to presentation
 UPDATE presentations
-SET slides = slides || 2
-WHERE presentationID = 1;
+SET slides = slides || 17
+WHERE presentationID =9;
 
 -- Remove slide from presentation
 UPDATE  presentations
