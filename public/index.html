@@ -43,8 +43,11 @@
             <h2>User profile</h2>
             <div id="update" class="userEdit">
                 <h3>Update user</h3>
-                <input type="text" minlength="3" id="inpNameUpdate" pattern="[A-Za-z0-9]+" placeholder="Update username"><br>
-                <input type="email" id="inpEmailUpdate" placeholder="Update email"><br>
+                <label for="inpNameUpdate">Username</label><br>
+                <input type="text" minlength="3" id="inpNameUpdate" pattern="[A-Za-z0-9]+"><br>
+                <label for="inpEmailUpdate">Email</label><br>
+                <input type="email" id="inpEmailUpdate"><br>
+                <label for="inpPasswordUpdate">Password</label><br>
                 <input type="text" minlength="4" id="inpPasswordUpdate" placeholder="Update password">
                 <br><br>
                 <button class="userButtons" id="btnUpdate">Update user</button>
@@ -102,11 +105,12 @@
         if(inputValidation.validName(txtResultCreate, inpNameCreate) && inputValidation.validEmail(txtResultCreate,inpEmailCreate) 
             && inputValidation.validPassword(txtResultCreate, inpPasswordCreate)){
             let currentData = await userClient.createUser(txtResultCreate, "/user", inpNameCreate.value, inpEmailCreate.value, inpPasswordCreate.value);
-            console.log(currentData);
             if(currentData.userID && currentData.userName && currentData.userEmail){
                 currentUser.ID = currentData.userID;
                 currentUser.username = currentData.userName;
                 currentUser.email = currentData.userEmail;
+                inpNameUpdate.value = currentUser.username;
+                inpEmailUpdate.value = currentUser.email;
                 showUserPage();
             }
         }
@@ -119,15 +123,25 @@
             currentUser.ID = currentData.userID;
             currentUser.username = currentData.userName;
             currentUser.email = currentData.userEmail;
+            inpNameUpdate.value = currentUser.username;
+            inpEmailUpdate.value = currentUser.email;
             showUserPage();
         }        
     });
 
     //---------------------------------------
-    btnUpdate.addEventListener('click', function(evt){
+    btnUpdate.addEventListener('click', async function(evt){
         if(inputValidation.validName(txtResultUpdate,inpNameUpdate) && inputValidation.validEmail(txtResultUpdate,inpEmailUpdate)
             && inputValidation.validPassword(txtResultUpdate,inpPasswordUpdate)){
-            userClient.updateUser(txtResultUpdate, `/user/${currentUser.ID}`, inpNameUpdate.value, inpEmailUpdate.value, inpPasswordUpdate.value);
+            let currentData = await userClient.updateUser(txtResultUpdate, `/user/${currentUser.ID}`, inpNameUpdate.value, inpEmailUpdate.value, inpPasswordUpdate.value);
+            if(currentData.userName && currentData.userEmail){
+                currentUser.username = currentData.userName;
+                currentUser.email = currentData.userEmail;
+                inpNameUpdate.value = currentUser.username;
+                inpEmailUpdate.value = currentUser.email;
+            }
+            inpPasswordUpdate.value = "";
+            console.log(currentUser);
         }
     });
 

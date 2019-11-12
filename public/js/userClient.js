@@ -68,6 +68,7 @@ function UserClient(){
             let resp = await fetch(url, cfg);
             let data = await resp.json();
             result.innerHTML = data.msg;
+            return data;
             
         }
         catch(err){

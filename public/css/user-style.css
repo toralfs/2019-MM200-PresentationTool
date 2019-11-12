@@ -55,7 +55,7 @@ body{
     padding:0;
 }
 
-#userPage h3, #userPage h2{
+#userPage h3, #userPage h2, #userPage label{
     font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
 }
 
