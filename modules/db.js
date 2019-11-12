@@ -88,6 +88,7 @@ const db = function (dbConnectionString) {
         return response;
     }
 
+
     const updateUser = async function (userID, userName, userEmail, userPassword) {
         let response = null;
         let userToUpdate = await getUserByID(userID);
@@ -164,6 +165,7 @@ const db = function (dbConnectionString) {
         return response;
     }
 
+
     // -------------------- Slides --------------------
     const getSlidesByPresID = async function (presentationID) {
         let slideData = null;
@@ -199,7 +201,19 @@ const db = function (dbConnectionString) {
         }
         return response;
     }
+    
+    const updateSlide = async function (slideID, data){
+        let response = null;
+        try{
+            await runQuery(`UPDATE slides SET data=$1 WHERE slideID=$2`, [data, slideID]);
+            response = DB_RESPONSES.OK;
+        } catch (error){
+          console.log(error);
+        }
+        return response;
+    }
 
+    
     return {
         getUser: getUserByID,
         getUserByName: getUserByName,
@@ -211,7 +225,7 @@ const db = function (dbConnectionString) {
         deleteExistingPresentation: deletePresentation,
         updateExitingPresentation: udpatePresentation,
         getPresentations: getPresentationsByUserID,
-
+        updateExitingSlide: updateSlide,
         insertNewSlide: insertSlide,
         deleteExistingSlide: deleteSlide,
         getSlides: getSlidesByPresID
