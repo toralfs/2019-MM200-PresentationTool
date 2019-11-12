@@ -80,3 +80,27 @@ body{
 #logout{
     float: right;
 }
+
+@media screen and (max-width: 500px){
+
+    .start{
+        width: 60vw;
+        height: 60vh;
+    }
+    #startPage h3{
+        font-size: 5vw;
+    }
+    #startPageTitle{
+        font-size: 6vw;
+    }
+    #startPage input, #userPage input{
+        font-size: 5vw;
+    }
+    .userButtons{
+        font-size: 5vw;
+    }
+    #userPage h3, #userPage h2, #userPage label{
+        font-size: 5vw;
+    }
+
+} 
