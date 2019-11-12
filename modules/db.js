@@ -27,14 +27,6 @@ const db = function (dbConnectionString) {
         return response;
     }
 
-    async function insertData(query, params) {
-        const client = new pg.Client(connectionString);
-        await client.connect();
-        await client.query(query, params);
-        await client.end();
-    }
-
-
     // ------------------------ Users --------------------------------
     const getUserByName = async function (userName) {
         let userData = null;
@@ -72,7 +64,7 @@ const db = function (dbConnectionString) {
             response = DB_RESPONSES.ALREADY_EXIST;
         } else {
             try {
-                await insertData(`INSERT INTO users(name, email, password) VALUES ($1, $2, $3)`, [userName, userEmail, userPassword]);
+                await runQuery(`INSERT INTO users(name, email, password) VALUES ($1, $2, $3)`, [userName, userEmail, userPassword]);
                 response = DB_RESPONSES.OK;
             } catch (error) {
                 console.error(error);
@@ -85,7 +77,7 @@ const db = function (dbConnectionString) {
         let response = null;
         if (await getUserByID(userID)) {
             try {
-                await insertData(`DELETE FROM users WHERE userID=$1`, [userID]);
+                await runQuery(`DELETE FROM users WHERE userID=$1`, [userID]);
                 response = DB_RESPONSES.OK;
             } catch (error) {
                 console.error(error);
@@ -95,8 +87,6 @@ const db = function (dbConnectionString) {
         }
         return response;
     }
-
-
 
 
     const updateUser = async function (userID, userName, userEmail, userPassword) {
@@ -112,7 +102,7 @@ const db = function (dbConnectionString) {
                 response = DB_RESPONSES.ALREADY_EXIST;
             } else {
                 try {
-                    await insertData(`UPDATE users SET name=$2, email=$3, password=$4 WHERE userID=$1`, [userID, userName, userEmail, userPassword]);
+                    await runQuery(`UPDATE users SET name=$2, email=$3, password=$4 WHERE userID=$1`, [userID, userName, userEmail, userPassword]);
                     response = DB_RESPONSES.OK;
                 } catch (error) {
                     console.error(error);
@@ -128,9 +118,9 @@ const db = function (dbConnectionString) {
     // ----------------------- Presentations ---------------------------------
     const getPresentationsByUserID = async function (ownerID) {
         let presentationData = null;
-        try{
+        try {
             presentationData = await runQueryAll(`SELECT * FROM presentations WHERE ownerID=$1`, [ownerID]);
-        } catch(error) {
+        } catch (error) {
             console.error(error);
         }
         return presentationData;
@@ -139,7 +129,7 @@ const db = function (dbConnectionString) {
     const insertPresentation = async function (presentationName, ownerID, theme) {
         let response = null;
         try {
-            await insertData(`INSERT INTO presentations(name, slides, ownerID, sharedUsers, theme) VALUES ($1, '{}', $2, '{}', $3)`, [presentationName, ownerID, theme]);
+            await runQuery(`INSERT INTO presentations(name, slides, ownerID, sharedUsers, theme) VALUES ($1, '{}', $2, '{}', $3)`, [presentationName, ownerID, theme]);
             response = DB_RESPONSES.OK;
         } catch (error) {
             console.error(error);
@@ -150,66 +140,95 @@ const db = function (dbConnectionString) {
 
     const deletePresentation = async function (presentationID) {
         let response = null;
-        
-            try {
-                await insertData(`DELETE FROM presentations WHERE presentationID=$1`, [presentationID]);
-                response = DB_RESPONSES.OK;
-            } catch (error) {
-                console.error(error);
+        try {
+            let presentationToDelete = await runQuery(`SELECT slides FROM presentations WHERE presentationID=$1`, [presentationID]);
+            for(let slide of presentationToDelete.slides) {
+                await runQuery(`DELETE FROM slides WHERE slideID=$1`, [slide]);
             }
-        
+            await runQuery(`DELETE FROM presentations WHERE presentationID=$1`, [presentationID]);
+            response = DB_RESPONSES.OK;
+        } catch (error) {
+            console.error(error);
+        }
+
         return response;
     }
 
     const udpatePresentation = async function (presentationName, theme, presentationID) {
         let response = null;
         try {
-            await insertData(`UPDATE presentations SET name=$1, theme=$2 WHERE presentationID=$3`, [presentationName, theme, presentationID]);
+            await runQuery(`UPDATE presentations SET name=$1, theme=$2 WHERE presentationID=$3`, [presentationName, theme, presentationID]);
             response = DB_RESPONSES.OK;
-        } catch(error) {
+        } catch (error) {
             console.error(error);
         }
         return response;
     }
 
-// ----------------------- Slide ---------------------------------
 
-
-    const deleteSlide = async function (slideID) {
-    let response = null;
-        
-        try{
-            await insertData(`DELETE FROM slides WHERE slideID=$1`, [slideID]);
+    // -------------------- Slides --------------------
+    const getSlidesByPresID = async function (presentationID) {
+        let slideData = null;
+        try {
+            slideData = await runQueryAll(`SELECT * FROM slides WHERE presentationID=$1`, [presentationID]);
+        } catch (error) {
+            console.error(error);
+        }
+        return slideData;
+    }
+    
+    const insertSlide = async function (data, presentationID) {
+        let response = null;
+        try {
+            let insertedSlide = await runQuery(`INSERT INTO slides (data, presentationID) VALUES ($1, $2) RETURNING slideID`, [data, presentationID]);
+            let slideID = insertedSlide.slideid;
+            await runQuery(`UPDATE presentations SET slides = slides || $1::int WHERE presentationID = $2`, [slideID, presentationID]);
             response = DB_RESPONSES.OK;
-        } catch (error){
+        } catch (error) {
+            console.error(error);
+        }
+        return response;
+    }
+
+    const deleteSlide = async function (slideID, presentationID) {
+        let response = null;
+        try {
+            await runQuery(`DELETE FROM slides WHERE slideID=$1`, [slideID]);
+            await runQuery(`UPDATE  presentations SET slides = array_remove(slides, $1) WHERE presentationID = $2;`, [slideID, presentationID]);
+            response = DB_RESPONSES.OK;
+        } catch (error) {
             console.log(error);
         }
         return response;
     }
+    
     const updateSlide = async function (slideID, data){
         let response = null;
         try{
             await runQuery(`UPDATE slides SET data=$1 WHERE slideID=$2`, [data, slideID]);
             response = DB_RESPONSES.OK;
         } catch (error){
-            console.log(error);
+          console.log(error);
         }
         return response;
     }
 
-
+    
     return {
         getUser: getUserByID,
         getUserByName: getUserByName,
         insertNewUser: insertUser,
         deleteExistingUser: deleteUser,
         updateExitingUser: updateUser,
+
         insertNewPresentation: insertPresentation,
         deleteExistingPresentation: deletePresentation,
         updateExitingPresentation: udpatePresentation,
         getPresentations: getPresentationsByUserID,
+        updateExitingSlide: updateSlide,
+        insertNewSlide: insertSlide,
         deleteExistingSlide: deleteSlide,
-        updateExitingSlide: updateSlide
+        getSlides: getSlidesByPresID
     }
 }
 
