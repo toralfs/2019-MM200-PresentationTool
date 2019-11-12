@@ -1,6 +1,5 @@
 function UserClient(){
 
-
     this.createUser = async function(result, url, username, email, password){
 
         let updata = {
@@ -19,7 +18,7 @@ function UserClient(){
             let resp = await fetch(url, cfg);
             let data = await resp.json();
             result.innerHTML = data.msg;
-            
+            return data;            
         }
         catch (err) {
             console.log(err);
@@ -69,6 +68,7 @@ function UserClient(){
             let resp = await fetch(url, cfg);
             let data = await resp.json();
             result.innerHTML = data.msg;
+            return data;
             
         }
         catch(err){
