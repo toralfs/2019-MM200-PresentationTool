@@ -13,7 +13,7 @@
 
 <body>
     <div id="container">
-        <div id="startPage">
+        <div id="startPage" style="display: none;">
             <h1 id="startPageTitle">PRESENTATION TOOL</h1>
             <h3 id="startWelcomeMessage">Welcome to our new presentation tool! Please create an account or log in to proceed.</h3>
             <div id="register" class="start">
@@ -63,7 +63,13 @@
 
     </div>
 
-    <div id="presentation" style="display: none;">
+    <div id="overview">
+        <div id="presentations">
+
+        </div>
+
+
+
         <div id="createPres">
             <input type="text" minlength="3" id="inpPresNameCreate" pattern="^[A-Za-z0-9\s]+$" placeholder="Presentation name">
             
