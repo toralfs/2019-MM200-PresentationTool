@@ -66,6 +66,14 @@
 
 <script>
 
+    const HTTP_CODES = {
+        OK: 200,
+        CREATED: 201,
+        BAD_REQUEST: 400,
+        NOT_FOUND: 404,
+        CONFLICT: 409
+    }
+
     let startPage = document.getElementById('startPage');
     let userPage = document.getElementById('userPage');
     let logoutDiv = document.getElementById('logout');
@@ -105,7 +113,7 @@
         if(inputValidation.validName(txtResultCreate, inpNameCreate) && inputValidation.validEmail(txtResultCreate,inpEmailCreate) 
             && inputValidation.validPassword(txtResultCreate, inpPasswordCreate)){
             let currentData = await userClient.createUser(txtResultCreate, "/user", inpNameCreate.value, inpEmailCreate.value, inpPasswordCreate.value);
-            if(currentData.userID && currentData.userName && currentData.userEmail){
+            if(currentData.code == HTTP_CODES.CREATED){
                 currentUser.ID = currentData.userID;
                 currentUser.username = currentData.userName;
                 currentUser.email = currentData.userEmail;
@@ -119,7 +127,7 @@
     //----------------------------------------
     btnLogin.addEventListener('click', async function(evt){
         let currentData = await userClient.loginUser(txtResultLogin, "/user/auth", inpNameLogin.value, inpPasswordLogin.value);
-        if(currentData.userID && currentData.userName && currentData.userEmail){
+        if(currentData.code == HTTP_CODES.OK){
             currentUser.ID = currentData.userID;
             currentUser.username = currentData.userName;
             currentUser.email = currentData.userEmail;
@@ -134,35 +142,25 @@
         if(inputValidation.validName(txtResultUpdate,inpNameUpdate) && inputValidation.validEmail(txtResultUpdate,inpEmailUpdate)
             && inputValidation.validPassword(txtResultUpdate,inpPasswordUpdate)){
             let currentData = await userClient.updateUser(txtResultUpdate, `/user/${currentUser.ID}`, inpNameUpdate.value, inpEmailUpdate.value, inpPasswordUpdate.value);
-            if(currentData.userName && currentData.userEmail){
+            if(currentData.code == HTTP_CODES.OK){
                 currentUser.username = currentData.userName;
                 currentUser.email = currentData.userEmail;
                 inpNameUpdate.value = currentUser.username;
                 inpEmailUpdate.value = currentUser.email;
             }
             inpPasswordUpdate.value = "";
-            console.log(currentUser);
         }
     });
 
     //------------------------------------------
     btnDelete.addEventListener('click', function(evt){
         userClient.deleteUser(txtResultDelete, `/user/${currentUser.ID}`);
+        logoutUser();
     });
 
     //-----------------------------------------
     btnLogout.addEventListener('click', function(evt){
-        currentUser.ID = "";
-        currentUser.username = "";
-        currentUser.email = "";
-        txtResultLogin.innerHTML = "Successfully logged out";
-        
-        //Empty the input fields
-        let inputs = document.querySelectorAll("input");
-        for (let i of inputs){
-            i.value = "";
-        }
-        showStartPage();
+        logoutUser();
     });
 
     function showStartPage(){
@@ -175,6 +173,29 @@
         startPage.style = "display:none";
         userPage.style = "display:flex";
         logoutDiv.style = "display:flex";
+    }
+
+    function emptyInputs(){
+        let inputs = document.querySelectorAll("input");
+        for (let i of inputs){
+            i.value = "";
+        }
+    }
+
+    function emptyTxtResult(){
+        txtResultCreate.innerHTML = "";
+        txtResultLogin.innerHTML = "";
+        txtResultUpdate.innerHTML = "";
+        txtResultDelete.innerHTML = "";
+    }
+
+    function logoutUser(){
+        currentUser.ID = "";
+        currentUser.username = "";
+        currentUser.email = "";
+        emptyInputs();
+        emptyTxtResult();
+        showStartPage();
     }
 
 </script>
