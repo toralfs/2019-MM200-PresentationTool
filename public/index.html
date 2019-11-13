@@ -158,7 +158,11 @@
     //------------------------------------------
     btnDelete.addEventListener('click', function(evt){
         userClient.deleteUser(txtResultDelete, `/user/${currentUser.ID}`);
-        logoutUser();
+        currentUser = {};
+        emptyInputs();
+        emptyTxtResult();
+        showStartPage();
+        localStorage.clear();
     });
 
     //-----------------------------------------
