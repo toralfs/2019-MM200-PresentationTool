@@ -20,7 +20,7 @@
         <img class="logo" src="images/logo.svg" alt="logo">
         <nav id="navbar">
             <ul class="nav__links">
-                <li><a href="#">My presentations</a></li>
+                <li><a href="#overview" onclick="loadPresOverview()">My presentations</a></li>
                 <li><a href="#">Shared with me</a></li>
                 <li><a href="#">Some other thing</a></li>
             </ul>
@@ -39,13 +39,14 @@
     </div>
 
     <div id="container">
-
-
         <main>
             <div id="overview" class="page">
 
             </div>
 
+            <div id="overview_shared" class="page">
+
+            </div>
         </main>
     </div>
 </body>
@@ -83,12 +84,11 @@
     userClient = new UserClient();
     presentationClient = new PresentationClient();
 
-    //loadPresOverview();
-
     async function loadPresOverview() {
-        let temp, item, a;
+        let template, item, a;
         temp = document.getElementById("overviewTemp");
         item = temp.content.querySelector("div");
+        console.log(item);
         let presentations = await presentationClient.getPresentations(`/presentation/4`);
         console.log(presentations.presentations);
         for (let presentation of presentations.presentations) {
