@@ -157,7 +157,7 @@ const db = function (dbConnectionString) {
     const udpatePresentation = async function (presentationName, theme, presentationID) {
         let response = null;
         try {
-            await runQuery(`UPDATE presentations SET name=$1, theme=$2 WHERE presentationID=$3`, [presentationName, theme, presentationID]);
+            await runQuery(`UPDATE presentations SET name=$1, theme=$2, last_updated=current_timestamp WHERE presentationID=$3`, [presentationName, theme, presentationID]);
             response = DB_RESPONSES.OK;
         } catch (error) {
             console.error(error);
