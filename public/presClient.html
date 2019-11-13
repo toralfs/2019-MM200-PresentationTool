@@ -5,7 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Presentation</title>
-    <link rel="stylesheet" type="text/css" href="css/presentationOverview.css">
+    <link rel="stylesheet" href="css/presOverview.css">
     <script src="js/userClient.js"></script>
     <script src="js/inputValidation.js"></script>
     <script src="js/presentationClient.js"></script>
@@ -16,34 +16,59 @@
         <div></div>
     </template>
 
-
-    <div id="container">
+    <header>
+        <img class="logo" src="images/logo.svg" alt="logo">
         <nav id="navbar">
-            <ul>
-                <a href="#startPage">Presentation App</a>
-                <a href="#userPage">user placeholder</a>
+            <ul class="nav__links">
+                <li><a href="#">My presentations</a></li>
+                <li><a href="#">Shared with me</a></li>
+                <li><a href="#">Some other thing</a></li>
             </ul>
         </nav>
+        <a class="cta" href="#">User</a>
+        <p onclick="openNav()" class="menu cta">Menu</p>
+    </header>
+
+    <div id="mobile__menu" class="overlay">
+        <a class="close" onclick="closeNav()">&times;</a>
+        <div class="overlay__content">
+            <a href="#">My presentations</a>
+            <a href="#">Shared with me</a>
+            <a href="#">Some other thing</a>
+        </div>
+    </div>
+
+    <div id="container">
+
+
         <main>
-            <div id="overview">
+            <div id="overview" class="page">
 
             </div>
+
         </main>
     </div>
 </body>
 
 <script>
+    // Script for mobile use - move to separate script eventually
+    function openNav() {
+        document.getElementById("mobile__menu").style.width = "100%";
+    }
+
+    function closeNav() {
+        document.getElementById("mobile__menu").style.width = "0";
+    }
+
+
+
+    // --------------------------------------------------------------
     const HTTP_CODES = {
         OK: 200,
         CREATED: 201,
         BAD_REQUEST: 400,
         NOT_FOUND: 404,
         CONFLICT: 409
-    }
-
-    let currentUser = {
-        id: "4",
-        name: "test"
     }
 
     // ---------------- Presentations ---------------------------
@@ -54,15 +79,17 @@
         owner: "",
         theme: ""
     }
+
+    userClient = new UserClient();
     presentationClient = new PresentationClient();
 
-    loadPresOverview();
+    //loadPresOverview();
 
     async function loadPresOverview() {
         let temp, item, a;
         temp = document.getElementById("overviewTemp");
         item = temp.content.querySelector("div");
-        let presentations = await presentationClient.getPresentations(`/presentation/${currentUser.id}`);
+        let presentations = await presentationClient.getPresentations(`/presentation/4`);
         console.log(presentations.presentations);
         for (let presentation of presentations.presentations) {
             a = document.importNode(item, true);
