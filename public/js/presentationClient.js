@@ -70,6 +70,7 @@ function PresentationClient(){
             console.log(err);
         }
     }
+<<<<<<< HEAD
 
     this.getPresentations = async function (url) {
         try {
@@ -81,5 +82,7 @@ function PresentationClient(){
             console.error(error);
         }
     }
+=======
+>>>>>>> 187253e0d458921bd78a422617267e27c43a7e48
     
 }
