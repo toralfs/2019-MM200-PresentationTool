@@ -70,5 +70,16 @@ function PresentationClient(){
             console.log(err);
         }
     }
+
+    this.getPresentations = async function (url) {
+        try {
+            console.log(url);
+            let res = await fetch(url);
+            let data = await res.json();
+            return data;
+        } catch (error) {
+            console.error(error);
+        }
+    }
     
 }

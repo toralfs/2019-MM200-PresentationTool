@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Presentation</title>
+    <link rel="stylesheet" type="text/css" href="css/presentationOverview.css">
+    <script src="js/userClient.js"></script>
+    <script src="js/inputValidation.js"></script>
+    <script src="js/presentationClient.js"></script>
+</head>
+
+<body>
+    <template id="overviewTemp">
+        <div></div>
+    </template>
+
+
+    <div id="container">
+        <nav id="navbar">
+            <ul>
+                <a href="#startPage">Presentation App</a>
+                <a href="#userPage">user placeholder</a>
+            </ul>
+        </nav>
+        <main>
+            <div id="overview">
+
+            </div>
+        </main>
+    </div>
+</body>
+
+<script>
+    const HTTP_CODES = {
+        OK: 200,
+        CREATED: 201,
+        BAD_REQUEST: 400,
+        NOT_FOUND: 404,
+        CONFLICT: 409
+    }
+
+    let currentUser = {
+        id: "4",
+        name: "test"
+    }
+
+    // ---------------- Presentations ---------------------------
+    let presOverview = document.getElementById("overview");
+
+    let currentPres = {
+        ID: "",
+        owner: "",
+        theme: ""
+    }
+    presentationClient = new PresentationClient();
+
+    loadPresOverview();
+
+    async function loadPresOverview() {
+        let temp, item, a;
+        temp = document.getElementById("overviewTemp");
+        item = temp.content.querySelector("div");
+        let presentations = await presentationClient.getPresentations(`/presentation/${currentUser.id}`);
+        console.log(presentations.presentations);
+        for (let presentation of presentations.presentations) {
+            a = document.importNode(item, true);
+            a.textContent += presentation.name;
+            //append the new node wherever you like:
+            presOverview.appendChild(a);
+        }
+    }
+
+</script>
+
+</html>

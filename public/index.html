@@ -13,7 +13,7 @@
 
 <body>
     <div id="container">
-        <div id="startPage" style="display: none;">
+        <div id="startPage">
             <h1 id="startPageTitle">PRESENTATION TOOL</h1>
             <h3 id="startWelcomeMessage">Welcome to our new presentation tool! Please create an account or log in to proceed.</h3>
             <div id="register" class="start">
@@ -63,7 +63,7 @@
 
     </div>
 
-    <div id="overview">
+    <div id="overview" style="display: none;">
         <div id="presentations">
 
         </div>
@@ -108,6 +108,7 @@
         CONFLICT: 409
     }
 
+    // ------------------------- Users -----------------------
     let startPage = document.getElementById('startPage');
     let userPage = document.getElementById('userPage');
     let logoutDiv = document.getElementById('logout');
@@ -140,6 +141,8 @@
         email: ""
     }
 
+
+    // ---------------- Presentations ---------------------------
     let inpPresNameCreate = document.getElementById('inpPresNameCreate');
     let btnCreatePres = document.getElementById('btnCreatePres');
     let txtResultCreatePres = document.getElementById('txtResultCreatePres');
@@ -177,24 +180,24 @@
     });
     
     //----------------------------------------
-    btnLogin.addEventListener('click', async function(evt){
+    btnLogin.addEventListener('click', async function (evt) {
         let currentData = await userClient.loginUser(txtResultLogin, "/user/auth", inpNameLogin.value, inpPasswordLogin.value);
-        if(currentData.code == HTTP_CODES.OK){
+        if (currentData.code == HTTP_CODES.OK) {
             currentUser.ID = currentData.userID;
             currentUser.username = currentData.userName;
             currentUser.email = currentData.userEmail;
             inpNameUpdate.value = currentUser.username;
             inpEmailUpdate.value = currentUser.email;
             showUserPage();
-        }        
+        }
     });
 
     //---------------------------------------
-    btnUpdate.addEventListener('click', async function(evt){
-        if(inputValidation.validName(txtResultUpdate,inpNameUpdate) && inputValidation.validEmail(txtResultUpdate,inpEmailUpdate)
-            && inputValidation.validPassword(txtResultUpdate,inpPasswordUpdate)){
+    btnUpdate.addEventListener('click', async function (evt) {
+        if (inputValidation.validName(txtResultUpdate, inpNameUpdate) && inputValidation.validEmail(txtResultUpdate, inpEmailUpdate)
+            && inputValidation.validPassword(txtResultUpdate, inpPasswordUpdate)) {
             let currentData = await userClient.updateUser(txtResultUpdate, `/user/${currentUser.ID}`, inpNameUpdate.value, inpEmailUpdate.value, inpPasswordUpdate.value);
-            if(currentData.code == HTTP_CODES.OK){
+            if (currentData.code == HTTP_CODES.OK) {
                 currentUser.username = currentData.userName;
                 currentUser.email = currentData.userEmail;
                 inpNameUpdate.value = currentUser.username;
@@ -205,73 +208,73 @@
     });
 
     //------------------------------------------
-    btnDelete.addEventListener('click', function(evt){
+    btnDelete.addEventListener('click', function (evt) {
         userClient.deleteUser(txtResultDelete, `/user/${currentUser.ID}`);
         logoutUser();
     });
 
     //-----------------------------------------
-    btnLogout.addEventListener('click', function(evt){
+    btnLogout.addEventListener('click', function (evt) {
         logoutUser();
     });
 
     //-----------------------------------
-    btnCreatePres.addEventListener('click', function(evt){
+    btnCreatePres.addEventListener('click', function (evt) {
         //need to figure out how to send the theme as a parameter
     });
 
-    btnUpdatePres.addEventListener('click', function(evt){
+    btnUpdatePres.addEventListener('click', function (evt) {
         //need to figure out how to send the theme as a parameter
     });
 
     //-------------------------------------
-    btnDeletePres.addEventListener('click', function(evt){
+    btnDeletePres.addEventListener('click', function (evt) {
         presentationClient.deletePresentation(txtResultDeletePres, `/presentation/${currentPres.ID}`);
     });
 
     //--------------------------------------
-    function validUsername(txt,username){
-        
-        if(!username.value){
+    function validUsername(txt, username) {
+
+        if (!username.value) {
             txt.innerHTML = "Username is missing";
             return false;
         }
         let validityState = username.validity;
-        if(validityState.patternMismatch){
+        if (validityState.patternMismatch) {
             txt.innerHTML = "Use only letters and digits";
             return false;
         }
-        else if(validityState.tooShort){
+        else if (validityState.tooShort) {
             txt.innerHTML = "Username must be at least 3 characters long";
             return false;
         }
-        else{
+        else {
             txt.innerHTML = "";
         }
         return true;
     }
 
-    function showUserPage(){
+    function showUserPage() {
         startPage.style = "display:none";
         userPage.style = "display:flex";
         logoutDiv.style = "display:flex";
     }
 
-    function emptyInputs(){
+    function emptyInputs() {
         let inputs = document.querySelectorAll("input");
-        for (let i of inputs){
+        for (let i of inputs) {
             i.value = "";
         }
     }
 
-    function emptyTxtResult(){
+    function emptyTxtResult() {
         txtResultCreate.innerHTML = "";
         txtResultLogin.innerHTML = "";
         txtResultUpdate.innerHTML = "";
         txtResultDelete.innerHTML = "";
     }
 
-    function logoutUser(){
+    function logoutUser() {
         currentUser.ID = "";
         currentUser.username = "";
         currentUser.email = "";
