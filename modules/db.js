@@ -28,6 +28,7 @@ const db = function (dbConnectionString) {
     }
 
     // ------------------------ Users --------------------------------
+    /*
     const getUserByName = async function (userName) {
         let userData = null;
         try {
@@ -37,7 +38,7 @@ const db = function (dbConnectionString) {
         }
         return userData;
     }
-
+*/
     const getUserByEmail = async function (userName) {
         let userData = null;
         try {
@@ -216,7 +217,7 @@ const db = function (dbConnectionString) {
     
     return {
         getUser: getUserByID,
-        getUserByName: getUserByName,
+       // getUserByName: getUserByName,
         insertNewUser: insertUser,
         deleteExistingUser: deleteUser,
         updateExitingUser: updateUser,
