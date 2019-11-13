@@ -17,7 +17,9 @@
     </template>
 
     <header>
-        <img class="logo" src="images/logo.svg" alt="logo">
+        <a href="index.html" class="logo">
+            <img class="logo" src="images/logo.svg" alt="logo">
+        </a>
         <nav id="navbar">
             <ul class="nav__links">
                 <li><a href="#overview" onclick="loadPresOverview()">My presentations</a></li>
@@ -85,13 +87,16 @@
     presentationClient = new PresentationClient();
 
     async function loadPresOverview() {
-        let template, item, a;
-        temp = document.getElementById("overviewTemp");
-        item = temp.content.querySelector("div");
-        console.log(item);
-        let presentations = await presentationClient.getPresentations(`/presentation/4`);
+        while (presOverview.firstChild) {
+            presOverview.removeChild(presOverview.firstChild);
+        }
+
+        let presentations = await presentationClient.getPresentations(`/presentation/1`);
         console.log(presentations.presentations);
         for (let presentation of presentations.presentations) {
+            let template, item, a;
+            template = document.getElementById("overviewTemp");
+            item = template.content.querySelector("div");
             a = document.importNode(item, true);
             a.textContent += presentation.name;
             //append the new node wherever you like:
