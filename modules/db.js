@@ -129,7 +129,7 @@ const db = function (dbConnectionString) {
     const insertPresentation = async function (presentationName, ownerID, theme) {
         let response = null;
         try {
-            await runQuery(`INSERT INTO presentations(name, slides, ownerID, sharedUsers, theme) VALUES ($1, '{}', $2, '{}', $3)`, [presentationName, ownerID, theme]);
+            await runQuery(`INSERT INTO presentations(name, slides, ownerID, sharedUsers, public, theme) VALUES ($1, '{}', $2, '{}', false, $3)`, [presentationName, ownerID, theme]);
             response = DB_RESPONSES.OK;
         } catch (error) {
             console.error(error);
