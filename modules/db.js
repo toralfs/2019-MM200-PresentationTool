@@ -165,6 +165,15 @@ const db = function (dbConnectionString) {
         return response;
     }
 
+    const getPublicPresentations = async function(){
+        let presentationData = null;
+        try {
+            presentationData = await runQueryAll(`SELECT * FROM presentations WHERE public=true`);
+        } catch (error) {
+            console.error(error);
+        }
+        return presentationData;
+    }
 
     // -------------------- Slides --------------------
     const getSlidesByPresID = async function (presentationID) {
@@ -225,6 +234,8 @@ const db = function (dbConnectionString) {
         deleteExistingPresentation: deletePresentation,
         updateExitingPresentation: udpatePresentation,
         getPresentations: getPresentationsByUserID,
+        publicPresentations: getPublicPresentations,
+
         updateExitingSlide: updateSlide,
         insertNewSlide: insertSlide,
         deleteExistingSlide: deleteSlide,

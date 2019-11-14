@@ -73,4 +73,15 @@ route.put('/:presentationID', async function(req, res) {
     }
 });
 
+// GET public presentations------------------
+route.get('/public', async function(req,res){
+    let publicPres = await db.publicPresentations();
+    if(publicPres){
+        res.status(HTTP_CODES.OK).json({code: HTTP_CODES.OK, publicPres: publicPres});
+    }
+    else{
+        res.status(HTTP_CODES.NOT_FOUND).json({code: HTTP_CODES.NOT_FOUND, msg: `No public presentations available`});
+    }
+})
+
 module.exports = route;
