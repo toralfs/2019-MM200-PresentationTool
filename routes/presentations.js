@@ -92,9 +92,15 @@ route.get('/', async function(req,res){
     }
 });
 
-// presentation sharing--------------------
-route.put('/:presentationID/share', sharing.share);
+//Presentation sharing--------------------
 
-route.put('/:presentationID/sharing',sharing.shareWithUser);
+//Make presentation public
+route.put('/:presentationID/public', sharing.share);
+
+//Share with specific user
+route.put('/:presentationID/share', sharing.shareWithUser);
+
+//Unshare with specific user
+route.put('/:presentationID/unshare', sharing.unshareWithUser);
 
 module.exports = route;

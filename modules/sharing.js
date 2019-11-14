@@ -52,7 +52,33 @@ async function shareWithUser(req,res){
             if(user){
                 let shared = await db.sharePresentationWithUser(req.params.presentationID, user.userid);
                 if(shared == DB_RESPONSES.OK){
-                    res.status(HTTP_CODES.OK).json({code: HTTP_CODES.OK, msg: `Presentation with ID=${req.params.presentationID} shared with user with ${user.name}`});
+                    res.status(HTTP_CODES.OK).json({code: HTTP_CODES.OK, msg: `Presentation with ID=${req.params.presentationID} shared with ${user.name}`});
+                }
+                else{
+                    res.status(HTTP_CODES.NOT_FOUND).json({code: HTTP_CODES.NOT_FOUND, msg: `Presentation not found`});
+                }
+            }
+            else{
+                res.status(HTTP_CODES.NOT_FOUND).json({code: HTTP_CODES.NOT_FOUND, msg: `User ${req.body.username} not found`});
+            }
+        }
+        else{
+            res.status(HTTP_CODES.BAD_REQUEST).json({code: HTTP_CODES.BAD_REQUEST, msg: `Invalid request`});
+        }
+    }
+    catch(error){
+        console.log(error);
+    }
+}
+
+async function unshareWithUser(req,res){
+    try{
+        if(req.body.username && req.params.presentationID){
+            let user = await db.getUserByName(req.body.username);
+            if(user){
+                let unshared = await db.unsharePresentationWithUser(req.params.presentationID, user.userid);
+                if(unshared == DB_RESPONSES.OK){
+                    res.status(HTTP_CODES.OK).json({code: HTTP_CODES.OK, msg: `Presentation with ID=${req.params.presentationID} unshared with ${user.name}`});
                 }
                 else{
                     res.status(HTTP_CODES.NOT_FOUND).json({code: HTTP_CODES.NOT_FOUND, msg: `Presentation not found`});
@@ -73,6 +99,7 @@ async function shareWithUser(req,res){
 
 module.exports = {
     share: share,
-    shareWithUser: shareWithUser
+    shareWithUser: shareWithUser,
+    unshareWithUser: unshareWithUser
 }
 

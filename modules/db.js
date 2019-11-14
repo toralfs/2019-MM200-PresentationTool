@@ -175,36 +175,38 @@ const db = function (dbConnectionString) {
         return presentationData;
     }
 
-    const sharePresentation = async function(presentationID, public){
+    const sharePresentationPublicly = async function(presentationID, public){
         let response = null;
-        if(presentationID){
-            try{
-                await runQuery(`UPDATE presentations SET public=$2 WHERE presentationID=$1`, [presentationID, public]);
-                response = DB_RESPONSES.OK;
-            }
-            catch(error){
-                console.log(error);
-            }
+        try{
+            await runQuery(`UPDATE presentations SET public=$2 WHERE presentationID=$1`, [presentationID, public]);
+            response = DB_RESPONSES.OK;
         }
-        else{
-            response = DB_RESPONSES.NOT_EXIST;
+        catch(error){
+            console.log(error);
         }
         return response;
     }
 
     const sharePresentationWithUser = async function(presentationID, userID){
         let response = null;
-        if(userID && presentationID){
-            try{
-                await runQuery(`UPDATE presentations SET sharedUsers = sharedUsers || $1::int WHERE presentationID = $2`, [userID, presentationID]);
-                response = DB_RESPONSES.OK
-            }
-            catch(error){
-                console.log(error);
-            }
+        try{
+            await runQuery(`UPDATE presentations SET sharedUsers = sharedUsers || $1::int WHERE presentationID = $2`, [userID, presentationID]);
+            response = DB_RESPONSES.OK
         }
-        else{
-            response = DB_RESPONSES.NOT_EXIST;
+        catch(error){
+            console.log(error);
+        }
+        return response;
+    }
+
+    const unsharePresentationWithUser = async function(presentationID, userID){
+        let response = null;
+        try{
+            await runQuery(`UPDATE  presentations SET sharedusers = array_remove(sharedusers, $1) WHERE presentationID = $2;`, [userID, presentationID]);
+            response = DB_RESPONSES.OK
+        }
+        catch(error){
+            console.log(error);
         }
         return response;
     }
@@ -269,8 +271,9 @@ const db = function (dbConnectionString) {
         updateExitingPresentation: udpatePresentation,
         getPresentations: getPresentationsByUserID,
         publicPresentations: getPublicPresentations,
-        sharePresentation: sharePresentation,
+        sharePresentation: sharePresentationPublicly,
         sharePresentationWithUser: sharePresentationWithUser,
+        unsharePresentationWithUser: unsharePresentationWithUser,
 
         updateExitingSlide: updateSlide,
         insertNewSlide: insertSlide,
