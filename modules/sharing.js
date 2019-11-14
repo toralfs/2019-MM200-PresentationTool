@@ -18,45 +18,6 @@ const DB_RESPONSES = {
     NOT_EXIST: "NOT_EXIST"
 };
 
-/*const sharing = function(){
-
-    const sharePresentation = async function(presentationID, share){
-        let code = null;
-        let msg = ``;
-        if(presentationID && share){
-            let updateShare = await db.sharePresentation(presentationID, share);
-            if(updateShare == DB_RESPONSES.OK){
-                let status = "";
-                if(share == true){
-                    status = "shared";
-                }
-                else if(share == false){
-                    status = "unshared";
-                }
-                code = HTTP_CODES.OK;
-                msg = `Presentation ${status}`;
-            }
-            else{
-                code = HTTP_CODES.NOT_FOUND;
-                msg = `Presentation not found`;
-            }
-        }
-        else{
-            code = HTTP_CODES.BAD_REQUEST;
-            msg = `Error ${code} Bad Request`;
-        }
-
-        return {
-            code: code,
-            msg: msg
-        }
-    }
-    
-    return {
-        sharePresentation: sharePresentation
-    }
-}*/
-
 async function share(req, res) {
     try  {
         if (req.body.public && req.params.presentationID) {
