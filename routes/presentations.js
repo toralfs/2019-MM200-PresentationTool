@@ -1,5 +1,6 @@
 const express = require('express');
 const route = express.Router();
+const sharing = require("../modules/sharing");
 const db = require("../modules/db")(process.env.DATABASE_URL || databaseRunLocal());
 
 function databaseRunLocal() {
@@ -13,7 +14,7 @@ const HTTP_CODES = {
     CREATED: 201,
     BAD_REQUEST: 400,
     NOT_FOUND: 404
-}
+};
 
 const DB_RESPONSES = {
     OK: "OK",
@@ -73,15 +74,18 @@ route.put('/:presentationID', async function(req, res) {
     }
 });
 
-// GET public presentations------------------
-route.get('/public', async function(req,res){
+// get public presentations------------------
+route.get('/', async function(req,res){
     let publicPres = await db.publicPresentations();
     if(publicPres){
-        res.status(HTTP_CODES.OK).json({code: HTTP_CODES.OK, publicPres: publicPres});
+        res.status(HTTP_CODES.OK).json({code: HTTP_CODES.OK, publicPresentations: publicPres});
     }
     else{
         res.status(HTTP_CODES.NOT_FOUND).json({code: HTTP_CODES.NOT_FOUND, msg: `No public presentations available`});
     }
-})
+});
+
+// presentation sharing--------------------
+route.put('/:presentationID/share', sharing.share);
 
 module.exports = route;
