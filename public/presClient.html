@@ -13,18 +13,23 @@
 
 <body>
     <template id="overviewTemp">
-        <div></div>
+        <div>
+            <h2 class="overview-presname"></h2>
+            <p class="overview-slides">Slides: </p>
+            <p class="overview-theme"></p>
+            <button class="overview-editButton" onclick=editPresentation()>Edit</button>
+            <div class="overview-hiddenid"></div>
+        </div>
     </template>
 
     <header>
         <a href="index.html" class="logo">
-            <img class="logo" src="images/logo.svg" alt="logo">
+            <img class="logo" src="images/logo.sv" alt="logo">
         </a>
         <nav id="navbar">
             <ul class="nav__links">
                 <li><a href="#overview" onclick="loadPresOverview()">My presentations</a></li>
                 <li><a href="#">Shared with me</a></li>
-                <li><a href="#">Some other thing</a></li>
             </ul>
         </nav>
         <a class="cta" href="#">User</a>
@@ -43,7 +48,8 @@
     <div id="container">
         <main>
             <div id="overview" class="page">
-
+                <h1>My Presentations</h1>
+                <div id="presContainer"></div>
             </div>
 
             <div id="overview_shared" class="page">
@@ -75,7 +81,7 @@
     }
 
     // ---------------- Presentations ---------------------------
-    let presOverview = document.getElementById("overview");
+    let userPresentations = [];
 
     let currentPres = {
         ID: "",
@@ -86,22 +92,32 @@
     userClient = new UserClient();
     presentationClient = new PresentationClient();
 
+    function editPresentation() {
+        console.log("edit pres");
+    }
+
+
     async function loadPresOverview() {
-        while (presOverview.firstChild) {
-            presOverview.removeChild(presOverview.firstChild);
+        let presOverview = document.getElementById("overview");
+        let presContainer = document.getElementById("presContainer");
+
+        while (presContainer.firstChild) {
+            presContainer.removeChild(presContainer.firstChild);
         }
 
         let presentations = await presentationClient.getPresentations(`/presentation/1`);
-        console.log(presentations.presentations);
         for (let presentation of presentations.presentations) {
-            let template, item, a;
-            template = document.getElementById("overviewTemp");
-            item = template.content.querySelector("div");
-            a = document.importNode(item, true);
-            a.textContent += presentation.name;
-            //append the new node wherever you like:
-            presOverview.appendChild(a);
+            userPresentations.push(presentation);
+            let tmp1 = document.getElementById('overviewTemp').content.cloneNode(true);
+            console.log(presentation);
+            tmp1.querySelector(".overview-presname").innerText = presentation.name;
+            tmp1.querySelector(".overview-slides").innerText = presentation.slides.length;
+            tmp1.querySelector(".overview-theme").innerText = presentation.theme;
+            tmp1.querySelector(".overview-hiddenid").innerText = presentation.presentationid;
+
+            presContainer.appendChild(tmp1);
         }
+        console.log(userPresentations);
     }
 
 </script>
