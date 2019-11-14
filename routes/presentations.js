@@ -77,7 +77,7 @@ route.put('/:presentationID', async function(req, res) {
 // get public presentations------------------
 route.get('/', async function(req,res){
     let publicPres = await db.publicPresentations();
-    if(publicPres){
+    if(publicPres && publicPres.length > 0){
         res.status(HTTP_CODES.OK).json({code: HTTP_CODES.OK, publicPresentations: publicPres});
     }
     else{
