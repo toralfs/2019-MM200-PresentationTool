@@ -45,7 +45,34 @@ async function share(req, res) {
     
 }
 
+async function shareWithUser(req,res){
+    try{
+        if(req.body.username && req.params.presentationID){
+            let user = await db.getUserByName(req.body.username);
+            if(user){
+                let shared = await db.sharePresentationWithUser(req.params.presentationID, user.userid);
+                if(shared == DB_RESPONSES.OK){
+                    res.status(HTTP_CODES.OK).json({code: HTTP_CODES.OK, msg: `Presentation with ID=${req.params.presentationID} shared with user with ${user.name}`});
+                }
+                else{
+                    res.status(HTTP_CODES.NOT_FOUND).json({code: HTTP_CODES.NOT_FOUND, msg: `Presentation not found`});
+                }
+            }
+            else{
+                res.status(HTTP_CODES.NOT_FOUND).json({code: HTTP_CODES.NOT_FOUND, msg: `User ${req.body.username} not found`});
+            }
+        }
+        else{
+            res.status(HTTP_CODES.BAD_REQUEST).json({code: HTTP_CODES.BAD_REQUEST, msg: `Invalid request`});
+        }
+    }
+    catch(error){
+        console.log(error);
+    }
+}
+
 module.exports = {
-    share: share
+    share: share,
+    shareWithUser: shareWithUser
 }
 

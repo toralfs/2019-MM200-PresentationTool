@@ -95,4 +95,6 @@ route.get('/', async function(req,res){
 // presentation sharing--------------------
 route.put('/:presentationID/share', sharing.share);
 
+route.put('/:presentationID/sharing',sharing.shareWithUser);
+
 module.exports = route;

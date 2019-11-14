@@ -192,6 +192,23 @@ const db = function (dbConnectionString) {
         return response;
     }
 
+    const sharePresentationWithUser = async function(presentationID, userID){
+        let response = null;
+        if(userID && presentationID){
+            try{
+                await runQuery(`UPDATE presentations SET sharedUsers = sharedUsers || $1::int WHERE presentationID = $2`, [userID, presentationID]);
+                response = DB_RESPONSES.OK
+            }
+            catch(error){
+                console.log(error);
+            }
+        }
+        else{
+            response = DB_RESPONSES.NOT_EXIST;
+        }
+        return response;
+    }
+
     // -------------------- Slides --------------------
     const getSlidesByPresID = async function (presentationID) {
         let slideData = null;
@@ -253,6 +270,7 @@ const db = function (dbConnectionString) {
         getPresentations: getPresentationsByUserID,
         publicPresentations: getPublicPresentations,
         sharePresentation: sharePresentation,
+        sharePresentationWithUser: sharePresentationWithUser,
 
         updateExitingSlide: updateSlide,
         insertNewSlide: insertSlide,
