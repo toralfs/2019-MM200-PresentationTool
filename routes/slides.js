@@ -13,7 +13,8 @@ const HTTP_CODES = {
     OK: 200,
     CREATED: 201,
     BAD_REQUEST: 400,
-    NOT_FOUND: 404
+    NOT_FOUND: 404,
+    CONFLICT: 409
 }
  
 const DB_RESPONSES = {
@@ -49,12 +50,26 @@ route.post('/', async function(req, res){
     }
 });
 // endpoint GET -----------------------------
-route.get('/:slideID', async function(req, res){
-    let slide = await db.getSlides(req.params.slideID);
+route.get('/:presentationID', async function(req, res){
+    let slide = await db.getSlides(req.params.presentationID);
     if(slide) {
         res.status(HTTP_CODES.OK).json({data: slide});
     } else {
         res.status(HTTP_CODES.NOT_FOUND).end();
+    }
+});
+// endpoint PUT -----------------------------
+route.put('/:slideID', async function(req, res) {
+    if(req.params.slideID && req.body.data){
+        let updatedSlide = await db.updateExitingSlide(req.params.slideID, req.body.data);
+        if(updatedSlide === DB_RESPONSES.OK) {
+            res.status(HTTP_CODES.OK).json({code: HTTP_CODES.OK, msg: `User with slideID=${req.params.slideID} updated`, data: updatedSlide});
+        }else{
+            res.status(HTTP_CODES.BAD_REQUEST).json({code: HTTP_CODES.BAD_REQUEST, msg: `Bad request`});
+        }
+    }
+    else{
+        res.status(HTTP_CODES.BAD_REQUEST).json({msg: `Wrong credentials.`});
     }
 });
 module.exports = route;
