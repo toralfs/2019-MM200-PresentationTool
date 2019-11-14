@@ -28,6 +28,7 @@ const db = function (dbConnectionString) {
     }
 
     // ------------------------ Users --------------------------------
+    
     const getUserByName = async function (userName) {
         let userData = null;
         try {
