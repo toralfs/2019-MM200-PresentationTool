@@ -23,7 +23,7 @@ const DB_RESPONSES = {
 
 // GET presentations by ownerID-----------------
 route.get('/:userID', async function(req, res){
-    let presentations = await db.getPresentations(req.params.userID);
+    let presentations = await db.getPresentationsByUser(req.params.userID);
     let user = await db.getUser(req.params.userID);
     if(user){
         if(presentations && presentations.length > 0) {

@@ -126,6 +126,17 @@ const db = function (dbConnectionString) {
         return presentationData;
     }
 
+    const getPresentationByID = async function(presentationID){
+        let presentationData = null;
+        try{
+            presentationData = await runQuery(`SELECT * FROM presentations WHERE presentationID=$1`, [presentationID]);
+        }
+        catch (error){
+            console.log(error);
+        }
+        return presentationData;
+    }
+
     const insertPresentation = async function (presentationName, ownerID, theme) {
         let response = null;
         try {
@@ -179,7 +190,6 @@ const db = function (dbConnectionString) {
         let presentationData = null;
         try{
             presentationData = await runQueryAll(`SELECT * FROM presentations WHERE ${userID}=ANY(sharedUsers)`);
-            //DOESN'T WORK YET!!!!!!!
         }
         catch(error){
             console.error(error);
@@ -281,7 +291,8 @@ const db = function (dbConnectionString) {
         insertNewPresentation: insertPresentation,
         deleteExistingPresentation: deletePresentation,
         updateExitingPresentation: udpatePresentation,
-        getPresentations: getPresentationsByUserID,
+        getPresentationsByUser: getPresentationsByUserID,
+        getPresentationByID: getPresentationByID,
         publicPresentations: getPublicPresentations,
         getSharedWithMe: getSharedWithMePresentations,
         sharePresentation: sharePresentationPublicly,

@@ -49,7 +49,8 @@ async function shareWithUser(req,res){
     try{
         if(req.body.username && req.params.presentationID){
             let user = await db.getUserByName(req.body.username);
-            if(user){
+            let presentation = await db.getPresentationByID(req.params.presentationID);
+            if(user && user.userid != presentation.ownerid){
                 let shared = await db.sharePresentationWithUser(req.params.presentationID, user.userid);
                 if(shared == DB_RESPONSES.OK){
                     res.status(HTTP_CODES.OK).json({code: HTTP_CODES.OK, msg: `Presentation with ID=${req.params.presentationID} shared with ${user.name}`});
@@ -59,7 +60,7 @@ async function shareWithUser(req,res){
                 }
             }
             else{
-                res.status(HTTP_CODES.NOT_FOUND).json({code: HTTP_CODES.NOT_FOUND, msg: `User ${req.body.username} not found`});
+                res.status(HTTP_CODES.NOT_FOUND).json({code: HTTP_CODES.NOT_FOUND, msg: `User '${req.body.username}' not found`});
             }
         }
         else{
@@ -75,7 +76,8 @@ async function unshareWithUser(req,res){
     try{
         if(req.body.username && req.params.presentationID){
             let user = await db.getUserByName(req.body.username);
-            if(user){
+            let presentation = await db.getPresentationByID(req.params.presentationID);
+            if(user && user.userid != presentation.ownerid){
                 let unshared = await db.unsharePresentationWithUser(req.params.presentationID, user.userid);
                 if(unshared == DB_RESPONSES.OK){
                     res.status(HTTP_CODES.OK).json({code: HTTP_CODES.OK, msg: `Presentation with ID=${req.params.presentationID} unshared with ${user.name}`});
@@ -85,7 +87,7 @@ async function unshareWithUser(req,res){
                 }
             }
             else{
-                res.status(HTTP_CODES.NOT_FOUND).json({code: HTTP_CODES.NOT_FOUND, msg: `User ${req.body.username} not found`});
+                res.status(HTTP_CODES.NOT_FOUND).json({code: HTTP_CODES.NOT_FOUND, msg: `User '${req.body.username}' not found`});
             }
         }
         else{
