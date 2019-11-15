@@ -13,12 +13,11 @@
 
 <body>
     <template id="overviewTemp">
-        <div>
+        <div class="overview-clickablediv">
             <h2 class="overview-presname"></h2>
             <p class="overview-slides">Slides: </p>
             <p class="overview-theme"></p>
-            <button class="overview-editButton" onclick=editPresentation()>Edit</button>
-            <div class="overview-hiddenid"></div>
+            <div class="overview-hiddenid" hidden="true"></div>
         </div>
     </template>
 
@@ -29,7 +28,7 @@
         <nav id="navbar">
             <ul class="nav__links">
                 <li><a href="#overview" onclick="loadPresOverview()">My presentations</a></li>
-                <li><a href="#">Shared with me</a></li>
+                <li><a href="#overview" onclick="loadSharedPresOverview()">Shared with me</a></li>
             </ul>
         </nav>
         <a class="cta" href="#">User</a>
@@ -47,7 +46,7 @@
 
     <div id="container">
         <main>
-            <div id="overview" class="page">
+            <div id="overview" class="page" hidden="true">
                 <h1>My Presentations</h1>
                 <div id="presContainer"></div>
             </div>
@@ -92,14 +91,26 @@
     userClient = new UserClient();
     presentationClient = new PresentationClient();
 
-    function editPresentation() {
-        console.log("edit pres");
+    function editPresentation(e) {
+        let presID = parseInt(e.currentTarget.querySelector("div").innerText);
+
+        let index = userPresentations.map(function(e) {
+            return e.presentationid;
+        }).indexOf(presID);
+        
+        currentPres.ID = userPresentations[index].presentationid;
+        currentPres.owner = userPresentations[index].ownerid;
+        currentPres.theme = userPresentations[index].theme;
+        console.log(currentPres);
     }
 
 
     async function loadPresOverview() {
+        userPresentations = [];
         let presOverview = document.getElementById("overview");
         let presContainer = document.getElementById("presContainer");
+
+        presOverview.hidden = false;
 
         while (presContainer.firstChild) {
             presContainer.removeChild(presContainer.firstChild);
@@ -109,7 +120,10 @@
         for (let presentation of presentations.presentations) {
             userPresentations.push(presentation);
             let tmp1 = document.getElementById('overviewTemp').content.cloneNode(true);
-            console.log(presentation);
+            
+            tmp1.querySelector("div").addEventListener("click", function (e) {
+                editPresentation(e);
+            });
             tmp1.querySelector(".overview-presname").innerText = presentation.name;
             tmp1.querySelector(".overview-slides").innerText = presentation.slides.length;
             tmp1.querySelector(".overview-theme").innerText = presentation.theme;
@@ -117,7 +131,30 @@
 
             presContainer.appendChild(tmp1);
         }
-        console.log(userPresentations);
+    }
+
+    async function loadSharedPresOverview() {
+        let presOverview = document.getElementById("overview");
+        let presContainer = document.getElementById("presContainer");
+
+        while (presContainer.firstChild) {
+            presContainer.removeChild(presContainer.firstChild);
+        }
+
+        let presentations = await presentationClient.getSharedPresentations(`/sharedpres/1`); //url subject to change
+        for (let presentation of presentations.presentations) {
+            userPresentations.push(presentation);
+
+            let temp1 = document.getElementById("overviewTemp").content.cloneNode(true);
+            
+            tmp1.querySelector("div").addEventListener("click", function (e) {
+                editPresentation(e);
+            });
+            tmp1.querySelector(".overview-presname").innerText = presentation.name;
+            tmp1.querySelector(".overview-slides").innerText = presentation.slides.length;
+            tmp1.querySelector(".overview-theme").innerText = presentation.theme;
+            tmp1.querySelector(".overview-hiddenid").innerText = presentation.presentationid;
+        }
     }
 
 </script>

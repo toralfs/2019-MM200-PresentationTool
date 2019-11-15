@@ -1,3 +1,4 @@
+/* ------------- Navbar start. Credit to https://www.skillthrive.com/courses/flexbox-navbar for css ---------------- */
 * {
     box-sizing: border-box;
     margin: 0;
@@ -130,7 +131,7 @@ header {
         display: initial;
     }
 }
-
+/* ------------ Navbar end -------------------- */
 
 .page {
     position: absolute;
@@ -140,4 +141,8 @@ header {
     margin-left: -30%;
     
     background-color: rgb(250, 250, 250);
+}
+
+.overview-clickablediv {
+    cursor: pointer;
 }
