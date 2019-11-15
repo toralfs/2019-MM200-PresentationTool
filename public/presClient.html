@@ -141,7 +141,7 @@
             presContainer.removeChild(presContainer.firstChild);
         }
 
-        let presentations = await presentationClient.getSharedPresentations(`/sharedpres/1`); //url subject to change
+        let presentations = await presentationClient.getPresentations(`/sharedpres/${currentUser.ID}`); //url subject to change
         for (let presentation of presentations.presentations) {
             userPresentations.push(presentation);
 
