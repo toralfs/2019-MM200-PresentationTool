@@ -178,7 +178,7 @@ const db = function (dbConnectionString) {
     const getSharedWithMePresentations = async function(userID){
         let presentationData = null;
         try{
-            presentationData = await runQueryAll(`SELECT * FROM presentations WHERE in_array(sharedusers, ${userID})=TRUE`);
+            presentationData = await runQueryAll(`SELECT * FROM presentations WHERE ${userID}=ANY(sharedUsers)`);
             //DOESN'T WORK YET!!!!!!!
         }
         catch(error){
