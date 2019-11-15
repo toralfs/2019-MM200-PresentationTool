@@ -175,6 +175,18 @@ const db = function (dbConnectionString) {
         return presentationData;
     }
 
+    const getSharedWithMePresentations = async function(userID){
+        let presentationData = null;
+        try{
+            presentationData = await runQueryAll(`SELECT * FROM presentations WHERE in_array(sharedusers, ${userID})=TRUE`);
+            //DOESN'T WORK YET!!!!!!!
+        }
+        catch(error){
+            console.error(error);
+        }
+        return presentationData;
+    }
+
     const sharePresentationPublicly = async function(presentationID, public){
         let response = null;
         try{
@@ -182,7 +194,7 @@ const db = function (dbConnectionString) {
             response = DB_RESPONSES.OK;
         }
         catch(error){
-            console.log(error);
+            console.error(error);
         }
         return response;
     }
@@ -194,7 +206,7 @@ const db = function (dbConnectionString) {
             response = DB_RESPONSES.OK
         }
         catch(error){
-            console.log(error);
+            console.error(error);
         }
         return response;
     }
@@ -206,7 +218,7 @@ const db = function (dbConnectionString) {
             response = DB_RESPONSES.OK
         }
         catch(error){
-            console.log(error);
+            console.error(error);
         }
         return response;
     }
@@ -271,6 +283,7 @@ const db = function (dbConnectionString) {
         updateExitingPresentation: udpatePresentation,
         getPresentations: getPresentationsByUserID,
         publicPresentations: getPublicPresentations,
+        getSharedWithMe: getSharedWithMePresentations,
         sharePresentation: sharePresentationPublicly,
         sharePresentationWithUser: sharePresentationWithUser,
         unsharePresentationWithUser: unsharePresentationWithUser,
