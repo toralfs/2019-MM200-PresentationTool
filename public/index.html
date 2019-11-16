@@ -7,7 +7,9 @@
     <title>Presentation</title>
     <link rel="stylesheet" type="text/css" href="css/user-style.css">
     <script src = "js/userClient.js"></script>
+    <script src = "js/presentationClient.js"></script>
     <script src = "js/inputValidation.js"></script>
+    <script src = "js/presentationClient.js"></script>
 </head>
 
 <body>
@@ -61,7 +63,36 @@
         </div>
 
     </div>
+
+    <div id="presentation" style="display: none;">
+        <div id="createPres">
+            <input type="text" minlength="3" id="inpPresNameCreate" pattern="^[A-Za-z0-9\s]+$" placeholder="Presentation name">
+            
+            <!-- We'll only need more themes later
+            <input type="radio" id="defaultThemeCreate" name="themesCreate" value="defaultTheme" checked>
+            <label for="defaultThemeCreate">Default Theme</label>
+            <input type="radio" id="darkThemeCreate" name="themesCreate" value="darkTheme">
+            <label for="darkThemeCreate">Dark Theme</label>
+            -->
+
+            <button id="btnCreatePres">Create new presentation!</button>
+            <h3 id="txtResultCreatePres"></h3>
+        </div>
+
+        <div id="updatePres">
+            <input type="text" minlength="3" id="inpPresNameUpdate" pattern="^[A-Za-z0-9\s-]+$" placeholder="Presentation name">
+            <button id="btnUpdatePres">Update presentation</button>
+            <h3 id="txtResultUpdatePres">
+        </div>
+
+        <div id="deletePres">
+            <button id="btnDeletePres">Delete presentation</button>
+            <h3 id="txtResultDeletePres"></h3>
+        </div>
+    </div>
     
+
+    <a href="presClient.html">PresClient</a>
 </body>
 
 <script>
@@ -74,6 +105,7 @@
         CONFLICT: 409
     }
 
+    // ------------------------- Users -----------------------
     let startPage = document.getElementById('startPage');
     let userPage = document.getElementById('userPage');
     let logoutDiv = document.getElementById('logout');
@@ -105,8 +137,28 @@
     //Automatically login if the user did not logout from the previous session
     retrieveCredentials();
 
+    // ---------------- Presentations ---------------------------
+    let inpPresNameCreate = document.getElementById('inpPresNameCreate');
+    let btnCreatePres = document.getElementById('btnCreatePres');
+    let txtResultCreatePres = document.getElementById('txtResultCreatePres');
+
+    let inpPresNameUpdate = document.getElementById('inpPresNameUpdate');
+    let btnUpdatePres = document.getElementById('btnUpdatePres');
+    let txtResultUpdatePres = document.getElementById('txtResultUpdatePres');
+
+    let btnDeletePres = document.getElementById('btnDeletePres');
+    let txtResultDeletePres = document.getElementById('txtResultDeletePres');
+
+    let currentPres = {
+        ID: "",
+        owner: "",
+        theme: ""
+    }
+
+    let presentationClient = new PresentationClient();
     let userClient = new UserClient();
     let inputValidation = new InputValidation();
+
 
     //------------------------------------------
     btnCreate.addEventListener('click', async function(evt) {
@@ -126,9 +178,9 @@
     });
     
     //----------------------------------------
-    btnLogin.addEventListener('click', async function(evt){
+    btnLogin.addEventListener('click', async function (evt) {
         let currentData = await userClient.loginUser(txtResultLogin, "/user/auth", inpNameLogin.value, inpPasswordLogin.value);
-        if(currentData.code == HTTP_CODES.OK){
+        if (currentData.code == HTTP_CODES.OK) {
             currentUser.ID = currentData.userID;
             currentUser.username = currentData.userName;
             currentUser.email = currentData.userEmail;
@@ -140,11 +192,11 @@
     });
 
     //---------------------------------------
-    btnUpdate.addEventListener('click', async function(evt){
-        if(inputValidation.validName(txtResultUpdate,inpNameUpdate) && inputValidation.validEmail(txtResultUpdate,inpEmailUpdate)
-            && inputValidation.validPassword(txtResultUpdate,inpPasswordUpdate)){
+    btnUpdate.addEventListener('click', async function (evt) {
+        if (inputValidation.validName(txtResultUpdate, inpNameUpdate) && inputValidation.validEmail(txtResultUpdate, inpEmailUpdate)
+            && inputValidation.validPassword(txtResultUpdate, inpPasswordUpdate)) {
             let currentData = await userClient.updateUser(txtResultUpdate, `/user/${currentUser.ID}`, inpNameUpdate.value, inpEmailUpdate.value, inpPasswordUpdate.value);
-            if(currentData.code == HTTP_CODES.OK){
+            if (currentData.code == HTTP_CODES.OK) {
                 currentUser.username = currentData.userName;
                 currentUser.email = currentData.userEmail;
                 inpNameUpdate.value = currentUser.username;
@@ -156,7 +208,7 @@
     });
 
     //------------------------------------------
-    btnDelete.addEventListener('click', function(evt){
+    btnDelete.addEventListener('click', function (evt) {
         userClient.deleteUser(txtResultDelete, `/user/${currentUser.ID}`);
         currentUser = {};
         emptyInputs();
@@ -174,26 +226,34 @@
         localStorage.clear();
     });
 
-    function showStartPage(){
-        startPage.style = "display:flex";
-        userPage.style = "display:none";
-        logoutDiv.style = "display:none";
-    }
+    //-----------------------------------
+    btnCreatePres.addEventListener('click', function (evt) {
+        //need to figure out how to send the theme as a parameter
+    });
 
-    function showUserPage(){
+    btnUpdatePres.addEventListener('click', function (evt) {
+        //need to figure out how to send the theme as a parameter
+    });
+
+    //-------------------------------------
+    btnDeletePres.addEventListener('click', function (evt) {
+        presentationClient.deletePresentation(txtResultDeletePres, `/presentation/${currentPres.ID}`);
+    });
+
+    function showUserPage() {
         startPage.style = "display:none";
         userPage.style = "display:flex";
         logoutDiv.style = "display:flex";
     }
 
-    function emptyInputs(){
+    function emptyInputs() {
         let inputs = document.querySelectorAll("input");
-        for (let i of inputs){
+        for (let i of inputs) {
             i.value = "";
         }
     }
 
-    function emptyTxtResult(){
+    function emptyTxtResult() {
         txtResultCreate.innerHTML = "";
         txtResultLogin.innerHTML = "";
         txtResultUpdate.innerHTML = "";
@@ -217,7 +277,6 @@
             currentUser.email = "";
         }
     }
-
 
 </script>
 

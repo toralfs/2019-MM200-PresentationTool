@@ -209,8 +209,8 @@ const db = function (dbConnectionString) {
         try {
             let insertedSlide = await runQuery(`INSERT INTO slides (data, presentationID) VALUES ($1, $2) RETURNING slideID`, [data, presentationID]);
             let slideID = insertedSlide.slideid;
-            await runQuery(`UPDATE presentations SET slides = slides || $1::int WHERE presentationID = $2`, [slideID, presentationID]);
-            response = DB_RESPONSES.OK;
+            await runQuery(`UPDATE presentations SET last_updated=current_timestamp, slides = slides || $1::int WHERE presentationID = $2`, [slideID, presentationID]);
+            response = DB_RESPONSES.OK; 
         } catch (error) {
             console.error(error);
         }
