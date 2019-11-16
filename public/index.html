@@ -132,12 +132,10 @@
 
     let btnLogout = document.getElementById('btnLogout');
 
-    let currentUser = {
-        ID: "",
-        username: "",
-        email: ""
-    }
+    let currentUser = {};
 
+    //Automatically login if the user did not logout from the previous session
+    retrieveCredentials();
 
     // ---------------- Presentations ---------------------------
     let inpPresNameCreate = document.getElementById('inpPresNameCreate');
@@ -174,6 +172,7 @@
                 inpNameUpdate.value = currentUser.username;
                 inpEmailUpdate.value = currentUser.email;
                 showUserPage();
+                saveCredentials();
             }
         }
     });
@@ -188,7 +187,8 @@
             inpNameUpdate.value = currentUser.username;
             inpEmailUpdate.value = currentUser.email;
             showUserPage();
-        }
+            saveCredentials();
+        }        
     });
 
     //---------------------------------------
@@ -201,6 +201,7 @@
                 currentUser.email = currentData.userEmail;
                 inpNameUpdate.value = currentUser.username;
                 inpEmailUpdate.value = currentUser.email;
+                saveCredentials();
             }
             inpPasswordUpdate.value = "";
         }
@@ -209,12 +210,20 @@
     //------------------------------------------
     btnDelete.addEventListener('click', function (evt) {
         userClient.deleteUser(txtResultDelete, `/user/${currentUser.ID}`);
-        logoutUser();
+        currentUser = {};
+        emptyInputs();
+        emptyTxtResult();
+        showStartPage();
+        localStorage.clear();
     });
 
     //-----------------------------------------
-    btnLogout.addEventListener('click', function (evt) {
-        logoutUser();
+    btnLogout.addEventListener('click', function(evt){
+        currentUser = {};
+        emptyInputs();
+        emptyTxtResult();
+        showStartPage();
+        localStorage.clear();
     });
 
     //-----------------------------------
@@ -230,28 +239,6 @@
     btnDeletePres.addEventListener('click', function (evt) {
         presentationClient.deletePresentation(txtResultDeletePres, `/presentation/${currentPres.ID}`);
     });
-
-    //--------------------------------------
-    function validUsername(txt, username) {
-
-        if (!username.value) {
-            txt.innerHTML = "Username is missing";
-            return false;
-        }
-        let validityState = username.validity;
-        if (validityState.patternMismatch) {
-            txt.innerHTML = "Use only letters and digits";
-            return false;
-        }
-        else if (validityState.tooShort) {
-            txt.innerHTML = "Username must be at least 3 characters long";
-            return false;
-        }
-        else {
-            txt.innerHTML = "";
-        }
-        return true;
-    }
 
     function showUserPage() {
         startPage.style = "display:none";
@@ -273,86 +260,24 @@
         txtResultDelete.innerHTML = "";
     }
 
-    function logoutUser() {
-        currentUser.ID = "";
-        currentUser.username = "";
-        currentUser.email = "";
-        emptyInputs();
-        emptyTxtResult();
-        showStartPage();
+    //Store user credentials in Local Storage-------------------------------
+    function saveCredentials(){
+        localStorage.setItem("userCredentials",JSON.stringify(currentUser));
     }
 
-    //-----------------------------------
-    btnCreatePres.addEventListener('click', function(evt){
-        //need to figure out how to send the theme as a parameter
-    });
-
-    btnUpdatePres.addEventListener('click', function(evt){
-        //need to figure out how to send the theme as a parameter
-    });
-
-    //-------------------------------------
-    btnDeletePres.addEventListener('click', function(evt){
-        presentationClient.deletePresentation(txtResultDeletePres, `/presentation/${currentPres.ID}`);
-    });
-
-    //--------------------------------------
-    function validUsername(txt,username){
-        
-        if(!username.value){
-            txt.innerHTML = "Username is missing";
-            return false;
-        }
-        let validityState = username.validity;
-        if(validityState.patternMismatch){
-            txt.innerHTML = "Use only letters and digits";
-            return false;
-        }
-        else if(validityState.tooShort){
-            txt.innerHTML = "Username must be at least 3 characters long";
-            return false;
+    function retrieveCredentials(){
+        let data = localStorage.getItem("userCredentials");
+        if(data){
+            currentUser = JSON.parse(data);
+            showUserPage();
         }
         else{
-            txt.innerHTML = "";
+            currentUser.ID = "";
+            currentUser.username = "";
+            currentUser.email = "";
         }
-        return true;
     }
 
-    //---------------------------------------
-    function validEmail(txt,email){
-        
-        if(!email.value){
-            txt.innerHTML = "Email is missing";
-            return false;
-        }
-        let validityState = email.validity;
-        if(!validityState.valid){
-            txt.innerHTML = "Wrong email format";
-            return false;
-        }
-        else{
-            txt.innerHTML = "";
-        }
-        return true;
-    }
-
-    //--------------------------------------
-    function validPassword(txt,password){
-        
-        if(!password.value){
-            txt.innerHTML = "Password is missing";
-            return false;
-        }
-        let validityState = password.validity;
-        if(validityState.tooShort){
-            txt.innerHTML = "Password must be at least 4 characters long"
-            return false;
-        }
-        else{
-            txt.innerHTML = "";
-        }
-        return true;
-    }
 </script>
 
 </html>

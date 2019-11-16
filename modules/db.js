@@ -28,6 +28,7 @@ const db = function (dbConnectionString) {
     }
 
     // ------------------------ Users --------------------------------
+    
     const getUserByName = async function (userName) {
         let userData = null;
         try {
@@ -165,6 +166,32 @@ const db = function (dbConnectionString) {
         return response;
     }
 
+    const getPublicPresentations = async function(){
+        let presentationData = null;
+        try {
+            presentationData = await runQueryAll(`SELECT * FROM presentations WHERE public=true`);
+        } catch (error) {
+            console.error(error);
+        }
+        return presentationData;
+    }
+
+    const sharePresentation = async function(presentationID, public){
+        let response = null;
+        if(presentationID){
+            try{
+                await runQuery(`UPDATE presentations SET public=$2 WHERE presentationID=$1`, [presentationID, public]);
+                response = DB_RESPONSES.OK;
+            }
+            catch(error){
+                console.log(error);
+            }
+        }
+        else{
+            response = DB_RESPONSES.NOT_EXIST;
+        }
+        return response;
+    }
 
     // -------------------- Slides --------------------
     const getSlidesByPresID = async function (presentationID) {
@@ -225,6 +252,9 @@ const db = function (dbConnectionString) {
         deleteExistingPresentation: deletePresentation,
         updateExitingPresentation: udpatePresentation,
         getPresentations: getPresentationsByUserID,
+        publicPresentations: getPublicPresentations,
+        sharePresentation: sharePresentation,
+
         updateExitingSlide: updateSlide,
         insertNewSlide: insertSlide,
         deleteExistingSlide: deleteSlide,
