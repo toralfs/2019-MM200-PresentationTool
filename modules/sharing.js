@@ -10,12 +10,14 @@ const HTTP_CODES = {
     OK: 200,
     CREATED: 201,
     BAD_REQUEST: 400,
-    NOT_FOUND: 404
+    NOT_FOUND: 404,
+    CONFLICT: 409
 };
 
 const DB_RESPONSES = {
     OK: "OK",
-    NOT_EXIST: "NOT_EXIST"
+    NOT_EXIST: "NOT_EXIST",
+    ALREADY_EXIST: "ALREADY_EXIST"
 };
 
 async function share(req, res) {
@@ -55,6 +57,9 @@ async function shareWithUser(req,res){
                 if(shared == DB_RESPONSES.OK){
                     res.status(HTTP_CODES.OK).json({code: HTTP_CODES.OK, msg: `Presentation with ID=${req.params.presentationID} shared with ${user.name}`});
                 }
+                else if(shared == DB_RESPONSES.ALREADY_EXIST){
+                    res.status(HTTP_CODES.CONFLICT).json({code: HTTP_CODES.CONFLICT, msg: `Presentation already shared with ${user.name}`});
+                }
                 else{
                     res.status(HTTP_CODES.NOT_FOUND).json({code: HTTP_CODES.NOT_FOUND, msg: `Presentation not found`});
                 }
@@ -81,6 +86,9 @@ async function unshareWithUser(req,res){
                 let unshared = await db.unsharePresentationWithUser(req.params.presentationID, user.userid);
                 if(unshared == DB_RESPONSES.OK){
                     res.status(HTTP_CODES.OK).json({code: HTTP_CODES.OK, msg: `Presentation with ID=${req.params.presentationID} unshared with ${user.name}`});
+                }
+                else if(unshared == DB_RESPONSES.ALREADY_EXIST){
+                    res.status(HTTP_CODES.CONFLICT).json({code: HTTP_CODES.CONFLICT, msg: `Presentation not shared with ${user.name}. Cannot unshare.`});
                 }
                 else{
                     res.status(HTTP_CODES.NOT_FOUND).json({code: HTTP_CODES.NOT_FOUND, msg: `Presentation not found`});

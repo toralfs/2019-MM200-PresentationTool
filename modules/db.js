@@ -212,8 +212,15 @@ const db = function (dbConnectionString) {
     const sharePresentationWithUser = async function(presentationID, userID){
         let response = null;
         try{
-            await runQuery(`UPDATE presentations SET sharedUsers = sharedUsers || $1::int WHERE presentationID = $2`, [userID, presentationID]);
-            response = DB_RESPONSES.OK
+            let shared = null; 
+            shared = await runQuery(`SELECT * FROM presentations WHERE $2=ANY(sharedUsers) AND presentationID = $1`, [presentationID, userID]);
+            if(shared == null){
+                await runQuery(`UPDATE presentations SET sharedUsers = sharedUsers || $1::int WHERE presentationID = $2`, [userID, presentationID]);
+                response = DB_RESPONSES.OK;
+            }
+            else{
+                response = DB_RESPONSES.ALREADY_EXIST;
+            }
         }
         catch(error){
             console.error(error);
@@ -224,8 +231,15 @@ const db = function (dbConnectionString) {
     const unsharePresentationWithUser = async function(presentationID, userID){
         let response = null;
         try{
-            await runQuery(`UPDATE  presentations SET sharedusers = array_remove(sharedusers, $1) WHERE presentationID = $2;`, [userID, presentationID]);
-            response = DB_RESPONSES.OK
+            let shared = null; 
+            shared = await runQuery(`SELECT * FROM presentations WHERE $2=ANY(sharedUsers) AND presentationID = $1`, [presentationID, userID]);
+            if(shared){
+                await runQuery(`UPDATE  presentations SET sharedusers = array_remove(sharedusers, $1) WHERE presentationID = $2;`, [userID, presentationID]);
+                response = DB_RESPONSES.OK;
+            }
+            else{
+                response = DB_RESPONSES.ALREADY_EXIST;
+            }
         }
         catch(error){
             console.error(error);
