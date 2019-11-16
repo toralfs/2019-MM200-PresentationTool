@@ -107,9 +107,36 @@ async function unshareWithUser(req,res){
     }
 }
 
+async function sharedWithMe(req,res){
+    try{
+        let sharedPres = await db.getSharedWithMe(req.params.userID);
+        if(sharedPres && sharedPres.length > 0){
+            res.status(HTTP_CODES.OK).json({code: HTTP_CODES.OK, sharedPresentations: sharedPres});
+        }
+        else{
+            res.status(HTTP_CODES.NOT_FOUND).json({code: HTTP_CODES.NOT_FOUND, msg: `No shared presentations.`});
+        }
+    }
+    catch(error){
+        console.log(error);
+    }
+}
+
+async function getPublicPresentations(req,res){
+    let publicPres = await db.publicPresentations();
+    if(publicPres && publicPres.length > 0){
+        res.status(HTTP_CODES.OK).json({code: HTTP_CODES.OK, publicPresentations: publicPres});
+    }
+    else{
+        res.status(HTTP_CODES.NOT_FOUND).json({code: HTTP_CODES.NOT_FOUND, msg: `No public presentations available.`});
+    }
+}
+
 module.exports = {
     share: share,
     shareWithUser: shareWithUser,
-    unshareWithUser: unshareWithUser
+    unshareWithUser: unshareWithUser,
+    sharedWithMe: sharedWithMe,
+    publicPresentations: getPublicPresentations
 }
 
