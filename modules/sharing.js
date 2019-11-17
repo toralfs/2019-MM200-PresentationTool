@@ -111,7 +111,7 @@ async function sharedWithMe(req,res){
     try{
         let sharedPres = await db.getSharedWithMe(req.params.userID);
         if(sharedPres && sharedPres.length > 0){
-            res.status(HTTP_CODES.OK).json({code: HTTP_CODES.OK, sharedPresentations: sharedPres});
+            res.status(HTTP_CODES.OK).json({code: HTTP_CODES.OK, presentations: sharedPres});
         }
         else{
             res.status(HTTP_CODES.NOT_FOUND).json({code: HTTP_CODES.NOT_FOUND, msg: `No shared presentations.`});
