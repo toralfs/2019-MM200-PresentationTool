@@ -28,6 +28,7 @@ const db = function (dbConnectionString) {
     }
 
     // ------------------------ Users --------------------------------
+    
     const getUserByName = async function (userName) {
         let userData = null;
         try {
@@ -126,10 +127,21 @@ const db = function (dbConnectionString) {
         return presentationData;
     }
 
+    const getPresentationByID = async function(presentationID){
+        let presentationData = null;
+        try{
+            presentationData = await runQuery(`SELECT * FROM presentations WHERE presentationID=$1`, [presentationID]);
+        }
+        catch (error){
+            console.log(error);
+        }
+        return presentationData;
+    }
+
     const insertPresentation = async function (presentationName, ownerID, theme) {
         let response = null;
         try {
-            await runQuery(`INSERT INTO presentations(name, slides, ownerID, sharedUsers, theme) VALUES ($1, '{}', $2, '{}', $3)`, [presentationName, ownerID, theme]);
+            await runQuery(`INSERT INTO presentations(name, slides, ownerID, sharedUsers, public, theme) VALUES ($1, '{}', $2, '{}', false, $3)`, [presentationName, ownerID, theme]);
             response = DB_RESPONSES.OK;
         } catch (error) {
             console.error(error);
@@ -157,7 +169,7 @@ const db = function (dbConnectionString) {
     const udpatePresentation = async function (presentationName, theme, presentationID) {
         let response = null;
         try {
-            await runQuery(`UPDATE presentations SET name=$1, theme=$2 WHERE presentationID=$3`, [presentationName, theme, presentationID]);
+            await runQuery(`UPDATE presentations SET name=$1, theme=$2, last_updated=current_timestamp WHERE presentationID=$3`, [presentationName, theme, presentationID]);
             response = DB_RESPONSES.OK;
         } catch (error) {
             console.error(error);
@@ -165,6 +177,76 @@ const db = function (dbConnectionString) {
         return response;
     }
 
+    const getPublicPresentations = async function(){
+        let presentationData = null;
+        try {
+            presentationData = await runQueryAll(`SELECT * FROM presentations WHERE public=true`);
+        } catch (error) {
+            console.error(error);
+        }
+        return presentationData;
+    }
+
+    const getSharedWithMePresentations = async function(userID){
+        let presentationData = null;
+        try{
+            presentationData = await runQueryAll(`SELECT * FROM presentations WHERE ${userID}=ANY(sharedUsers)`);
+        }
+        catch(error){
+            console.error(error);
+        }
+        return presentationData;
+    }
+
+    const sharePresentationPublicly = async function(presentationID, public){
+        let response = null;
+        try{
+            await runQuery(`UPDATE presentations SET public=$2 WHERE presentationID=$1`, [presentationID, public]);
+            response = DB_RESPONSES.OK;
+        }
+        catch(error){
+            console.error(error);
+        }
+        return response;
+    }
+
+    const sharePresentationWithUser = async function(presentationID, userID){
+        let response = null;
+        try{
+            let shared = null; 
+            shared = await runQuery(`SELECT * FROM presentations WHERE $2=ANY(sharedUsers) AND presentationID = $1`, [presentationID, userID]);
+            if(shared == null){
+                await runQuery(`UPDATE presentations SET sharedUsers = sharedUsers || $1::int WHERE presentationID = $2`, [userID, presentationID]);
+                response = DB_RESPONSES.OK;
+            }
+            else{
+                response = DB_RESPONSES.ALREADY_EXIST;
+            }
+        }
+        catch(error){
+            console.error(error);
+        }
+        return response;
+    }
+
+    const unsharePresentationWithUser = async function(presentationID, userID){
+        let response = null;
+        try{
+            let shared = null; 
+            shared = await runQuery(`SELECT * FROM presentations WHERE $2=ANY(sharedUsers) AND presentationID = $1`, [presentationID, userID]);
+            if(shared){
+                await runQuery(`UPDATE  presentations SET sharedusers = array_remove(sharedusers, $1) WHERE presentationID = $2;`, [userID, presentationID]);
+                response = DB_RESPONSES.OK;
+            }
+            else{
+                response = DB_RESPONSES.ALREADY_EXIST;
+            }
+        }
+        catch(error){
+            console.error(error);
+        }
+        return response;
+    }
 
     // -------------------- Slides --------------------
     const getSlidesByPresID = async function (presentationID) {
@@ -182,8 +264,8 @@ const db = function (dbConnectionString) {
         try {
             let insertedSlide = await runQuery(`INSERT INTO slides (data, presentationID) VALUES ($1, $2) RETURNING slideID`, [data, presentationID]);
             let slideID = insertedSlide.slideid;
-            await runQuery(`UPDATE presentations SET slides = slides || $1::int WHERE presentationID = $2`, [slideID, presentationID]);
-            response = DB_RESPONSES.OK;
+            await runQuery(`UPDATE presentations SET last_updated=current_timestamp, slides = slides || $1::int WHERE presentationID = $2`, [slideID, presentationID]);
+            response = DB_RESPONSES.OK; 
         } catch (error) {
             console.error(error);
         }
@@ -224,7 +306,14 @@ const db = function (dbConnectionString) {
         insertNewPresentation: insertPresentation,
         deleteExistingPresentation: deletePresentation,
         updateExitingPresentation: udpatePresentation,
-        getPresentations: getPresentationsByUserID,
+        getPresentationsByUser: getPresentationsByUserID,
+        getPresentationByID: getPresentationByID,
+        publicPresentations: getPublicPresentations,
+        getSharedWithMe: getSharedWithMePresentations,
+        sharePresentation: sharePresentationPublicly,
+        sharePresentationWithUser: sharePresentationWithUser,
+        unsharePresentationWithUser: unsharePresentationWithUser,
+
         updateExitingSlide: updateSlide,
         insertNewSlide: insertSlide,
         deleteExistingSlide: deleteSlide,

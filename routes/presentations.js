@@ -1,5 +1,6 @@
 const express = require('express');
 const route = express.Router();
+const sharing = require("../modules/sharing");
 const db = require("../modules/db")(process.env.DATABASE_URL || databaseRunLocal());
 
 function databaseRunLocal() {
@@ -13,21 +14,28 @@ const HTTP_CODES = {
     CREATED: 201,
     BAD_REQUEST: 400,
     NOT_FOUND: 404
-}
+};
 
 const DB_RESPONSES = {
     OK: "OK",
     NOT_EXIST: "NOT_EXIST"
 };
 
-// endpoint GET---------------------------------
+// GET presentations by ownerID-----------------
 route.get('/:userID', async function(req, res){
-    let presentations = await db.getPresentations(req.params.userID);
-    if(presentations) {
-        res.status(HTTP_CODES.OK).json({code: HTTP_CODES.OK, presentations: presentations});
-    } else {
-        res.status(HTTP_CODES.NOT_FOUND).json({code: HTTP_CODES.NOT_FOUND, msg: "This presentation does not exist"});
+    let presentations = await db.getPresentationsByUser(req.params.userID);
+    let user = await db.getUser(req.params.userID);
+    if(user){
+        if(presentations && presentations.length > 0) {
+            res.status(HTTP_CODES.OK).json({code: HTTP_CODES.OK, presentations: presentations});
+        } else {
+            res.status(HTTP_CODES.NOT_FOUND).json({code: HTTP_CODES.NOT_FOUND, msg: "This user does not have any presentations"});
+        }
     }
+    else{
+        res.status(HTTP_CODES.NOT_FOUND).json({code: HTTP_CODES.NOT_FOUND, msg: "This user does not exist"});
+    }
+    
 });
 
 // endpoint POST--------------------------------
@@ -72,5 +80,22 @@ route.put('/:presentationID', async function(req, res) {
         res.status(HTTP_CODES.BAD_REQUEST).json({code: HTTP_CODES.BAD_REQUEST, msg: `Error ${HTTP_CODES.BAD_REQUEST} Bad Request`});
     }
 });
+
+//Presentation sharing--------------------
+
+//Make presentation public/private
+route.put('/:presentationID/public', sharing.share);
+
+//Share with specific user
+route.put('/:presentationID/share', sharing.shareWithUser);
+
+//Unshare with specific user
+route.put('/:presentationID/unshare', sharing.unshareWithUser);
+
+//Get presentations shared with user that has userID
+route.get('/:userID/shared-with-me', sharing.sharedWithMe);
+
+//Get public presentations
+route.get('/', sharing.publicPresentations);
 
 module.exports = route;
