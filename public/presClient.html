@@ -17,10 +17,34 @@
             <h2 class="overview-presname"></h2>
             <p class="overview-slides">Slides: </p>
             <p class="overview-theme">Theme: </p>
-            <p class="overview-public-status"></p>
+            <p class="overview-public-status">Sharing: </p>
+            <p class="overview-last-updated">Last updated: </p>
             <div class="overview-hiddenid" hidden="true"></div>
         </div>
     </template>
+
+    <template id=edit-slideoverview-temp>
+        <li class="edit-slideoverview"></li>
+    </template>
+
+    <template id="temp-slideA">
+        <div class="slideA-container">
+            <h1 class="title"></h1>
+        </div>
+    </template>
+
+    <template id="temp-slideB">
+        <div class="slideA-container">
+            <!-- slide type b content -->
+        </div>
+    </template>
+
+    <template id="temp-slideC">
+        <div class="slideA-container">
+            <!-- slide type c content -->
+        </div>
+    </template>
+
 
     <header>
         <a href="index.html" class="logo">
@@ -28,8 +52,8 @@
         </a>
         <nav id="navbar">
             <ul class="nav__links">
-                <li><a href="#overview" onclick="loadPresOverview()">My presentations</a></li>
-                <li><a href="#overview" onclick="loadSharedPresOverview()">Shared with me</a></li>
+                <li><a href="#overview" onclick="loadPresOverview(false)">My presentations</a></li>
+                <li><a href="#overview" onclick="loadPresOverview(true)">Shared with me</a></li>
             </ul>
         </nav>
         <a class="cta" href="#">User</a>
@@ -39,27 +63,33 @@
     <div id="mobile__menu" class="overlay">
         <a class="close" onclick="closeNav()">&times;</a>
         <div class="overlay__content">
-            <a href="#">My presentations</a>
-            <a href="#">Shared with me</a>
-            <a href="#">Some other thing</a>
+            <a href="#overview" onclick="loadPresOverview(false), closeNav()">My presentations</a>
+            <a href="#overview" onclick="loadPresOverview(true), closeNav()">Shared with me</a>
         </div>
     </div>
 
     <div id="container">
         <main>
-            <div id="overview" class="page" hidden="true">
-                <h1>My Presentations</h1>
+            <div id="overview" class="page" style="display: none;">
+                <h1></h1>
                 <div id="presContainer"></div>
+                <button id="overview-create-pres-btn" onclick=createPresentation()>&plus;</button>
             </div>
 
-            <div id="overview_shared" class="page">
-
+            <div id="editview" class="page" style="display: none;">
+                <ul id="slide__list"></ul>
+                <div id="editButtons">
+                    
+                </div>
             </div>
         </main>
     </div>
 </body>
 
 <script>
+    let presOverview = document.getElementById("overview");
+    let editView = document.getElementById("editview");
+
     // Script for mobile use - move to separate script eventually
     function openNav() {
         document.getElementById("mobile__menu").style.width = "100%";
@@ -95,76 +125,95 @@
     function editPresentation(e) {
         let presID = parseInt(e.currentTarget.querySelector("div").innerText);
 
-        let index = userPresentations.map(function(e) {
+        let index = userPresentations.map(function (e) {
             return e.presentationid;
         }).indexOf(presID);
-        
+
         currentPres.ID = userPresentations[index].presentationid;
         currentPres.owner = userPresentations[index].ownerid;
         currentPres.theme = userPresentations[index].theme;
         console.log(currentPres);
+        hideAllPages(); //This seems like a bad idea
+        loadEditView(currentPres.ID);
     }
 
 
-    async function loadPresOverview() {
+    async function loadEditView() {
+        window.location.href = "#editview";
+        editView.style.display = "block";
+        let slideList = document.getElementById("slide__list");
+        let slides = await presentationClient.getSlides('/presentation/slide/', currentPres.ID);
+        console.log(slides);
+        if (slides.code === HTTP_CODES.OK) {
+            for (let slide of slides.data) {
+                let tmp1 = document.getElementById("edit-slideoverview-temp").content.cloneNode(true);
+                tmp1.querySelector(".edit-slideoverview").innerText = `# ${slide.slideid}`;
+                slideList.appendChild(tmp1);
+            }
+        }
+    }
+
+
+    async function loadPresOverview(isShared) {
         userPresentations = [];
-        let presOverview = document.getElementById("overview");
         let presContainer = document.getElementById("presContainer");
 
-        presOverview.hidden = false;
-
+        presOverview.style.display = "block"; //display style subject to change
         while (presContainer.firstChild) {
             presContainer.removeChild(presContainer.firstChild);
         }
-
-        let presentations = await presentationClient.getPresentations(`/presentation/1`); 
+        let presentations = null;
+        if (isShared) {
+            presentations = await presentationClient.getPresentations(`/presentation/3/shared-with-me`);
+            presOverview.querySelector("h1").innerHTML = "Shared with me"
+        } else {
+            presentations = await presentationClient.getPresentations(`/presentation/1`);
+            presOverview.querySelector("h1").innerHTML = "My Presentations"
+        }
         //need to transfer the ID of the current user (from local storage)
-        for (let presentation of presentations.presentations) {
-            userPresentations.push(presentation);
-            let tmp1 = document.getElementById('overviewTemp').content.cloneNode(true);          
-            
-            tmp1.querySelector("div").addEventListener("click", function (e) {
-                editPresentation(e);
-            });
-            tmp1.querySelector(".overview-presname").innerText = presentation.name;
-            tmp1.querySelector(".overview-slides").innerText += presentation.slides.length;
-            tmp1.querySelector(".overview-theme").innerText += presentation.theme;
-            tmp1.querySelector(".overview-hiddenid").innerText = presentation.presentationid;
-            if(presentation.public == true){
-                tmp1.querySelector(".overview-public-status").innerText = "Public";
-            }
-            else{
-                tmp1.querySelector(".overview-public-status").innerText = "Private";
-            }
-            
+        if (presentations.code === HTTP_CODES.OK) {
+            for (let presentation of presentations.presentations) {
+                userPresentations.push(presentation);
+                let tmp1 = document.getElementById('overviewTemp').content.cloneNode(true);
 
-            presContainer.appendChild(tmp1);
+                tmp1.querySelector("div").addEventListener("click", function (e) {
+                    editPresentation(e);
+                });
+                tmp1.querySelector(".overview-presname").innerText = presentation.name;
+                tmp1.querySelector(".overview-slides").innerText += presentation.slides.length;
+                tmp1.querySelector(".overview-theme").innerText += presentation.theme;
+                tmp1.querySelector(".overview-hiddenid").innerText = presentation.presentationid;
+                if (presentation.public == true) {
+                    tmp1.querySelector(".overview-public-status").innerText += "Public";
+                }
+                else {
+                    tmp1.querySelector(".overview-public-status").innerText += "Private";
+                }
+
+                let lastUpdated = presentationClient.splitTime(presentation.last_updated);
+
+                tmp1.querySelector(".overview-last-updated").innerText += `${lastUpdated.date}, ${lastUpdated.clock}`;
+
+                presContainer.appendChild(tmp1);
+            }
+        } else {
+            presContainer.innerHTML = `Error ${presentations.code}, ${presentations.msg}`; //Should be a describing error message
+        }
+
+    }
+
+    async function createPresentation() {
+        let placeholder = document.getElementById("placeholder");
+        let createdPres = await presentationClient.createPresentation("/presentation", "New presentation", currentUser.ID, "default");
+        console.log(createdPres);
+        if (createdPres.code === HTTP_CODES.CREATED) {
+            //Load edit view with created presentation
         }
     }
 
-    async function loadSharedPresOverview() {
-        let presOverview = document.getElementById("overview");
-        let presContainer = document.getElementById("presContainer");
-
-        while (presContainer.firstChild) {
-            presContainer.removeChild(presContainer.firstChild);
-        }
-
-        let presentations = await presentationClient.getPresentations(`/sharedpres/${currentUser.ID}`); //url subject to change
-        //need to transfer the ID of the current user (from local storage)
-        for (let presentation of presentations.presentations) {
-            userPresentations.push(presentation);
-
-            let temp1 = document.getElementById("overviewTemp").content.cloneNode(true);
-            
-            tmp1.querySelector("div").addEventListener("click", function (e) {
-                editPresentation(e);
-            });
-            tmp1.querySelector(".overview-presname").innerText = presentation.name;
-            tmp1.querySelector(".overview-slides").innerText += presentation.slides.length;
-            tmp1.querySelector(".overview-theme").innerText += presentation.theme;
-            tmp1.querySelector(".overview-hiddenid").innerText = presentation.presentationid;
-        }
+    function hideAllPages() {
+        presOverview.style.display = "none";
+        editView.style.display = "none";
     }
 
 </script>

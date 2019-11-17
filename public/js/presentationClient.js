@@ -1,7 +1,7 @@
 function PresentationClient(){
 
     //----------------------------
-    this.createPresentation = async function(result, url, name, ownerID, theme){
+    this.createPresentation = async function(url, name, ownerID, theme){
 
         let updata = {
             name: name,
@@ -18,7 +18,7 @@ function PresentationClient(){
         try {
             let resp = await fetch(url, cfg);
             let data = await resp.json();
-            result.innerHTML = data.msg;
+            return data;
             
         }
         catch (err) {
@@ -80,7 +80,20 @@ function PresentationClient(){
             console.error(error);
         }
     }
+    // ------------------ Slides ----------------------
+    this.getSlides = async function(url, presID) {
+        try {
+            let resp = await fetch(url + presID);
+            let data = await resp.json();
+            return data;
+        } catch (error) {
+            console.error(error);
+        }
+    }
 
+
+
+    // ------------------ Sharing ---------------------
     this.setPublicStatus = async function(url, status){
         let updata = {
             public: status
@@ -162,5 +175,14 @@ function PresentationClient(){
         } catch (error) {
             console.error(error);
         }
+    }
+
+    this.splitTime = function(timestamp) {
+        let splitTimestamp = timestamp.split(/[T,.,]+/);
+        let time = {
+            date: splitTimestamp[0],
+            clock: splitTimestamp[1]
+        }
+        return time;
     }
 }
