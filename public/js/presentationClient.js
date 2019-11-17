@@ -101,5 +101,66 @@ function PresentationClient(){
             console.log(error);
         }
     }
+
+    this.shareWithUser = async function(url, username){
+        let updata = {
+            username: username
+        };
+
+        let cfg = {
+            method: "PUT",
+            headers: {"Content-Type":"application/json"},
+            body: JSON.stringify(updata)
+        }
+
+        try{
+            let resp = await fetch(url, cfg);
+            let data = resp.json();
+            return data;
+        }
+        catch(error){
+            console.log(error);
+        }
+    }
     
+    this.unshareWithUser = async function(url, userID){
+        let updata = {
+            userID: userID
+        };
+
+        let cfg = {
+            method: "PUT",
+            headers: {"Content-Type":"application/json"},
+            body: JSON.stringify(updata)
+        }
+
+        try{
+            let resp = await fetch(url, cfg);
+            let data = resp.json();
+            return data;
+        }
+        catch(error){
+            console.log(error);
+        }
+    }
+
+    this.getPublicPresentations = async function (url) {
+        try {
+            let resp = await fetch(url);
+            let data = await resp.json();
+            return data;
+        } catch (error) {
+            console.error(error);
+        }
+    }
+
+    this.getSharedWithMePresentations = async function (url) {
+        try {
+            let resp = await fetch(url);
+            let data = await resp.json();
+            return data;
+        } catch (error) {
+            console.error(error);
+        }
+    }
 }
