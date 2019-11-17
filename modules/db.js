@@ -127,6 +127,17 @@ const db = function (dbConnectionString) {
         return presentationData;
     }
 
+    const getPresentationByID = async function(presentationID){
+        let presentationData = null;
+        try{
+            presentationData = await runQuery(`SELECT * FROM presentations WHERE presentationID=$1`, [presentationID]);
+        }
+        catch (error){
+            console.log(error);
+        }
+        return presentationData;
+    }
+
     const insertPresentation = async function (presentationName, ownerID, theme) {
         let response = null;
         try {
@@ -176,19 +187,63 @@ const db = function (dbConnectionString) {
         return presentationData;
     }
 
-    const sharePresentation = async function(presentationID, public){
+    const getSharedWithMePresentations = async function(userID){
+        let presentationData = null;
+        try{
+            presentationData = await runQueryAll(`SELECT * FROM presentations WHERE ${userID}=ANY(sharedUsers)`);
+        }
+        catch(error){
+            console.error(error);
+        }
+        return presentationData;
+    }
+
+    const sharePresentationPublicly = async function(presentationID, public){
         let response = null;
-        if(presentationID){
-            try{
-                await runQuery(`UPDATE presentations SET public=$2 WHERE presentationID=$1`, [presentationID, public]);
+        try{
+            await runQuery(`UPDATE presentations SET public=$2 WHERE presentationID=$1`, [presentationID, public]);
+            response = DB_RESPONSES.OK;
+        }
+        catch(error){
+            console.error(error);
+        }
+        return response;
+    }
+
+    const sharePresentationWithUser = async function(presentationID, userID){
+        let response = null;
+        try{
+            let shared = null; 
+            shared = await runQuery(`SELECT * FROM presentations WHERE $2=ANY(sharedUsers) AND presentationID = $1`, [presentationID, userID]);
+            if(shared == null){
+                await runQuery(`UPDATE presentations SET sharedUsers = sharedUsers || $1::int WHERE presentationID = $2`, [userID, presentationID]);
                 response = DB_RESPONSES.OK;
             }
-            catch(error){
-                console.log(error);
+            else{
+                response = DB_RESPONSES.ALREADY_EXIST;
             }
         }
-        else{
-            response = DB_RESPONSES.NOT_EXIST;
+        catch(error){
+            console.error(error);
+        }
+        return response;
+    }
+
+    const unsharePresentationWithUser = async function(presentationID, userID){
+        let response = null;
+        try{
+            let shared = null; 
+            shared = await runQuery(`SELECT * FROM presentations WHERE $2=ANY(sharedUsers) AND presentationID = $1`, [presentationID, userID]);
+            if(shared){
+                await runQuery(`UPDATE  presentations SET sharedusers = array_remove(sharedusers, $1) WHERE presentationID = $2;`, [userID, presentationID]);
+                response = DB_RESPONSES.OK;
+            }
+            else{
+                response = DB_RESPONSES.ALREADY_EXIST;
+            }
+        }
+        catch(error){
+            console.error(error);
         }
         return response;
     }
@@ -251,9 +306,13 @@ const db = function (dbConnectionString) {
         insertNewPresentation: insertPresentation,
         deleteExistingPresentation: deletePresentation,
         updateExitingPresentation: udpatePresentation,
-        getPresentations: getPresentationsByUserID,
+        getPresentationsByUser: getPresentationsByUserID,
+        getPresentationByID: getPresentationByID,
         publicPresentations: getPublicPresentations,
-        sharePresentation: sharePresentation,
+        getSharedWithMe: getSharedWithMePresentations,
+        sharePresentation: sharePresentationPublicly,
+        sharePresentationWithUser: sharePresentationWithUser,
+        unsharePresentationWithUser: unsharePresentationWithUser,
 
         updateExitingSlide: updateSlide,
         insertNewSlide: insertSlide,
