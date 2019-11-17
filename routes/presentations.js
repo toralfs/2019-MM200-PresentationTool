@@ -23,7 +23,7 @@ const DB_RESPONSES = {
 
 // GET presentations by ownerID-----------------
 route.get('/:userID', async function(req, res){
-    let presentations = await db.getPresentations(req.params.userID);
+    let presentations = await db.getPresentationsByUser(req.params.userID);
     let user = await db.getUser(req.params.userID);
     if(user){
         if(presentations && presentations.length > 0) {
@@ -81,18 +81,21 @@ route.put('/:presentationID', async function(req, res) {
     }
 });
 
-// get public presentations------------------
-route.get('/', async function(req,res){
-    let publicPres = await db.publicPresentations();
-    if(publicPres && publicPres.length > 0){
-        res.status(HTTP_CODES.OK).json({code: HTTP_CODES.OK, publicPresentations: publicPres});
-    }
-    else{
-        res.status(HTTP_CODES.NOT_FOUND).json({code: HTTP_CODES.NOT_FOUND, msg: `No public presentations available`});
-    }
-});
+//Presentation sharing--------------------
 
-// presentation sharing--------------------
-route.put('/:presentationID/share', sharing.share);
+//Make presentation public/private
+route.put('/:presentationID/public', sharing.share);
+
+//Share with specific user
+route.put('/:presentationID/share', sharing.shareWithUser);
+
+//Unshare with specific user
+route.put('/:presentationID/unshare', sharing.unshareWithUser);
+
+//Get presentations shared with user that has userID
+route.get('/:userID/shared-with-me', sharing.sharedWithMe);
+
+//Get public presentations
+route.get('/', sharing.publicPresentations);
 
 module.exports = route;
