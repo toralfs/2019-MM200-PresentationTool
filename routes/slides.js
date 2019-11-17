@@ -51,9 +51,9 @@ route.post('/', async function(req, res){
 });
 // endpoint GET -----------------------------
 route.get('/:presentationID', async function(req, res){
-    let slide = await db.getSlides(req.params.presentationID);
-    if(slide) {
-        res.status(HTTP_CODES.OK).json({data: slide});
+    let slides = await db.getSlides(req.params.presentationID);
+    if(slides) {
+        res.status(HTTP_CODES.OK).json({code: HTTP_CODES.OK, data: slides});
     } else {
         res.status(HTTP_CODES.NOT_FOUND).end();
     }
