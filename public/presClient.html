@@ -16,14 +16,15 @@
         <div class="overview-clickablediv">
             <h2 class="overview-presname"></h2>
             <p class="overview-slides">Slides: </p>
-            <p class="overview-theme"></p>
+            <p class="overview-theme">Theme: </p>
+            <p class="overview-public-status"></p>
             <div class="overview-hiddenid" hidden="true"></div>
         </div>
     </template>
 
     <header>
         <a href="index.html" class="logo">
-            <img class="logo" src="images/logo.sv" alt="logo">
+            <img class="logo" src="images/logo.svg" alt="logo">
         </a>
         <nav id="navbar">
             <ul class="nav__links">
@@ -116,18 +117,26 @@
             presContainer.removeChild(presContainer.firstChild);
         }
 
-        let presentations = await presentationClient.getPresentations(`/presentation/1`);
+        let presentations = await presentationClient.getPresentations(`/presentation/1`); 
+        //need to transfer the ID of the current user (from local storage)
         for (let presentation of presentations.presentations) {
             userPresentations.push(presentation);
-            let tmp1 = document.getElementById('overviewTemp').content.cloneNode(true);
+            let tmp1 = document.getElementById('overviewTemp').content.cloneNode(true);          
             
             tmp1.querySelector("div").addEventListener("click", function (e) {
                 editPresentation(e);
             });
             tmp1.querySelector(".overview-presname").innerText = presentation.name;
-            tmp1.querySelector(".overview-slides").innerText = presentation.slides.length;
-            tmp1.querySelector(".overview-theme").innerText = presentation.theme;
+            tmp1.querySelector(".overview-slides").innerText += presentation.slides.length;
+            tmp1.querySelector(".overview-theme").innerText += presentation.theme;
             tmp1.querySelector(".overview-hiddenid").innerText = presentation.presentationid;
+            if(presentation.public == true){
+                tmp1.querySelector(".overview-public-status").innerText = "Public";
+            }
+            else{
+                tmp1.querySelector(".overview-public-status").innerText = "Private";
+            }
+            
 
             presContainer.appendChild(tmp1);
         }
@@ -142,6 +151,7 @@
         }
 
         let presentations = await presentationClient.getPresentations(`/sharedpres/${currentUser.ID}`); //url subject to change
+        //need to transfer the ID of the current user (from local storage)
         for (let presentation of presentations.presentations) {
             userPresentations.push(presentation);
 
@@ -151,8 +161,8 @@
                 editPresentation(e);
             });
             tmp1.querySelector(".overview-presname").innerText = presentation.name;
-            tmp1.querySelector(".overview-slides").innerText = presentation.slides.length;
-            tmp1.querySelector(".overview-theme").innerText = presentation.theme;
+            tmp1.querySelector(".overview-slides").innerText += presentation.slides.length;
+            tmp1.querySelector(".overview-theme").innerText += presentation.theme;
             tmp1.querySelector(".overview-hiddenid").innerText = presentation.presentationid;
         }
     }

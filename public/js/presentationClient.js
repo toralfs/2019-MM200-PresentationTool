@@ -80,5 +80,26 @@ function PresentationClient(){
             console.error(error);
         }
     }
+
+    this.setPublicStatus = async function(url, status){
+        let updata = {
+            public: status
+        };
+
+        let cfg = {
+            method: "PUT",
+            headers: {"Content-Type":"application/json"},
+            body: JSON.stringify(updata)
+        }
+
+        try{
+            let resp = await fetch(url, cfg);
+            let data = resp.json();
+            return data;
+        }
+        catch(error){
+            console.log(error);
+        }
+    }
     
 }
