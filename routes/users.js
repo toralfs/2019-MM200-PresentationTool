@@ -84,7 +84,7 @@ route.put('/:userID', async function(req, res, next) {
         let updatedUser = await db.updateExitingUser(req.params.userID, req.body.name, req.body.email, hashPssw);
         if(updatedUser === DB_RESPONSES.OK) {
             let user = await db.getUserByName(req.body.name);
-            res.status(HTTP_CODES.OK).json({code: HTTP_CODES.OK, msg: `User with userID=${req.params.userID} updated`, userName: user.name, userEmail: user.email});
+            res.status(HTTP_CODES.OK).json({code: HTTP_CODES.OK, msg: `User updated`, userName: user.name, userEmail: user.email});
         } else if(updatedUser === DB_RESPONSES.ALREADY_EXIST){
             res.status(HTTP_CODES.CONFLICT).json({code: HTTP_CODES.CONFLICT, msg: "Username or email already exist"});
         } else if(updatedUser === DB_RESPONSES.NOT_EXIST) {

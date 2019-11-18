@@ -1,5 +1,6 @@
 function UserClient(){
 
+    //------------------------
     this.createUser = async function(result, url, username, email, password){
 
         let updata = {
@@ -25,6 +26,7 @@ function UserClient(){
         }
     }
 
+    //------------------------
     this.loginUser = async function(result, url, username, password){
 
         let updata = {
@@ -50,6 +52,7 @@ function UserClient(){
         }
     }
 
+    //------------------------
     this.updateUser = async function(result, url, username, email, password){ 
         
         let updata = {
@@ -76,7 +79,8 @@ function UserClient(){
         }
     }
 
-    this.deleteUser = async function(result, url){
+    //------------------------
+    this.deleteUser = async function(url){
         let cfg = {
             method: "DELETE",
             headers: {"Content-Type":"application/json"},
@@ -85,7 +89,7 @@ function UserClient(){
         try{
             let resp = await fetch(url, cfg);
             let data = await resp.json();
-            result.innerHTML = data.msg;
+            return data;
             
         }
         catch(err){
