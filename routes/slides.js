@@ -52,10 +52,10 @@ route.post('/', async function(req, res){
 // endpoint GET -----------------------------
 route.get('/:presentationID', async function(req, res){
     let slide = await db.getSlides(req.params.presentationID);
-    if(slide) {
+    if(slide && slide.length>0) {
         res.status(HTTP_CODES.OK).json({data: slide, code: HTTP_CODES.OK});
     } else {
-        res.status(HTTP_CODES.NOT_FOUND).json({code: HTTP_CODES.NOT_FOUND, msg: `Presentation with ID=${req.params.presentationID} not found`});
+        res.status(HTTP_CODES.NOT_FOUND).json({code: HTTP_CODES.NOT_FOUND, msg: `This presentation does not have any slides`});
     }
 });
 // endpoint PUT -----------------------------
