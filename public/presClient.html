@@ -233,7 +233,6 @@
     }
 
     async function createPresentation() {
-        let placeholder = document.getElementById("placeholder");
         let createdPres = await presentationClient.createPresentation("New presentation", currentUser.ID, "default");
         console.log(createdPres);
         if (createdPres.code === HTTP_CODES.CREATED) {
