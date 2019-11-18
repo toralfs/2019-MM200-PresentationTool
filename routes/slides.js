@@ -46,16 +46,16 @@ route.post('/', async function(req, res){
         }
     }
     else {
-        res.status(HTTP_CODES.BAD_REQUEST).json({msg: "No wrong"});
+        res.status(HTTP_CODES.BAD_REQUEST).json({code: HTTP_CODES.BAD_REQUEST, msg: `Bad request`});
     }
 });
 // endpoint GET -----------------------------
 route.get('/:presentationID', async function(req, res){
     let slide = await db.getSlides(req.params.presentationID);
-    if(slide) {
-        res.status(HTTP_CODES.OK).json({data: slide});
+    if(slide && slide.length>0) {
+        res.status(HTTP_CODES.OK).json({data: slide, code: HTTP_CODES.OK});
     } else {
-        res.status(HTTP_CODES.NOT_FOUND).end();
+        res.status(HTTP_CODES.NOT_FOUND).json({code: HTTP_CODES.NOT_FOUND, msg: `This presentation does not have any slides`});
     }
 });
 // endpoint PUT -----------------------------
@@ -63,13 +63,13 @@ route.put('/:slideID', async function(req, res) {
     if(req.params.slideID && req.body.data){
         let updatedSlide = await db.updateExitingSlide(req.params.slideID, req.body.data);
         if(updatedSlide === DB_RESPONSES.OK) {
-            res.status(HTTP_CODES.OK).json({code: HTTP_CODES.OK, msg: `User with slideID=${req.params.slideID} updated`, data: updatedSlide});
+            res.status(HTTP_CODES.OK).json({code: HTTP_CODES.OK, msg: `Slide with slideID=${req.params.slideID} updated`, data: updatedSlide});
         }else{
             res.status(HTTP_CODES.BAD_REQUEST).json({code: HTTP_CODES.BAD_REQUEST, msg: `Bad request`});
         }
     }
     else{
-        res.status(HTTP_CODES.BAD_REQUEST).json({msg: `Wrong credentials.`});
+        res.status(HTTP_CODES.BAD_REQUEST).json({code: HTTP_CODES.BAD_REQUEST, msg: `Wrong credentials.`});
     }
 });
 module.exports = route;
