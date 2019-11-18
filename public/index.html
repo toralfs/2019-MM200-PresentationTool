@@ -12,57 +12,66 @@
 </head>
 
 <body>
-    <div id="container">
-        <div id="startPage">
-            <h1 id="startPageTitle">PRESENTATION TOOL</h1>
-            <h3 id="startWelcomeMessage">Welcome to our new presentation tool! Please create an account or log in to proceed.</h3>
-            <div id="register" class="start">
-                <h3>Create a new user account</h3>
-                <input type="text" minlength="3" id="inpNameCreate" pattern="[A-Za-z0-9]+" placeholder="Username"><br>
-                <input type="email" id="inpEmailCreate" placeholder="E-mail"><br>
-                <input type="password" minlength="4" id="inpPasswordCreate" placeholder="Password">
-                <br><br>
-                <button class="userButtons" id="btnCreate" onclick=createUser()>Create user</button>
-                <h3 id="txtResultCreate"></h3>
-            </div>
 
-            <div id="login" class="start">
-                <h3>Already have an account?<br>Log in here!</h3>
-                <input type="text" id="inpNameLogin" placeholder="Username"><br>
-                <input type="password" id="inpPasswordLogin" placeholder="Password">
-                <br><br>
-                <button class="userButtons" id="btnLogin" onclick=loginUser()>Login</button>
-                <h3 id="txtResultLogin"></h3>
-            </div>
+    <header style="display:none">
+        <a href="#overview" class="logo">
+            <img class="logo" src="images/logo.svg" alt="logo">
+        </a>
+        <nav id="navbar">
+            <ul class="nav__links">
+                <li><a href="#overview" onclick="loadPresOverview()">My presentations</a></li>
+                <li><a href="#overview" onclick="loadSharedPresOverview()">Shared with me</a></li>
+            </ul>
+        </nav>
+        <a class="cta" href="#account" onclick=showUserPage()>User</a>
+        <a class="cta" href="#" onclick=logoutUser()>Logout</a>
+        <p onclick="openNav()" class="menu cta">Menu</p>
+    </header>
+
+    <div id="startPage">
+        <h1 id="startPageTitle">PRESENTATION TOOL</h1>
+        <h3 id="startWelcomeMessage">Welcome to our new presentation tool! Please create an account or log in to proceed.</h3>
+        <div id="register" class="start">
+            <h3>Create a new user account</h3>
+            <input type="text" minlength="3" id="inpNameCreate" pattern="[A-Za-z0-9]+" placeholder="Username"><br>
+            <input type="email" id="inpEmailCreate" placeholder="E-mail"><br>
+            <input type="password" minlength="4" id="inpPasswordCreate" placeholder="Password">
+            <br><br>
+            <button class="userButtons" id="btnCreate" onclick=createUser()>Create user</button>
+            <h3 id="txtResultCreate"></h3>
         </div>
 
-        <div id="logout" style="display:none">
-                <button class="userButtons" id="btnLogout" onclick=logoutUser()>Logout</button>
+        <div id="login" class="start">
+            <h3>Already have an account?<br>Log in here!</h3>
+            <input type="text" id="inpNameLogin" placeholder="Username"><br>
+            <input type="password" id="inpPasswordLogin" placeholder="Password">
+            <br><br>
+            <button class="userButtons" id="btnLogin" onclick=loginUser()>Login</button>
+            <h3 id="txtResultLogin"></h3>
         </div>
-
-        <div id="userPage" style="display:none">
-            <h2 id="accountPageTitle">Account settings</h2>
-            <div id="update" class="userEdit">
-                <h3>Update account</h3>
-                <label for="inpNameUpdate">Username</label><br>
-                <input type="text" minlength="3" id="inpNameUpdate" pattern="[A-Za-z0-9]+" placeholder="Update username"><br>
-                <label for="inpEmailUpdate">Email</label><br>
-                <input type="email" id="inpEmailUpdate" placeholder="Update email"><br>
-                <label for="inpPasswordUpdate">Password</label><br>
-                <input type="text" minlength="4" id="inpPasswordUpdate" placeholder="Update password">
-                <br><br>
-                <button class="userButtons" id="btnUpdate" onclick=updateUser()>Update user account</button>
-                <h3 id="txtResultUpdate"></h3>
-            </div>
-
-            <div id="delete" class="userEdit">
-                <h3>Other settings</h3>
-                <button class="userButtons" id="btnDelete" onclick=deleteUser()>Delete this account</button>
-            </div>
-        </div>
-
     </div>
 
+    <div id="userPage" style="display:none">
+        <h2 id="accountPageTitle">Account settings</h2>
+        <div id="update" class="userEdit">
+            <h3>Update account</h3>
+            <label for="inpNameUpdate">Username</label><br>
+            <input type="text" minlength="3" id="inpNameUpdate" pattern="[A-Za-z0-9]+" placeholder="Update username"><br>
+            <label for="inpEmailUpdate">Email</label><br>
+            <input type="email" id="inpEmailUpdate" placeholder="Update email"><br>
+            <label for="inpPasswordUpdate">Password</label><br>
+            <input type="text" minlength="4" id="inpPasswordUpdate" placeholder="Update password">
+            <br><br>
+            <button class="userButtons" id="btnUpdate" onclick=updateUser()>Update user account</button>
+            <h3 id="txtResultUpdate"></h3>
+        </div>
+
+        <div id="delete" class="userEdit">
+            <h3>Other settings</h3>
+            <button class="userButtons" id="btnDelete" onclick=deleteUser()>Delete this account</button>
+        </div>
+    </div>
+  
     <div id="presentation" style="display: none;">
         <div id="createPres">
             <input type="text" minlength="3" id="inpPresNameCreate" pattern="^[A-Za-z0-9\s]+$" placeholder="Presentation name">
@@ -79,7 +88,31 @@
         <div id="deletePres">
             <button id="btnDeletePres" onclick=deletePresentation()>Delete presentation</button>
         </div>
+
+        <div id="container">
+            <main>
+                <div id="overview" class="page" style="display: none;">
+                    <h1>My Presentations</h1>
+                    <div id="presContainer"></div>
+                </div>
+    
+                <div id="overview_shared" class="page">
+    
+                </div>
+            </main>
+        </div>
+
     </div>
+
+    <template id="overviewTemp">
+            <div class="overview-clickablediv">
+                <h2 class="overview-presname"></h2>
+                <p class="overview-slides">Slides: </p>
+                <p class="overview-theme"></p>
+                <div class="overview-hiddenid" hidden="true"></div>
+            </div>
+        </template>
+    
     
 
     <a href="presClient.html">PresClient</a>
@@ -98,7 +131,6 @@
     // ------------------------- USERS --------------------------
     let startPage = document.getElementById('startPage');
     let userPage = document.getElementById('userPage');
-    let logoutDiv = document.getElementById('logout');
 
     let inpNameCreate = document.getElementById('inpNameCreate');
     let inpEmailCreate = document.getElementById('inpEmailCreate');    
@@ -134,7 +166,7 @@
                 inpNameUpdate.value = currentUser.username;
                 inpEmailUpdate.value = currentUser.email;
                 saveCredentials();
-                showUserPage();
+                showPresentationPage();
             }
         }
     }
@@ -149,7 +181,7 @@
             inpNameUpdate.value = currentUser.username;
             inpEmailUpdate.value = currentUser.email;
             saveCredentials();
-            showUserPage();
+            showPresentationPage();
         }        
     }
 
@@ -222,6 +254,8 @@
     }
 
     // -------------------- PRESENTATIONS --------------------------------
+    let presentationPage = document.getElementById('presentation');
+
     let inpPresNameCreate = document.getElementById('inpPresNameCreate');
     let txtResultCreatePres = document.getElementById('txtResultCreatePres');
 
@@ -233,7 +267,7 @@
         owner: "",
         theme: ""
     }
-
+    let userPresentations = [];
     let presentationClient = new PresentationClient();
 
     //-----------------------------------
@@ -250,20 +284,96 @@
         presentationClient.deletePresentation(txtResultDeletePres, `/presentation/${currentPres.ID}`);
     }
 
+    function editPresentation(e) {
+        let presID = parseInt(e.currentTarget.querySelector("div").innerText);
+        let index = userPresentations.map(function(e) {
+            return e.presentationid;
+        }).indexOf(presID);
+        
+        currentPres.ID = userPresentations[index].presentationid;
+        currentPres.owner = userPresentations[index].ownerid;
+        currentPres.theme = userPresentations[index].theme;
+        console.log(currentPres);
+    }
+
+
+    async function loadPresOverview() {
+        userPresentations = [];
+        let presOverview = document.getElementById("overview");
+        let presContainer = document.getElementById("presContainer");
+
+        presOverview.style="display: flex";
+        presContainer.style="display: flex";
+
+        while (presContainer.firstChild) {
+            presContainer.removeChild(presContainer.firstChild);
+        }
+
+        let pres = await presentationClient.getPresentations(`/presentation/${currentUser.ID}`);
+        //check if the user has any presentations, else display error message/ button to create new presentation etc.
+        for (let presentation of pres.presentations) {
+            userPresentations.push(presentation);
+            let tmp1 = document.getElementById('overviewTemp').content.cloneNode(true);
+
+            tmp1.querySelector("div").addEventListener("click", function (e) {
+                editPresentation(e);
+            });
+            tmp1.querySelector(".overview-presname").innerText = presentation.name;
+            tmp1.querySelector(".overview-slides").innerText = presentation.slides.length;
+            tmp1.querySelector(".overview-theme").innerText = presentation.theme;
+            tmp1.querySelector(".overview-hiddenid").innerText = presentation.presentationid;
+            presContainer.appendChild(tmp1);
+        }
+    }
+
+    async function loadSharedPresOverview() {
+        let presOverview = document.getElementById("overview");
+        let presContainer = document.getElementById("presContainer");
+
+        while (presContainer.firstChild) {
+            presContainer.removeChild(presContainer.firstChild);
+        }
+
+        let pres = await presentationClient.getPresentations(`presentation/${currentUser.ID}/shared-with-me`);
+        //check for shared presentations, else display "No shared presentations..." etc. 
+        for (let presentation of pres.sharedPresentations) {
+            userPresentations.push(presentation);
+
+            let tmp1 = document.getElementById("overviewTemp").content.cloneNode(true);
+            
+            tmp1.querySelector("div").addEventListener("click", function (e) {
+                editPresentation(e);
+            });
+            tmp1.querySelector(".overview-presname").innerText = presentation.name;
+            tmp1.querySelector(".overview-slides").innerText = presentation.slides.length;
+            tmp1.querySelector(".overview-theme").innerText = presentation.theme;
+            tmp1.querySelector(".overview-hiddenid").innerText = presentation.presentationid;
+        }
+    }
+
 
     //Functions to switch between pages--------------------------
     function showUserPage() {
         emptyTxtResult();
         startPage.style = "display:none";
         userPage.style = "display:flex";
-        logoutDiv.style = "display:flex";
+        document.querySelector("header").style = "display:flex";
     }
 
     function showStartPage(){
         emptyTxtResult();
         startPage.style = "display:flex";
         userPage.style = "display:none";
-        logoutDiv.style = "display:none";
+        document.querySelector("header").style = "display:none";
+    }
+
+    function showPresentationPage(){
+        emptyTxtResult();
+        startPage.style = "display:none";
+        userPage.style = "display:none";
+        presentationPage.style = "display:flex";
+        document.getElementById("container").style = "display:flex";
+        document.querySelector("header").style = "display:flex";
     }
 
 </script>

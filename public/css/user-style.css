@@ -1,6 +1,7 @@
 body{
     height: 100vh;
-    background-image: linear-gradient(cornsilk, burlywood);
+    /*background-image: linear-gradient(cornsilk, burlywood);*/
+    background-color: cornsilk;
 }
 
 #startPageTitle, #startWelcomeMessage, #accountPageTitle{
@@ -17,7 +18,7 @@ body{
     font-size: 2vw;
 }
 
-#startPage{
+#startPage, #presentation{
     display: flex;
     margin:0;
     padding:0;
@@ -91,6 +92,77 @@ body{
 #logout{
     float: right;
 }
+
+#presContainer{
+    display: flex;
+    margin:0;
+    padding:0;
+    flex-direction: column;
+    justify-content: space-evenly;
+    align-items: baseline;
+    flex-wrap: wrap;
+}
+
+header {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    padding: 15px 10%;
+    background-color: #24252a;
+}
+
+.logo {
+    cursor: pointer;
+    margin-right: auto;
+}
+
+.nav__links {
+    list-style: none;
+    display: flex;
+}
+
+.nav__links a,
+.cta,
+.overlay__content a {
+    font-family: Arial, Helvetica, sans-serif;
+    font-weight: 500;
+    color: #edf0f1;
+    text-decoration: none;
+}
+
+.cta {
+    color: rgb(26, 26, 26)
+}
+
+.nav__links li {
+    padding: 0px 20px;
+}
+
+.nav__links li a {
+    transition: all 0.3s ease 0s;
+}
+
+.nav__links li a:hover {
+    color: cornsilk;
+}
+
+.cta {
+    margin-left: 20px;
+    padding: 9px 25px;
+    background-color: rgba(250, 250, 220, 1);
+    border: none;
+    border-radius: 50px;
+    cursor: pointer;
+    transition: all 0.3s ease 0s;
+}
+
+.cta:hover {
+    background-color: rgba(250, 250, 220, 0.8);
+}
+
+.menu {
+    display: none;
+  }
 
 @media screen and (max-width: 500px){
 
