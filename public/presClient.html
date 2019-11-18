@@ -100,7 +100,12 @@
 <script>
     let presOverview = document.getElementById("overview");
     let editView = document.getElementById("editview");
+    let pageList = [presOverview, editView];
+
     let divSelectedSlide = document.getElementById("selectedSlide");
+    let presContainer = document.getElementById("presContainer");
+    let slideList = document.getElementById("slide__list");
+    let divList = [divSelectedSlide, presContainer, slideList];
 
     // Script for mobile use - move to separate script eventually
     function openNav() {
@@ -149,15 +154,17 @@
         currentPres.ID = userPresentations[index].presentationid;
         currentPres.owner = userPresentations[index].ownerid;
         currentPres.theme = userPresentations[index].theme;
-        hideAllPages(); //This seems like a bad idea
+        presentationClient.hideAllPages(pageList, divList); //This seems like a bad idea
         loadEditView(currentPres.ID);
     }
 
 
     async function loadEditView() {
         window.location.href = "#editview";
+        presentationClient.hideAllPages(pageList, divList);
         editView.style.display = "block";
-        let slideList = document.getElementById("slide__list");
+        divSelectedSlide.style.display = "block";
+        
         let slides = await presentationClient.getSlides(currentPres.ID);
         if (slides.code === HTTP_CODES.OK) {
             if (slides.data.length > 0) {
@@ -169,29 +176,27 @@
                 selectedSlide.ID = slides.data[0].slideid;
                 selectedSlide.data = slides.data[0].data;
 
-                updateActiveSlide(selectedSlide);
+                displaySlide(selectedSlide, divSelectedSlide);
             } else {
                 divSelectedSlide.innerHTML = "You have no slides yet";
             }
         }
     }
 
-    function updateActiveSlide(slide) {
+    function displaySlide(slide, parentDiv) {
         let tmp1 = document.getElementById(`temp-slide${slide.data.type}`).content.cloneNode(true);
 
         tmp1.querySelector(".title").innerText = slide.data.title;
-        divSelectedSlide.appendChild(tmp1);
+        parentDiv.appendChild(tmp1);
     }
-
 
     async function loadPresOverview(isShared) {
         userPresentations = [];
-        let presContainer = document.getElementById("presContainer");
+        
 
+        presentationClient.hideAllPages(pageList, divList);
         presOverview.style.display = "block"; //display style subject to change
-        while (presContainer.firstChild) {
-            presContainer.removeChild(presContainer.firstChild);
-        }
+
         let presentations = null;
         if (isShared) {
             presentations = await presentationClient.getSharedWithMePresentations(3);
@@ -240,10 +245,7 @@
         }
     }
 
-    function hideAllPages() {
-        presOverview.style.display = "none";
-        editView.style.display = "none";
-    }
+
 
 </script>
 

@@ -219,4 +219,15 @@ function PresentationClient() {
     this.changeBgColor = function(slide, selectedColor) {
         slide.data.bgColor = selectedColor;
     }
+
+    this.hideAllPages = function(pages, divs) {
+        for(let page of pages) {
+            page.style.display = "none";
+        }
+        for (let div of divs) {
+            while(div.firstChild) {
+                div.removeChild(div.firstChild);
+            }
+        }
+    }
 }
