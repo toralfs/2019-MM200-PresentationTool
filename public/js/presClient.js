@@ -1,12 +1,17 @@
+// ------------ Pages -------------------------
 let presOverview = document.getElementById("overview");
 let editView = document.getElementById("editview");
 let pageList = [presOverview, editView];
-console.log(pageList);
 
+// ------------ divs that should auto clear -----------------
 let divSelectedSlide = document.getElementById("selectedSlide");
 let presContainer = document.getElementById("presContainer");
 let slideList = document.getElementById("slide__list");
 let divList = [divSelectedSlide, presContainer, slideList];
+
+// --------------- other ----------------------------
+let presToEdit = document.getElementById("presToEdit"); //Do I need this?
+let presName = document.getElementById("presName");
 
 // --------------------------------------------------------------
 const HTTP_CODES = {
@@ -19,9 +24,14 @@ const HTTP_CODES = {
 
 // ---------------- Presentations ---------------------------
 let userPresentations = [];
+let updateTimer = {
+    value: 0,
+    interval: null
+}
 
 let currentPres = {
     ID: "",
+    name: "",
     owner: "",
     theme: ""
 }
@@ -299,6 +309,7 @@ function initEditPresentation(e) {
     }).indexOf(presID);
 
     currentPres.ID = userPresentations[index].presentationid;
+    currentPres.name = userPresentations[index].name;
     currentPres.owner = userPresentations[index].ownerid;
     currentPres.theme = userPresentations[index].theme;
     hideAllPages(pageList, divList); //This seems like a bad idea
@@ -310,6 +321,8 @@ async function loadEditView() {
     hideAllPages(pageList, divList);
     editView.style.display = "block";
     divSelectedSlide.style.display = "block";
+
+    presName.value = currentPres.name;
 
     let slides = await restAPI.getSlides(currentPres.ID);
     if (slides.code === HTTP_CODES.OK) {
@@ -330,7 +343,7 @@ async function loadEditView() {
 }
 
 
-function splitTime (timestamp) {
+function splitTime(timestamp) {
     let splitTimestamp = timestamp.split(/[T,.,]+/);
     let time = {
         date: splitTimestamp[0],
@@ -356,4 +369,32 @@ function hideAllPages(pages, divs) {
             div.removeChild(div.firstChild);
         }
     }
+}
+
+function updateSlide() {
+    restAPI.updateSlide(selectedSlide.ID, selectedSlide.data);
+}
+
+function changePresName() {
+    currentPres.name = presName.value;
+    runUpdateTimer()
+}
+
+function runUpdateTimer() {
+    updateTimer.value = 0;
+    clearInterval(updateTimer.interval);
+    updateTimer.interval = setInterval(() => {
+        updateTimer.value++;
+        console.log(updateTimer.value);
+        if (updateTimer.value === 5) {
+            updatePresentation();
+            clearInterval(updateTimer.interval);
+        }
+    }, 1000);
+
+}
+
+function updatePresentation() {
+    restAPI.updatePresentation(currentPres.ID, currentPres.name, currentPres.theme);
+    console.log("Presentation Updated");
 }

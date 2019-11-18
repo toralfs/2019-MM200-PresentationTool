@@ -6,8 +6,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Presentation</title>
     <link rel="stylesheet" href="css/presOverview.css">
-    
-    
 </head>
 
 <body>
@@ -84,13 +82,16 @@
                     <select id="theme-selection">
                         <!-- Some options -->
                     </select>
-                    <button id="updatePres" onclick="presentationClient.updateSlide()">Update</button>
+                    <button id="updatePres">Update</button>
                 </div>
 
-                <div id="selectedSlide">
-                    <!-- contains slide from template -->
+                <div id="presToEdit">
+                    <input id="presName" type="text" oninput="changePresName()"/>
+                    <div id="selectedSlide">
+                        <!-- contains slide from template -->
+                    </div>
                 </div>
-
+                
             </div>
         </main>
     </div>
