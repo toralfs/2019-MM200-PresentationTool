@@ -79,8 +79,19 @@
             <div id="editview" class="page" style="display: none;">
                 <ul id="slide__list"></ul>
                 <div id="editButtons">
-                    
+                    <button id="add-slide">Add slide</button>
+                    <button id="remove-slide">Remove slide</button>
+                    <label for="theme-selection">Select theme: </label>
+                    <select id="theme-selection">
+                        <!-- Some options -->
+                    </select>
+                    <button id="updatePres" onclick="presentationClient.updateSlide()">Update</button>
                 </div>
+
+                <div id="selectedSlide">
+                    <!-- contains slide from template -->
+                </div>
+
             </div>
         </main>
     </div>
@@ -89,6 +100,7 @@
 <script>
     let presOverview = document.getElementById("overview");
     let editView = document.getElementById("editview");
+    let divSelectedSlide = document.getElementById("selectedSlide");
 
     // Script for mobile use - move to separate script eventually
     function openNav() {
@@ -119,6 +131,11 @@
         theme: ""
     }
 
+    let selectedSlide = {
+        ID: "",
+        data: {}
+    }
+
     userClient = new UserClient();
     presentationClient = new PresentationClient();
 
@@ -132,7 +149,6 @@
         currentPres.ID = userPresentations[index].presentationid;
         currentPres.owner = userPresentations[index].ownerid;
         currentPres.theme = userPresentations[index].theme;
-        console.log(currentPres);
         hideAllPages(); //This seems like a bad idea
         loadEditView(currentPres.ID);
     }
@@ -142,15 +158,29 @@
         window.location.href = "#editview";
         editView.style.display = "block";
         let slideList = document.getElementById("slide__list");
-        let slides = await presentationClient.getSlides('/presentation/slide/', currentPres.ID);
-        console.log(slides);
+        let slides = await presentationClient.getSlides(currentPres.ID);
         if (slides.code === HTTP_CODES.OK) {
-            for (let slide of slides.data) {
-                let tmp1 = document.getElementById("edit-slideoverview-temp").content.cloneNode(true);
-                tmp1.querySelector(".edit-slideoverview").innerText = `# ${slide.slideid}`;
-                slideList.appendChild(tmp1);
+            if (slides.data.length > 0) {
+                for (let slide of slides.data) {
+                    let tmp1 = document.getElementById("edit-slideoverview-temp").content.cloneNode(true);
+                    tmp1.querySelector(".edit-slideoverview").innerText = `# ${slide.slideid}`;
+                    slideList.appendChild(tmp1);
+                }
+                selectedSlide.ID = slides.data[0].slideid;
+                selectedSlide.data = slides.data[0].data;
+
+                updateActiveSlide(selectedSlide);
+            } else {
+                divSelectedSlide.innerHTML = "You have no slides yet";
             }
         }
+    }
+
+    function updateActiveSlide(slide) {
+        let tmp1 = document.getElementById(`temp-slide${slide.data.type}`).content.cloneNode(true);
+
+        tmp1.querySelector(".title").innerText = slide.data.title;
+        divSelectedSlide.appendChild(tmp1);
     }
 
 
@@ -164,10 +194,10 @@
         }
         let presentations = null;
         if (isShared) {
-            presentations = await presentationClient.getPresentations(`/presentation/3/shared-with-me`);
+            presentations = await presentationClient.getSharedWithMePresentations(3);
             presOverview.querySelector("h1").innerHTML = "Shared with me"
         } else {
-            presentations = await presentationClient.getPresentations(`/presentation/1`);
+            presentations = await presentationClient.getPresentations(1);
             presOverview.querySelector("h1").innerHTML = "My Presentations"
         }
         //need to transfer the ID of the current user (from local storage)
@@ -204,7 +234,7 @@
 
     async function createPresentation() {
         let placeholder = document.getElementById("placeholder");
-        let createdPres = await presentationClient.createPresentation("/presentation", "New presentation", currentUser.ID, "default");
+        let createdPres = await presentationClient.createPresentation("New presentation", currentUser.ID, "default");
         console.log(createdPres);
         if (createdPres.code === HTTP_CODES.CREATED) {
             //Load edit view with created presentation
