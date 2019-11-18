@@ -252,7 +252,7 @@ const db = function (dbConnectionString) {
     const getSlidesByPresID = async function (presentationID) {
         let slideData = null;
         try {
-            slideData = await runQueryAll(`SELECT * FROM slides WHERE presentationID=$1`, [presentationID]);
+            slideData = await runQueryAll(`SELECT * FROM slides WHERE presentationID=$1 ORDER BY slideID`, [presentationID]);
         } catch (error) {
             console.error(error);
         }
