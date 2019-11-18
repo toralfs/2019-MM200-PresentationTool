@@ -294,11 +294,16 @@ async function createPresentation() {
     }
 }
 
-function displaySlide(slide, parentDiv) {
-    let tmp1 = document.getElementById(`temp-slide${slide.data.type}`).content.cloneNode(true);
+function displaySlide() {
+    let tmp1 = document.getElementById(`temp-slide${selectedSlide.data.type}`).content.cloneNode(true);
 
-    tmp1.querySelector(".title").innerText = slide.data.title;
-    parentDiv.appendChild(tmp1);
+    let slideTitle = tmp1.querySelector(".title");
+    slideTitle.value = selectedSlide.data.title
+    slideTitle.addEventListener("input", (e) => {
+        selectedSlide.data.title = slideTitle.value;
+        runUpdateTimer();
+    });
+    divSelectedSlide.appendChild(slideTitle);
 }
 
 function initEditPresentation(e) {
@@ -329,13 +334,22 @@ async function loadEditView() {
         if (slides.data.length > 0) {
             for (let slide of slides.data) {
                 let tmp1 = document.getElementById("edit-slideoverview-temp").content.cloneNode(true);
-                tmp1.querySelector(".edit-slideoverview").innerText = `# ${slide.slideid}`;
+                let slideObject = tmp1.querySelector(".edit-slideoverview");
+                slideObject.innerText = `# ${slide.slideid}`;
+                slideObject.addEventListener("click", (e) => {
+                    let index = slides.data.map(function (e) {
+                        return e.slideid;
+                    }).indexOf(parseInt(e.currentTarget.innerHTML.split(" ")[1]));
+                    
+                    selectedSlide = slides.data[index];
+                    displaySlide();
+                });
                 slideList.appendChild(tmp1);
             }
             selectedSlide.ID = slides.data[0].slideid;
             selectedSlide.data = slides.data[0].data;
 
-            displaySlide(selectedSlide, divSelectedSlide);
+            displaySlide();
         } else {
             divSelectedSlide.innerHTML = "You have no slides yet";
         }
@@ -394,7 +408,15 @@ function runUpdateTimer() {
 
 }
 
-function updatePresentation() {
-    restAPI.updatePresentation(currentPres.ID, currentPres.name, currentPres.theme);
-    console.log("Presentation Updated");
+async function updatePresentation() {
+    //Tell user that pres is saving
+    let presUpd = await restAPI.updatePresentation(currentPres.ID, currentPres.name, currentPres.theme);
+    let slideUpd = await restAPI.updateSlide(selectedSlide.ID, selectedSlide.data);
+    if(presUpd.code === HTTP_CODES.OK && slideUpd.code === HTTP_CODES.OK) {
+        //Tell user pres has saved
+        console.log("Signal to user that presentation is updated");
+    } else {
+        //tell user that changes are only local
+        console.log("signal to user that presentation did not update?")
+    }
 }
