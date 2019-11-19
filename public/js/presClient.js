@@ -37,7 +37,7 @@ let currentPres = {
 }
 
 let selectedSlide = {
-    ID: "",
+    slideid: "",
     data: {}
 }
 
@@ -300,33 +300,25 @@ function displaySlide() {
     let tmp1 = document.getElementById(`temp-slide${slideType}`).content.cloneNode(true);
     switch (slideType) {
         case "A":
-            let slideTitle = tmp1.querySelector(".title");
-            slideTitle.value = selectedSlide.data.title;
-            slideTitle.addEventListener("input", (e) => {
-                selectedSlide.data.title = slideTitle.value;
-                runUpdateTimer();
+            tmp1.querySelector(".title").value = selectedSlide.data.text;
+            tmp1.querySelector(".title").addEventListener("input", (e) => {
+                changeSlideText(selectedSlide, e.target.value);
             });
-
-            divSelectedSlide.appendChild(slideTitle);
+            divSelectedSlide.appendChild(tmp1);
             break;
         case "B":
-            let slideText = tmp1.querySelector(".slide__text");
-            slideText.value = selectedSlide.data.text;
-            slideText.addEventListener("input", (e) => {
-                selectedSlide.data.text = slideTitle.value;
-                runUpdateTimer();
+            tmp1.querySelector(".slide__text").value = selectedSlide.data.text;
+            tmp1.querySelector(".slide__text").addEventListener("input", (e) => {
+                changeSlideText(selectedSlide, e.target.value);
             });
-            divSelectedSlide.appendChild(slideText);
-            let imageLink = tmp1.querySelector(".image__link");
-            let slideImage = tmp1.querySelector(".slide__image");
-            imageLink.value = selectedSlide.data.image;
-            imageLink.addEventListener("change", (e) => {
-                slideImage.src = imageLink.value;
+
+            tmp1.querySelector(".image__link").value = selectedSlide.data.image;
+            tmp1.querySelector(".slide__image").src = selectedSlide.data.image;
+            tmp1.querySelector(".image__link").addEventListener("change", (e) => {
+                changeImage(selectedSlide, e.target.parentNode.children[3], e.target.value); //doesn't look the cleanest but works
             });
-            slideImage.src = imageLink.value;
-            divSelectedSlide.appendChild(imageLink);
-            divSelectedSlide.appendChild(slideImage);
-            
+
+            divSelectedSlide.appendChild(tmp1);
             break;
         case "C":
             break;
@@ -373,14 +365,14 @@ async function loadEditView() {
                 });
                 slideList.appendChild(tmp1);
             }
-            selectedSlide.ID = slides.data[0].slideid;
+            selectedSlide.slideid = slides.data[0].slideid;
             selectedSlide.data = slides.data[0].data;
 
             displaySlide();
         } else {
             console.log("show text");
         }
-    } else if(slides.code === HTTP_CODES.NOT_FOUND) {
+    } else if (slides.code === HTTP_CODES.NOT_FOUND) {
         divSelectedSlide.innerHTML = "This presentation has no slides yet";
     }
 }
@@ -403,6 +395,17 @@ function changeBgColor(slide, selectedColor) {
     slide.data.bgColor = selectedColor;
 }
 
+function changeSlideText(slideToChange, slideText) {
+    slideToChange.data.text = slideText;
+    runUpdateTimer();
+}
+
+function changeImage(slideToChange, slideImage, imageLink) {
+    slideToChange.data.image = imageLink;
+    slideImage.src = imageLink;
+    runUpdateTimer();
+}
+
 function hideAllPages(pages, divs) {
     for (let page of pages) {
         page.style.display = "none";
@@ -418,10 +421,6 @@ function clearDiv(div) {
     while (div.firstChild) {
         div.removeChild(div.firstChild);
     }
-}
-
-function updateSlide() {
-    restAPI.updateSlide(selectedSlide.ID, selectedSlide.data);
 }
 
 function changePresName() {
@@ -445,7 +444,7 @@ function runUpdateTimer() {
 async function updatePresentation() {
     //Tell user that pres is saving
     let presUpd = await restAPI.updatePresentation(currentPres.ID, currentPres.name, currentPres.theme);
-    let slideUpd = await restAPI.updateSlide(selectedSlide.ID, selectedSlide.data);
+    let slideUpd = await restAPI.updateSlide(selectedSlide.slideid, selectedSlide.data);
     if (presUpd.code === HTTP_CODES.OK && slideUpd.code === HTTP_CODES.OK) {
         //Tell user pres has saved
         console.log("Signal to user that presentation is updated");
