@@ -39,6 +39,13 @@ function showEditView(){
     divSelectedSlide.style = "display:flex";
 }
 
+function showPublicPresPage(){
+    emptyTxtResult();
+    hideAllPages(pageList, divList);
+    presOverview.style = "display:flex";
+    document.querySelector("header").style = "display:flex";
+}
+
 function hideAllPages(pages, divs) {
     for (let page of pages) {
         page.style.display = "none";

@@ -96,6 +96,6 @@ route.put('/:presentationID/unshare', sharing.unshareWithUser);
 route.get('/:userID/shared-with-me', sharing.sharedWithMe);
 
 //Get public presentations
-route.get('/public', sharing.publicPresentations);
+route.get('/:userID/public', sharing.publicPresentations);
 
 module.exports = route;

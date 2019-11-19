@@ -206,9 +206,9 @@ const restAPI = {
         }
     },
 
-    getPublicPresentations: async function () {
+    getPublicPresentations: async function (userID) {
         try {
-            let resp = await fetch(`/presentation/public`);
+            let resp = await fetch(`/presentation/${userID}/public`);
             let data = await resp.json();
             return data;
         } catch (error) {
@@ -234,13 +234,48 @@ async function loadPresOverview(isShared) {
     userPresentations = [];
     let presentations = null;
     if (isShared) {
-        presentations = await restAPI.getSharedWithMePresentations(3);
+        presentations = await restAPI.getSharedWithMePresentations(currentUser.ID);
         presOverview.querySelector("h1").innerHTML = "Shared with me"
+        document.getElementById("overview-create-pres-btn").style = "display:none";
     } else {
-        presentations = await restAPI.getPresentations(1);
+        presentations = await restAPI.getPresentations(currentUser.ID);
         presOverview.querySelector("h1").innerHTML = "My Presentations"
+        document.getElementById("overview-create-pres-btn").style = "display:auto";
     }
-    //need to transfer the ID of the current user (from local storage)
+    if (presentations.code === HTTP_CODES.OK) {
+        for (let presentation of presentations.presentations) {
+            userPresentations.push(presentation);
+            let tmp1 = document.getElementById('overviewTemp').content.cloneNode(true);
+
+            tmp1.querySelector("div").addEventListener("click", function (e) {
+                initEditPresentation(e);
+            });
+            tmp1.querySelector(".overview-presname").innerText = presentation.name;
+            tmp1.querySelector(".overview-slides").innerText += presentation.slides.length;
+            tmp1.querySelector(".overview-theme").innerText += presentation.theme;
+            tmp1.querySelector(".overview-hiddenid").innerText = presentation.presentationid;
+            if (presentation.public == true) {
+                tmp1.querySelector(".overview-public-status").innerText += "Public";
+            }
+            else {
+                tmp1.querySelector(".overview-public-status").innerText += "Private";
+            }
+            let lastUpdated = splitTime(presentation.last_updated);
+            tmp1.querySelector(".overview-last-updated").innerText += `${lastUpdated.date}, ${lastUpdated.clock}`;
+            presContainer.appendChild(tmp1);
+        }
+    } else {
+        presContainer.innerHTML = `Error ${presentations.code}, ${presentations.msg}`; //Should be a describing error message
+    }
+
+}
+
+async function loadPublicPresentations(){
+    showPublicPresPage();
+    userPresentations = [];
+    let presentations = await restAPI.getPublicPresentations(currentUser.ID);
+    presOverview.querySelector("h1").innerHTML = "Public Presentations"
+    document.getElementById("overview-create-pres-btn").style = "display:none";
     if (presentations.code === HTTP_CODES.OK) {
         for (let presentation of presentations.presentations) {
             userPresentations.push(presentation);
@@ -261,13 +296,11 @@ async function loadPresOverview(isShared) {
             }
 
             let lastUpdated = splitTime(presentation.last_updated);
-
             tmp1.querySelector(".overview-last-updated").innerText += `${lastUpdated.date}, ${lastUpdated.clock}`;
-
             presContainer.appendChild(tmp1);
         }
     } else {
-        presContainer.innerHTML = `Error ${presentations.code}, ${presentations.msg}`; //Should be a describing error message
+        presContainer.innerHTML = `Error ${presentations.code}, ${presentations.msg}`;
     }
 
 }
