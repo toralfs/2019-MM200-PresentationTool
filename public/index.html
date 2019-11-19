@@ -156,47 +156,16 @@
         </main>
     </div>
 
-
+    <script src="js/inputValidation.js"></script>
+    <script src="js/changePage.js"></script>
     <script src="js/mobile.js"></script>
     <script src="js/presClient.js"></script>
     <script src="js/userClient.js"></script>
-    <script src="js/inputValidation.js"></script>
     <a href="presClient.html">PresClient</a>
 </body>
 
 <script>
     let inputValidation = new InputValidation();
-
-    let startPage = document.getElementById('startPage');
-    let userPage = document.getElementById('userPage');
-    let presentationPage = document.getElementById('presentation');
-
-    //Functions to switch between pages--------------------------
-    function showUserPage() {
-        emptyTxtResult();
-        startPage.style = "display:none";
-        userPage.style = "display:flex";
-        //presentationPage.style = "display:none";
-        document.querySelector("header").style = "display:flex";
-    }
-
-    function showStartPage() {
-        emptyTxtResult();
-        startPage.style = "display:flex";
-        userPage.style = "display:none";
-        //presentationPage.style = "display:none";
-        document.querySelector("header").style = "display:none";
-    }
-
-    function showPresentationPage() {
-        emptyTxtResult();
-        loadPresOverview();
-        startPage.style = "display:none";
-        userPage.style = "display:none";
-        //presentationPage.style = "display:flex";
-        document.querySelector("header").style = "display:flex";
-    }
-
 </script>
 
 </html>

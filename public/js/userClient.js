@@ -127,7 +127,7 @@ function retrieveCredentials() {
     let data = localStorage.getItem("userCredentials");
     if (data) {
         currentUser = JSON.parse(data);
-        showPresentationPage();
+        showPresentationOverview();
     }
     else {
         currentUser.ID = "";
@@ -148,7 +148,7 @@ async function createUser() {
             inpNameUpdate.value = currentUser.username;
             inpEmailUpdate.value = currentUser.email;
             saveCredentials();
-            showPresentationPage();
+            showPresentationOverview();
         }
     }
 }
@@ -163,7 +163,7 @@ async function loginUser() {
         inpNameUpdate.value = currentUser.username;
         inpEmailUpdate.value = currentUser.email;
         saveCredentials();
-        showPresentationPage();
+        showPresentationOverview();
     }
 }
 
