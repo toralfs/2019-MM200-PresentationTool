@@ -79,8 +79,8 @@ async function shareWithUser(req,res){
 
 async function unshareWithUser(req,res){
     try{
-        if(req.body.username && req.params.presentationID){
-            let user = await db.getUserByName(req.body.username);
+        if(req.body.userID && req.params.presentationID){
+            let user = await db.getUserByName(req.body.userID);
             let presentation = await db.getPresentationByID(req.params.presentationID);
             if(user && user.userid != presentation.ownerid){
                 let unshared = await db.unsharePresentationWithUser(req.params.presentationID, user.userid);
@@ -95,7 +95,7 @@ async function unshareWithUser(req,res){
                 }
             }
             else{
-                res.status(HTTP_CODES.NOT_FOUND).json({code: HTTP_CODES.NOT_FOUND, msg: `User '${req.body.username}' not found`});
+                res.status(HTTP_CODES.NOT_FOUND).json({code: HTTP_CODES.NOT_FOUND, msg: `User not found`});
             }
         }
         else{
@@ -111,7 +111,7 @@ async function sharedWithMe(req,res){
     try{
         let sharedPres = await db.getSharedWithMe(req.params.userID);
         if(sharedPres && sharedPres.length > 0){
-            res.status(HTTP_CODES.OK).json({code: HTTP_CODES.OK, sharedPresentations: sharedPres});
+            res.status(HTTP_CODES.OK).json({code: HTTP_CODES.OK, presentations: sharedPres});
         }
         else{
             res.status(HTTP_CODES.NOT_FOUND).json({code: HTTP_CODES.NOT_FOUND, msg: `No shared presentations.`});
