@@ -62,13 +62,20 @@ h1{
     margin-top: 2%;
 }
 
-#overview-create-pres-btn{
-    position: absolute;
-    left: 60%;
-
-}
-
 .overview-presname{
     font-size: 2vw;
     margin-bottom: 5vm;
+}
+
+#overview-create-pres-btn{
+    cursor: pointer;
+    border: none;
+    padding: 0.5vh;
+    margin: 0.5vh;
+    font-size: 1.5vw;
+    height: 6vh;
+    width: 20vw;
+    align-self: center;
+    background-color: black;
+    color: burlywood;
 }
