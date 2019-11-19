@@ -6,151 +6,216 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Presentation</title>
     <link rel="stylesheet" type="text/css" href="css/user-style.css">
-    <script src = "js/userClient.js"></script>
-    <script src = "js/presentationClient.js"></script>
-    <script src = "js/inputValidation.js"></script>
+    <script src="js/userClient.js"></script>
+    <script src="js/presentationClient.js"></script>
+    <script src="js/inputValidation.js"></script>
 </head>
 
 <body>
-    <div id="container">
-        <div id="startPage">
-            <h1 id="startPageTitle">PRESENTATION TOOL</h1>
-            <h3 id="startWelcomeMessage">Welcome to our new presentation tool! Please create an account or log in to proceed.</h3>
-            <div id="register" class="start">
-                <h3>Create a new user account</h3>
-                <input type="text" minlength="3" id="inpNameCreate" pattern="[A-Za-z0-9]+" placeholder="Username"><br>
-                <input type="email" id="inpEmailCreate" placeholder="E-mail"><br>
-                <input type="password" minlength="4" id="inpPasswordCreate" placeholder="Password">
-                <br><br>
-                <button class="userButtons" id="btnCreate">Create user</button>
-                <h3 id="txtResultCreate"></h3>
-            </div>
-
-            <div id="login" class="start">
-                <h3>Already have an account?<br>Log in here!</h3>
-                <input type="text" id="inpNameLogin" placeholder="Username"><br>
-                <input type="password" id="inpPasswordLogin" placeholder="Password">
-                <br><br>
-                <button class="userButtons" id="btnLogin">Login</button>
-                <h3 id="txtResultLogin"></h3>
-            </div>
+    <template id="overviewTemp">
+        <div class="overview-clickablediv">
+            <h2 class="overview-presname"></h2>
+            <p class="overview-slides">Slides: </p>
+            <p class="overview-theme">Theme: </p>
+            <p class="overview-public-status">Sharing: </p>
+            <p class="overview-last-updated">Last updated: </p>
+            <div class="overview-hiddenid" hidden="true"></div>
         </div>
+    </template>
 
-        <div id="logout" style="display:none">
-                <button class="userButtons" id="btnLogout">Logout</button>
+    <template id=edit-slideoverview-temp>
+        <li class="edit-slideoverview"></li>
+    </template>
+
+    <template id="temp-slideA">
+        <div class="slideA-container">
+            <input type="text" class="title" />
         </div>
+    </template>
 
-        <div id="userPage" style="display:none">
-            <h2 id="accountPageTitle">Account settings</h2>
-            <div id="update" class="userEdit">
-                <h3>Update account</h3>
-                <label for="inpNameUpdate">Username</label><br>
-                <input type="text" minlength="3" id="inpNameUpdate" pattern="[A-Za-z0-9]+" placeholder="Update username"><br>
-                <label for="inpEmailUpdate">Email</label><br>
-                <input type="email" id="inpEmailUpdate" placeholder="Update email"><br>
-                <label for="inpPasswordUpdate">Password</label><br>
-                <input type="text" minlength="4" id="inpPasswordUpdate" placeholder="Update password">
-                <br><br>
-                <button class="userButtons" id="btnUpdate">Update user account</button>
-                <h3 id="txtResultUpdate"></h3>
-            </div>
-
-            <div id="delete" class="userEdit">
-                <h3>Other settings</h3>
-                <button class="userButtons" id="btnDelete">Delete this account</button>
-                <h3 id="txtResultDelete"></h3>
-            </div>
+    <template id="temp-slideB">
+        <div class="slideA-container">
+            <!-- slide type b content -->
         </div>
+    </template>
 
+    <template id="temp-slideC">
+        <div class="slideA-container">
+            <!-- slide type c content -->
+        </div>
+    </template>
+
+    <header style="display:none">
+        <a href="#overview" class="logo">
+            <img class="logo" src="images/logo.svg" alt="logo">
+        </a>
+        <nav id="navbar">
+            <ul class="nav__links">
+                <li><a href="#overview" onclick="loadPresOverview(false)">My presentations</a></li>
+                <li><a href="#overview" onclick="loadPresOverview(true)">Shared with me</a></li>
+            </ul>
+        </nav>
+        <a class="cta" href="#account" onclick=showUserPage()>User</a>
+        <a class="cta" href="#" onclick=logoutUser()>Logout</a>
+        <p onclick="openNav()" class="menu cta">Menu</p>
+    </header>
+
+    <div id="mobile__menu" class="overlay">
+        <a class="close" onclick="closeNav()">&times;</a>
+        <div class="overlay__content">
+            <a href="#overview" onclick="loadPresOverview(false), closeNav()">My presentations</a>
+            <a href="#overview" onclick="loadPresOverview(true), closeNav()">Shared with me</a>
+        </div>
     </div>
 
-    <div id="presentation" style="display: none;">
-        <div id="createPres">
-            <input type="text" minlength="3" id="inpPresNameCreate" pattern="^[A-Za-z0-9\s]+$" placeholder="Presentation name">
-            <button id="btnCreatePres">Create new presentation!</button>
-            <h3 id="txtResultCreatePres"></h3>
-        </div>
+    <div id="container">
+        <main>
+            <div id="startPage">
+                <h1 id="startPageTitle">PRESENTATION TOOL</h1>
+                <h3 id="startWelcomeMessage">Welcome to our new presentation tool! Please create an account or log in to
+                    proceed.</h3>
+                <div id="register" class="start">
+                    <h3>Create a new user account</h3>
+                    <input type="text" minlength="3" id="inpNameCreate" pattern="[A-Za-z0-9]+"
+                        placeholder="Username"><br>
+                    <input type="email" id="inpEmailCreate" placeholder="E-mail"><br>
+                    <input type="password" minlength="4" id="inpPasswordCreate" placeholder="Password">
+                    <br><br>
+                    <button class="userButtons" id="btnCreate" onclick=createUser()>Create user</button>
+                    <h3 id="txtResultCreate"></h3>
+                </div>
 
-        <div id="updatePres">
+                <div id="login" class="start">
+                    <h3>Already have an account?<br>Log in here!</h3>
+                    <input type="text" id="inpNameLogin" placeholder="Username"><br>
+                    <input type="password" id="inpPasswordLogin" placeholder="Password">
+                    <br><br>
+                    <button class="userButtons" id="btnLogin" onclick=loginUser()>Login</button>
+                    <h3 id="txtResultLogin"></h3>
+                </div>
+            </div>
+
+
+            <div id="userPage" style="display:none">
+                <h2 id="accountPageTitle">Account settings</h2>
+                <div id="update" class="userEdit">
+                    <h3>Update account</h3>
+                    <label for="inpNameUpdate">Username</label><br>
+                    <input type="text" minlength="3" id="inpNameUpdate" pattern="[A-Za-z0-9]+"
+                        placeholder="Update username"><br>
+                    <label for="inpEmailUpdate">Email</label><br>
+                    <input type="email" id="inpEmailUpdate" placeholder="Update email"><br>
+                    <label for="inpPasswordUpdate">Password</label><br>
+                    <input type="text" minlength="4" id="inpPasswordUpdate" placeholder="Update password">
+                    <br><br>
+                    <button class="userButtons" id="btnUpdate" onclick=updateUser()>Update user account</button>
+                    <h3 id="txtResultUpdate"></h3>
+                </div>
+
+                <div id="delete" class="userEdit">
+                    <h3>Other settings</h3>
+                    <button class="userButtons" id="btnDelete" onclick=deleteUser()>Delete this account</button>
+                </div>
+            </div>
+
+
+            <div id="overview" class="page" style="display: none;">
+                <h1></h1>
+                <div id="presContainer"></div>
+                <button id="overview-create-pres-btn" onclick=createPresentation()>&plus;</button>
+            </div>
+
+            <div id="editview" class="page" style="display: none;">
+                <ul id="slide__list"></ul>
+                <div id="editButtons">
+                    <button id="add-slide">Add slide</button>
+                    <button id="remove-slide">Remove slide</button>
+                    <label for="theme-selection">Select theme: </label>
+                    <select id="theme-selection">
+                        <!-- Some options -->
+                    </select>
+                </div>
+
+                <div id="presToEdit">
+                    <input id="presName" type="text" oninput="changePresName()" />
+                    <div id="selectedSlide">
+                        <!-- contains slide from template -->
+                    </div>
+                </div>
+            </div>
+
+            <!--Maybe part of the template(?)
+    <div id="updatePres">
             <input type="text" minlength="3" id="inpPresNameUpdate" pattern="^[A-Za-z0-9\s-]+$" placeholder="Presentation name">
-            <button id="btnUpdatePres">Update presentation</button>
+            <button id="btnUpdatePres" onclick=updatePresentation()>Update presentation</button>
             <h3 id="txtResultUpdatePres">
         </div>
 
         <div id="deletePres">
-            <button id="btnDeletePres">Delete presentation</button>
-            <h3 id="txtResultDeletePres"></h3>
+            <button id="btnDeletePres" onclick=deletePresentation()>Delete presentation</button>
         </div>
+    -->
+        </main>
     </div>
-    
 
+
+    <script src="js/mobile.js"></script>
+    <script src="js/presClient.js"></script>
     <a href="presClient.html">PresClient</a>
 </body>
 
 <script>
 
-    const HTTP_CODES = {
-        OK: 200,
-        CREATED: 201,
-        BAD_REQUEST: 400,
-        NOT_FOUND: 404,
-        CONFLICT: 409
-    }
 
     // ------------------------- USERS --------------------------
     let startPage = document.getElementById('startPage');
     let userPage = document.getElementById('userPage');
-    let logoutDiv = document.getElementById('logout');
 
     let inpNameCreate = document.getElementById('inpNameCreate');
-    let inpEmailCreate = document.getElementById('inpEmailCreate');    
+    let inpEmailCreate = document.getElementById('inpEmailCreate');
     let inpPasswordCreate = document.getElementById('inpPasswordCreate');
-    let btnCreate = document.getElementById('btnCreate');
     let txtResultCreate = document.getElementById('txtResultCreate');
 
     let inpNameLogin = document.getElementById('inpNameLogin');
     let inpPasswordLogin = document.getElementById('inpPasswordLogin');
-    let btnLogin = document.getElementById('btnLogin');
     let txtResultLogin = document.getElementById('txtResultLogin');
 
     let inpNameUpdate = document.getElementById('inpNameUpdate');
-    let inpEmailUpdate = document.getElementById('inpEmailUpdate');    
+    let inpEmailUpdate = document.getElementById('inpEmailUpdate');
     let inpPasswordUpdate = document.getElementById('inpPasswordUpdate');
-    let btnUpdate = document.getElementById('btnUpdate');
     let txtResultUpdate = document.getElementById('txtResultUpdate');
-
-    let btnDelete = document.getElementById('btnDelete');
-    let txtResultDelete = document.getElementById('txtResultDelete');
-
-    let btnLogout = document.getElementById('btnLogout');
 
     let currentUser = {};
 
     let userClient = new UserClient();
     let inputValidation = new InputValidation();
 
+    // -------------------- PRESENTATIONS --------------------------------
+    let presentationPage = document.getElementById('presentation');
+
+    //---------------------------USER FUNCTIONS--------------------------------------
     //Automatically login if the user did not logout from the previous session
     retrieveCredentials();
 
     //------------------------------------------
-    btnCreate.addEventListener('click', async function(evt) {
-        if(inputValidation.validName(txtResultCreate, inpNameCreate) && inputValidation.validEmail(txtResultCreate,inpEmailCreate) 
-            && inputValidation.validPassword(txtResultCreate, inpPasswordCreate)){
+    async function createUser() {
+        if (inputValidation.validName(txtResultCreate, inpNameCreate) && inputValidation.validEmail(txtResultCreate, inpEmailCreate)
+            && inputValidation.validPassword(txtResultCreate, inpPasswordCreate)) {
             let currentData = await userClient.createUser(txtResultCreate, "/user", inpNameCreate.value, inpEmailCreate.value, inpPasswordCreate.value);
-            if(currentData.code == HTTP_CODES.CREATED){
+            if (currentData.code == HTTP_CODES.CREATED) {
                 currentUser.ID = currentData.userID;
                 currentUser.username = currentData.userName;
                 currentUser.email = currentData.userEmail;
                 inpNameUpdate.value = currentUser.username;
                 inpEmailUpdate.value = currentUser.email;
                 saveCredentials();
-                showUserPage();
+                showPresentationPage();
             }
         }
-    });
-    
+    }
+
     //----------------------------------------
-    btnLogin.addEventListener('click', async function (evt) {
+    async function loginUser() {
         let currentData = await userClient.loginUser(txtResultLogin, "/user/auth", inpNameLogin.value, inpPasswordLogin.value);
         if (currentData.code == HTTP_CODES.OK) {
             currentUser.ID = currentData.userID;
@@ -159,12 +224,12 @@
             inpNameUpdate.value = currentUser.username;
             inpEmailUpdate.value = currentUser.email;
             saveCredentials();
-            showUserPage();
-        }        
-    });
+            showPresentationPage();
+        }
+    }
 
     //---------------------------------------
-    btnUpdate.addEventListener('click', async function (evt) {
+    async function updateUser() {
         if (inputValidation.validName(txtResultUpdate, inpNameUpdate) && inputValidation.validEmail(txtResultUpdate, inpEmailUpdate)
             && inputValidation.validPassword(txtResultUpdate, inpPasswordUpdate)) {
             let currentData = await userClient.updateUser(txtResultUpdate, `/user/${currentUser.ID}`, inpNameUpdate.value, inpEmailUpdate.value, inpPasswordUpdate.value);
@@ -177,27 +242,30 @@
             }
             inpPasswordUpdate.value = "";
         }
-    });
+    }
 
     //------------------------------------------
-    btnDelete.addEventListener('click', function (evt) {
-        if (window.confirm("Are you sure you want to delete this account?")) { 
-            userClient.deleteUser(txtResultDelete, `/user/${currentUser.ID}`);
-            currentUser = {};
-            emptyInputs();
-            showStartPage();
-            localStorage.clear();
+    function deleteUser() {
+        if (window.confirm("Are you sure you want to delete this account?")) {
+            let del = userClient.deleteUser(`/user/${currentUser.ID}`);
+            if (del.code == HTTP_CODES.OK) {
+                currentUser = {};
+                emptyInputs();
+                showStartPage();
+                localStorage.clear();
+            }
         }
-    });
+    }
 
     //-----------------------------------------
-    btnLogout.addEventListener('click', function(evt){
+    function logoutUser() {
         currentUser = {};
         emptyInputs();
         showStartPage();
         localStorage.clear();
-    });
+    }
 
+    //-----------------------
     function emptyInputs() {
         let inputs = document.querySelectorAll("input");
         for (let i of inputs) {
@@ -205,80 +273,53 @@
         }
     }
 
+    //----------------------
     function emptyTxtResult() {
         txtResultCreate.innerHTML = "";
         txtResultLogin.innerHTML = "";
         txtResultUpdate.innerHTML = "";
-        txtResultDelete.innerHTML = "";
     }
 
     //Store user credentials in Local Storage-------------------------------
-    function saveCredentials(){
-        localStorage.setItem("userCredentials",JSON.stringify(currentUser));
+    function saveCredentials() {
+        localStorage.setItem("userCredentials", JSON.stringify(currentUser));
     }
 
-    function retrieveCredentials(){
+    function retrieveCredentials() {
         let data = localStorage.getItem("userCredentials");
-        if(data){
+        if (data) {
             currentUser = JSON.parse(data);
-            showUserPage();
+            showPresentationPage();
         }
-        else{
+        else {
             currentUser.ID = "";
             currentUser.username = "";
             currentUser.email = "";
         }
     }
 
-
-    // -------------------- PRESENTATIONS --------------------------------
-    let inpPresNameCreate = document.getElementById('inpPresNameCreate');
-    let btnCreatePres = document.getElementById('btnCreatePres');
-    let txtResultCreatePres = document.getElementById('txtResultCreatePres');
-
-    let inpPresNameUpdate = document.getElementById('inpPresNameUpdate');
-    let btnUpdatePres = document.getElementById('btnUpdatePres');
-    let txtResultUpdatePres = document.getElementById('txtResultUpdatePres');
-
-    let btnDeletePres = document.getElementById('btnDeletePres');
-    let txtResultDeletePres = document.getElementById('txtResultDeletePres');
-
-    let currentPres = {
-        ID: "",
-        owner: "",
-        theme: ""
-    }
-
-    let presentationClient = new PresentationClient();
-
-    //-----------------------------------
-    btnCreatePres.addEventListener('click', function (evt) {
-        //need to figure out how to send the theme as a parameter
-    });
-
-    btnUpdatePres.addEventListener('click', function (evt) {
-        //need to figure out how to send the theme as a parameter
-    });
-
-    //-------------------------------------
-    btnDeletePres.addEventListener('click', function (evt) {
-        presentationClient.deletePresentation(txtResultDeletePres, `/presentation/${currentPres.ID}`);
-    });
-
-
     //Functions to switch between pages--------------------------
     function showUserPage() {
         emptyTxtResult();
         startPage.style = "display:none";
         userPage.style = "display:flex";
-        logoutDiv.style = "display:flex";
+        document.querySelector("header").style = "display:flex";
     }
 
-    function showStartPage(){
+    function showStartPage() {
         emptyTxtResult();
         startPage.style = "display:flex";
         userPage.style = "display:none";
-        logoutDiv.style = "display:none";
+        document.querySelector("header").style = "display:none";
+    }
+
+    function showPresentationPage() {
+        emptyTxtResult();
+        loadPresOverview();
+        startPage.style = "display:none";
+        userPage.style = "display:none";
+        //presentationPage.style = "display:flex";
+        document.querySelector("header").style = "display:flex";
     }
 
 </script>
