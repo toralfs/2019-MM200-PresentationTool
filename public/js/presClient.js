@@ -1,7 +1,3 @@
-// ------------ Pages -------------------------
-
-
-// --------------- other ----------------------------
 let presToEdit = document.getElementById("presToEdit"); //Do I need this?
 let presName = document.getElementById("presName");
 
@@ -233,9 +229,9 @@ const restAPI = {
 
 
 async function loadPresOverview(isShared) {
-    userPresentations = [];
     showPresentationOverview();
 
+    userPresentations = [];
     let presentations = null;
     if (isShared) {
         presentations = await restAPI.getSharedWithMePresentations(3);

@@ -128,6 +128,7 @@ function retrieveCredentials() {
     if (data) {
         currentUser = JSON.parse(data);
         showPresentationOverview();
+        loadPresOverview();
     }
     else {
         currentUser.ID = "";
@@ -149,6 +150,7 @@ async function createUser() {
             inpEmailUpdate.value = currentUser.email;
             saveCredentials();
             showPresentationOverview();
+            loadPresOverview();
         }
     }
 }
@@ -164,6 +166,7 @@ async function loginUser() {
         inpEmailUpdate.value = currentUser.email;
         saveCredentials();
         showPresentationOverview();
+        loadPresOverview();
     }
 }
 
