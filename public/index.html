@@ -6,34 +6,44 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Presentation</title>
     <link rel="stylesheet" type="text/css" href="css/user-style.css">
-    <script src = "js/userClient.js"></script>
-    <script src = "js/presentationClient.js"></script>
-    <script src = "js/inputValidation.js"></script>
+    <script src="js/userClient.js"></script>
+    <script src="js/presentationClient.js"></script>
+    <script src="js/inputValidation.js"></script>
 </head>
 
 <body>
-    <div id="startPage">
-        <h1 id="startPageTitle">PRESENTATION TOOL</h1>
-        <h3 id="startWelcomeMessage">Welcome to our new presentation tool! Please create an account or log in to proceed.</h3>
-        <div id="register" class="start">
-            <h3>Create a new user account</h3>
-            <input type="text" minlength="3" id="inpNameCreate" pattern="[A-Za-z0-9]+" placeholder="Username"><br>
-            <input type="email" id="inpEmailCreate" placeholder="E-mail"><br>
-            <input type="password" minlength="4" id="inpPasswordCreate" placeholder="Password">
-            <br><br>
-            <button class="userButtons" id="btnCreate" onclick=createUser()>Create user</button>
-            <h3 id="txtResultCreate"></h3>
+    <template id="overviewTemp">
+        <div class="overview-clickablediv">
+            <h2 class="overview-presname"></h2>
+            <p class="overview-slides">Slides: </p>
+            <p class="overview-theme">Theme: </p>
+            <p class="overview-public-status">Sharing: </p>
+            <p class="overview-last-updated">Last updated: </p>
+            <div class="overview-hiddenid" hidden="true"></div>
         </div>
+    </template>
 
-        <div id="login" class="start">
-            <h3>Already have an account?<br>Log in here!</h3>
-            <input type="text" id="inpNameLogin" placeholder="Username"><br>
-            <input type="password" id="inpPasswordLogin" placeholder="Password">
-            <br><br>
-            <button class="userButtons" id="btnLogin" onclick=loginUser()>Login</button>
-            <h3 id="txtResultLogin"></h3>
+    <template id=edit-slideoverview-temp>
+        <li class="edit-slideoverview"></li>
+    </template>
+
+    <template id="temp-slideA">
+        <div class="slideA-container">
+            <input type="text" class="title" />
         </div>
-    </div>
+    </template>
+
+    <template id="temp-slideB">
+        <div class="slideA-container">
+            <!-- slide type b content -->
+        </div>
+    </template>
+
+    <template id="temp-slideC">
+        <div class="slideA-container">
+            <!-- slide type c content -->
+        </div>
+    </template>
 
     <header style="display:none">
         <a href="#overview" class="logo">
@@ -50,44 +60,91 @@
         <p onclick="openNav()" class="menu cta">Menu</p>
     </header>
 
-    <div id="userPage" style="display:none">
-        <h2 id="accountPageTitle">Account settings</h2>
-        <div id="update" class="userEdit">
-            <h3>Update account</h3>
-            <label for="inpNameUpdate">Username</label><br>
-            <input type="text" minlength="3" id="inpNameUpdate" pattern="[A-Za-z0-9]+" placeholder="Update username"><br>
-            <label for="inpEmailUpdate">Email</label><br>
-            <input type="email" id="inpEmailUpdate" placeholder="Update email"><br>
-            <label for="inpPasswordUpdate">Password</label><br>
-            <input type="text" minlength="4" id="inpPasswordUpdate" placeholder="Update password">
-            <br><br>
-            <button class="userButtons" id="btnUpdate" onclick=updateUser()>Update user account</button>
-            <h3 id="txtResultUpdate"></h3>
-        </div>
-
-        <div id="delete" class="userEdit">
-            <h3>Other settings</h3>
-            <button class="userButtons" id="btnDelete" onclick=deleteUser()>Delete this account</button>
-        </div>
-    </div>
-  
-    <div id="presentation" style="display: none;">
-        <div id="container">
-            <main>
-                <div id="overview" class="page" style="display: none;">
-                    <h1></h1>
-                    <div id="presContainer"></div>
-                    <button id="overview-create-pres-btn" onclick=createPresentation()>&plus;</button>
-                </div>
-                <div id="editview" class="page" style="display: none;">
-                    <ul id="slide__list"></ul>
-                    <div id="editButtons"></div>
-                </div>
-            </main>
+    <div id="mobile__menu" class="overlay">
+        <a class="close" onclick="closeNav()">&times;</a>
+        <div class="overlay__content">
+            <a href="#overview" onclick="loadPresOverview(false), closeNav()">My presentations</a>
+            <a href="#overview" onclick="loadPresOverview(true), closeNav()">Shared with me</a>
         </div>
     </div>
 
-    <!--Maybe part of the template(?)
+    <div id="container">
+        <main>
+            <div id="startPage">
+                <h1 id="startPageTitle">PRESENTATION TOOL</h1>
+                <h3 id="startWelcomeMessage">Welcome to our new presentation tool! Please create an account or log in to
+                    proceed.</h3>
+                <div id="register" class="start">
+                    <h3>Create a new user account</h3>
+                    <input type="text" minlength="3" id="inpNameCreate" pattern="[A-Za-z0-9]+"
+                        placeholder="Username"><br>
+                    <input type="email" id="inpEmailCreate" placeholder="E-mail"><br>
+                    <input type="password" minlength="4" id="inpPasswordCreate" placeholder="Password">
+                    <br><br>
+                    <button class="userButtons" id="btnCreate" onclick=createUser()>Create user</button>
+                    <h3 id="txtResultCreate"></h3>
+                </div>
+
+                <div id="login" class="start">
+                    <h3>Already have an account?<br>Log in here!</h3>
+                    <input type="text" id="inpNameLogin" placeholder="Username"><br>
+                    <input type="password" id="inpPasswordLogin" placeholder="Password">
+                    <br><br>
+                    <button class="userButtons" id="btnLogin" onclick=loginUser()>Login</button>
+                    <h3 id="txtResultLogin"></h3>
+                </div>
+            </div>
+
+
+            <div id="userPage" style="display:none">
+                <h2 id="accountPageTitle">Account settings</h2>
+                <div id="update" class="userEdit">
+                    <h3>Update account</h3>
+                    <label for="inpNameUpdate">Username</label><br>
+                    <input type="text" minlength="3" id="inpNameUpdate" pattern="[A-Za-z0-9]+"
+                        placeholder="Update username"><br>
+                    <label for="inpEmailUpdate">Email</label><br>
+                    <input type="email" id="inpEmailUpdate" placeholder="Update email"><br>
+                    <label for="inpPasswordUpdate">Password</label><br>
+                    <input type="text" minlength="4" id="inpPasswordUpdate" placeholder="Update password">
+                    <br><br>
+                    <button class="userButtons" id="btnUpdate" onclick=updateUser()>Update user account</button>
+                    <h3 id="txtResultUpdate"></h3>
+                </div>
+
+                <div id="delete" class="userEdit">
+                    <h3>Other settings</h3>
+                    <button class="userButtons" id="btnDelete" onclick=deleteUser()>Delete this account</button>
+                </div>
+            </div>
+
+
+            <div id="overview" class="page" style="display: none;">
+                <h1></h1>
+                <div id="presContainer"></div>
+                <button id="overview-create-pres-btn" onclick=createPresentation()>&plus;</button>
+            </div>
+
+            <div id="editview" class="page" style="display: none;">
+                <ul id="slide__list"></ul>
+                <div id="editButtons">
+                    <button id="add-slide">Add slide</button>
+                    <button id="remove-slide">Remove slide</button>
+                    <label for="theme-selection">Select theme: </label>
+                    <select id="theme-selection">
+                        <!-- Some options -->
+                    </select>
+                </div>
+
+                <div id="presToEdit">
+                    <input id="presName" type="text" oninput="changePresName()" />
+                    <div id="selectedSlide">
+                        <!-- contains slide from template -->
+                    </div>
+                </div>
+            </div>
+
+            <!--Maybe part of the template(?)
     <div id="updatePres">
             <input type="text" minlength="3" id="inpPresNameUpdate" pattern="^[A-Za-z0-9\s-]+$" placeholder="Presentation name">
             <button id="btnUpdatePres" onclick=updatePresentation()>Update presentation</button>
@@ -98,70 +155,24 @@
             <button id="btnDeletePres" onclick=deletePresentation()>Delete presentation</button>
         </div>
     -->
-
-    <template id="overviewTemp">
-        <div class="overview-clickablediv">
-            <h2 class="overview-presname"></h2>
-            <p class="overview-slides">Slides: </p>
-            <p class="overview-theme">Theme: </p>
-            <p class="overview-public-status">Sharing: </p>
-            <p class="overview-last-updated">Last updated: </p>
-            <div class="overview-hiddenid" hidden="true"></div>
-        </div>
-    </template>
-    
-    <template id=edit-slideoverview-temp>
-        <li class="edit-slideoverview"></li>
-    </template>
-    
-    <template id="temp-slideA">
-        <div class="slideA-container">
-            <h1 class="title"></h1>
-        </div>
-    </template>
-    
-    <template id="temp-slideB">
-        <div class="slideA-container">
-            <!-- slide type b content -->
-        </div>
-    </template>
-    
-    <template id="temp-slideC">
-        <div class="slideA-container">
-            <!-- slide type c content -->
-        </div>
-    </template>
-
-    <div id="mobile__menu" class="overlay">
-        <a class="close" onclick="closeNav()">&times;</a>
-        <div class="overlay__content">
-            <a href="#">My presentations</a>
-            <a href="#">Shared with me</a>
-            <a href="#">Some other thing</a>
-            <a href="#overview" onclick="loadPresOverview(false), closeNav()">My presentations</a>
-            <a href="#overview" onclick="loadPresOverview(true), closeNav()">Shared with me</a>
-        </div>
+        </main>
     </div>
 
+
+    <script src="js/mobile.js"></script>
+    <script src="js/presClient.js"></script>
     <a href="presClient.html">PresClient</a>
 </body>
 
 <script>
 
-    const HTTP_CODES = {
-        OK: 200,
-        CREATED: 201,
-        BAD_REQUEST: 400,
-        NOT_FOUND: 404,
-        CONFLICT: 409
-    }
 
     // ------------------------- USERS --------------------------
     let startPage = document.getElementById('startPage');
     let userPage = document.getElementById('userPage');
 
     let inpNameCreate = document.getElementById('inpNameCreate');
-    let inpEmailCreate = document.getElementById('inpEmailCreate');    
+    let inpEmailCreate = document.getElementById('inpEmailCreate');
     let inpPasswordCreate = document.getElementById('inpPasswordCreate');
     let txtResultCreate = document.getElementById('txtResultCreate');
 
@@ -170,7 +181,7 @@
     let txtResultLogin = document.getElementById('txtResultLogin');
 
     let inpNameUpdate = document.getElementById('inpNameUpdate');
-    let inpEmailUpdate = document.getElementById('inpEmailUpdate');    
+    let inpEmailUpdate = document.getElementById('inpEmailUpdate');
     let inpPasswordUpdate = document.getElementById('inpPasswordUpdate');
     let txtResultUpdate = document.getElementById('txtResultUpdate');
 
@@ -182,24 +193,16 @@
     // -------------------- PRESENTATIONS --------------------------------
     let presentationPage = document.getElementById('presentation');
 
-    let currentPres = {
-        ID: "",
-        owner: "",
-        theme: ""
-    }
-    let userPresentations = [];
-    let presentationClient = new PresentationClient();
-
     //---------------------------USER FUNCTIONS--------------------------------------
     //Automatically login if the user did not logout from the previous session
     retrieveCredentials();
 
     //------------------------------------------
     async function createUser() {
-        if(inputValidation.validName(txtResultCreate, inpNameCreate) && inputValidation.validEmail(txtResultCreate,inpEmailCreate) 
-            && inputValidation.validPassword(txtResultCreate, inpPasswordCreate)){
+        if (inputValidation.validName(txtResultCreate, inpNameCreate) && inputValidation.validEmail(txtResultCreate, inpEmailCreate)
+            && inputValidation.validPassword(txtResultCreate, inpPasswordCreate)) {
             let currentData = await userClient.createUser(txtResultCreate, "/user", inpNameCreate.value, inpEmailCreate.value, inpPasswordCreate.value);
-            if(currentData.code == HTTP_CODES.CREATED){
+            if (currentData.code == HTTP_CODES.CREATED) {
                 currentUser.ID = currentData.userID;
                 currentUser.username = currentData.userName;
                 currentUser.email = currentData.userEmail;
@@ -210,7 +213,7 @@
             }
         }
     }
-    
+
     //----------------------------------------
     async function loginUser() {
         let currentData = await userClient.loginUser(txtResultLogin, "/user/auth", inpNameLogin.value, inpPasswordLogin.value);
@@ -222,7 +225,7 @@
             inpEmailUpdate.value = currentUser.email;
             saveCredentials();
             showPresentationPage();
-        }        
+        }
     }
 
     //---------------------------------------
@@ -243,9 +246,9 @@
 
     //------------------------------------------
     function deleteUser() {
-        if (window.confirm("Are you sure you want to delete this account?")) { 
+        if (window.confirm("Are you sure you want to delete this account?")) {
             let del = userClient.deleteUser(`/user/${currentUser.ID}`);
-            if(del.code == HTTP_CODES.OK){
+            if (del.code == HTTP_CODES.OK) {
                 currentUser = {};
                 emptyInputs();
                 showStartPage();
@@ -255,7 +258,7 @@
     }
 
     //-----------------------------------------
-    function logoutUser(){
+    function logoutUser() {
         currentUser = {};
         emptyInputs();
         showStartPage();
@@ -278,118 +281,21 @@
     }
 
     //Store user credentials in Local Storage-------------------------------
-    function saveCredentials(){
-        localStorage.setItem("userCredentials",JSON.stringify(currentUser));
+    function saveCredentials() {
+        localStorage.setItem("userCredentials", JSON.stringify(currentUser));
     }
 
-    function retrieveCredentials(){
+    function retrieveCredentials() {
         let data = localStorage.getItem("userCredentials");
-        if(data){
+        if (data) {
             currentUser = JSON.parse(data);
             showPresentationPage();
         }
-        else{
+        else {
             currentUser.ID = "";
             currentUser.username = "";
             currentUser.email = "";
         }
-    }
-
-    //---------------------------PRESENTATION FUNCTIONS--------------------------------------
-
-    //-----------------------------------
-    async function createPresentation() {
-        let createdPres = await presentationClient.createPresentation("/presentation", "New presentation", currentUser.ID, "default");
-        console.log(createdPres);
-        if (createdPres.code === HTTP_CODES.CREATED) {
-            //Load edit view with created presentation
-        }
-    }
-
-    function updatePresentation() {
-        //need to figure out how to send the theme as a parameter
-    }
-
-    //-------------------------------------
-    function deletePresentation() {
-        presentationClient.deletePresentation(txtResultDeletePres, `/presentation/${currentPres.ID}`);
-    }
-
-    function editPresentation(e) {
-        let presID = parseInt(e.currentTarget.querySelector("div").innerText);
-        let index = userPresentations.map(function (e) {
-            return e.presentationid;
-        }).indexOf(presID);
-        
-        currentPres.ID = userPresentations[index].presentationid;
-        currentPres.owner = userPresentations[index].ownerid;
-        currentPres.theme = userPresentations[index].theme;
-        console.log(currentPres);
-        hideAllPages(); //This seems like a bad idea
-        loadEditView(currentPres.ID);
-    }
-
-    async function loadEditView() {
-        window.location.href = "#editview";
-        editView.style.display = "block";
-        let slideList = document.getElementById("slide__list");
-        let slides = await presentationClient.getSlides('/presentation/slide/', currentPres.ID);
-        console.log(slides);
-        if (slides.code === HTTP_CODES.OK) {
-            for (let slide of slides.data) {
-                let tmp1 = document.getElementById("edit-slideoverview-temp").content.cloneNode(true);
-                tmp1.querySelector(".edit-slideoverview").innerText = `# ${slide.slideid}`;
-                slideList.appendChild(tmp1);
-            }
-        }
-    }
-
-    async function loadPresOverview(isShared) {
-        userPresentations = [];
-        let presOverview = document.getElementById("overview");
-        let presContainer = document.getElementById("presContainer");
-
-        presOverview.style="display: flex";
-
-        while (presContainer.firstChild) {
-            presContainer.removeChild(presContainer.firstChild);
-        }
-        let pres = null;
-        if (isShared) {
-            pres = await presentationClient.getPresentations(`/presentation/${currentUser.ID}/shared-with-me`);
-            presOverview.querySelector("h1").innerHTML = "Shared with me"
-        } else {
-            pres = await presentationClient.getPresentations(`/presentation/${currentUser.ID}`);
-            presOverview.querySelector("h1").innerHTML = "My Presentations"
-        }
-        if (pres.code === HTTP_CODES.OK) {
-            for (let presentation of pres.presentations) {
-                userPresentations.push(presentation);
-                let tmp1 = document.getElementById('overviewTemp').content.cloneNode(true);
-                tmp1.querySelector("div").addEventListener("click", function (e) {
-                    editPresentation(e);
-                });
-                tmp1.querySelector(".overview-presname").innerText = presentation.name;
-                tmp1.querySelector(".overview-slides").innerText += presentation.slides.length;
-                tmp1.querySelector(".overview-theme").innerText += presentation.theme;
-                tmp1.querySelector(".overview-hiddenid").innerText = presentation.presentationid;
-                if (presentation.public == true) {
-                    tmp1.querySelector(".overview-public-status").innerText += "Public";
-                }
-                else {
-                    tmp1.querySelector(".overview-public-status").innerText += "Private";
-                }
-                let lastUpdated = presentationClient.splitTime(presentation.last_updated);
-                tmp1.querySelector(".overview-last-updated").innerText += `${lastUpdated.date}, ${lastUpdated.clock}`;
-                presContainer.appendChild(tmp1);
-            }
-        } else {
-            presContainer.innerHTML = `Error ${pres.code}, ${pres.msg}`; //Should be a describing error message
-        }   
-    }
-    function hideAllPages() {
-        presOverview.style.display = "none";
-        editView.style.display = "none";
     }
 
     //Functions to switch between pages--------------------------
@@ -400,19 +306,19 @@
         document.querySelector("header").style = "display:flex";
     }
 
-    function showStartPage(){
+    function showStartPage() {
         emptyTxtResult();
         startPage.style = "display:flex";
         userPage.style = "display:none";
         document.querySelector("header").style = "display:none";
     }
 
-    function showPresentationPage(){
+    function showPresentationPage() {
         emptyTxtResult();
         loadPresOverview();
         startPage.style = "display:none";
         userPage.style = "display:none";
-        presentationPage.style = "display:flex";
+        //presentationPage.style = "display:flex";
         document.querySelector("header").style = "display:flex";
     }
 

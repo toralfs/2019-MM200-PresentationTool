@@ -296,7 +296,6 @@ async function createPresentation() {
 
 function displaySlide() {
     let tmp1 = document.getElementById(`temp-slide${selectedSlide.data.type}`).content.cloneNode(true);
-
     let slideTitle = tmp1.querySelector(".title");
     slideTitle.value = selectedSlide.data.title
     slideTitle.addEventListener("input", (e) => {
@@ -304,6 +303,7 @@ function displaySlide() {
         runUpdateTimer();
     });
     divSelectedSlide.appendChild(slideTitle);
+    console.log(slideTitle);
 }
 
 function initEditPresentation(e) {
@@ -324,8 +324,8 @@ function initEditPresentation(e) {
 async function loadEditView() {
     window.location.href = "#editview";
     hideAllPages(pageList, divList);
-    editView.style.display = "block";
-    divSelectedSlide.style.display = "block";
+    editView.style.display = "flex";
+    divSelectedSlide.style.display = "flex";
 
     presName.value = currentPres.name;
 
@@ -342,6 +342,7 @@ async function loadEditView() {
                     }).indexOf(parseInt(e.currentTarget.innerHTML.split(" ")[1]));
                     
                     selectedSlide = slides.data[index];
+                    console.log(selectedSlide);
                     displaySlide();
                 });
                 slideList.appendChild(tmp1);
