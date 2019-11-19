@@ -8,7 +8,6 @@
     <link rel="stylesheet" type="text/css" href="css/user-style.css">
     <link rel="stylesheet" type="text/css" href="css/navbar.css">
     <script src="js/userClient.js"></script>
-    <script src="js/presentationClient.js"></script>
     <script src="js/inputValidation.js"></script>
 </head>
 
@@ -35,8 +34,11 @@
     </template>
 
     <template id="temp-slideB">
-        <div class="slideA-container">
-            <!-- slide type b content -->
+        <div class="slideB-container">
+            <input type="text" class="slide__text"/>
+            <label for="imageLink">Image Link</label>
+            <input id="imageLink" type="text" class="image__link"/>
+            <input id="slideImage" type="image" alt="insert image" class="slide__image"/>
         </div>
     </template>
 
@@ -162,7 +164,6 @@
 
     <script src="js/mobile.js"></script>
     <script src="js/presClient.js"></script>
-    <a href="presClient.html">PresClient</a>
 </body>
 
 <script>

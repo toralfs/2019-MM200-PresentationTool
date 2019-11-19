@@ -295,15 +295,43 @@ async function createPresentation() {
 }
 
 function displaySlide() {
-    let tmp1 = document.getElementById(`temp-slide${selectedSlide.data.type}`).content.cloneNode(true);
-    let slideTitle = tmp1.querySelector(".title");
-    slideTitle.value = selectedSlide.data.title
-    slideTitle.addEventListener("input", (e) => {
-        selectedSlide.data.title = slideTitle.value;
-        runUpdateTimer();
-    });
-    divSelectedSlide.appendChild(slideTitle);
-    console.log(slideTitle);
+    clearDiv(divSelectedSlide);
+    slideType = selectedSlide.data.type;
+    let tmp1 = document.getElementById(`temp-slide${slideType}`).content.cloneNode(true);
+    switch (slideType) {
+        case "A":
+            let slideTitle = tmp1.querySelector(".title");
+            slideTitle.value = selectedSlide.data.title;
+            slideTitle.addEventListener("input", (e) => {
+                selectedSlide.data.title = slideTitle.value;
+                runUpdateTimer();
+            });
+
+            divSelectedSlide.appendChild(slideTitle);
+            break;
+        case "B":
+            let slideText = tmp1.querySelector(".slide__text");
+            slideText.value = selectedSlide.data.text;
+            slideText.addEventListener("input", (e) => {
+                selectedSlide.data.text = slideTitle.value;
+                runUpdateTimer();
+            });
+            divSelectedSlide.appendChild(slideText);
+            let imageLink = tmp1.querySelector(".image__link");
+            let slideImage = tmp1.querySelector(".slide__image");
+            imageLink.value = selectedSlide.data.image;
+            imageLink.addEventListener("change", (e) => {
+                slideImage.src = imageLink.value;
+            });
+            slideImage.src = imageLink.value;
+            divSelectedSlide.appendChild(imageLink);
+            divSelectedSlide.appendChild(slideImage);
+            
+            break;
+        case "C":
+            break;
+    }
+
 }
 
 function initEditPresentation(e) {
@@ -317,7 +345,6 @@ function initEditPresentation(e) {
     currentPres.name = userPresentations[index].name;
     currentPres.owner = userPresentations[index].ownerid;
     currentPres.theme = userPresentations[index].theme;
-    hideAllPages(pageList, divList); //This seems like a bad idea
     loadEditView(currentPres.ID);
 }
 
@@ -340,9 +367,8 @@ async function loadEditView() {
                     let index = slides.data.map(function (e) {
                         return e.slideid;
                     }).indexOf(parseInt(e.currentTarget.innerHTML.split(" ")[1]));
-                    
+
                     selectedSlide = slides.data[index];
-                    console.log(selectedSlide);
                     displaySlide();
                 });
                 slideList.appendChild(tmp1);
@@ -352,8 +378,10 @@ async function loadEditView() {
 
             displaySlide();
         } else {
-            divSelectedSlide.innerHTML = "You have no slides yet";
+            console.log("show text");
         }
+    } else if(slides.code === HTTP_CODES.NOT_FOUND) {
+        divSelectedSlide.innerHTML = "This presentation has no slides yet";
     }
 }
 
@@ -386,6 +414,12 @@ function hideAllPages(pages, divs) {
     }
 }
 
+function clearDiv(div) {
+    while (div.firstChild) {
+        div.removeChild(div.firstChild);
+    }
+}
+
 function updateSlide() {
     restAPI.updateSlide(selectedSlide.ID, selectedSlide.data);
 }
@@ -406,18 +440,28 @@ function runUpdateTimer() {
             clearInterval(updateTimer.interval);
         }
     }, 1000);
-
 }
 
 async function updatePresentation() {
     //Tell user that pres is saving
     let presUpd = await restAPI.updatePresentation(currentPres.ID, currentPres.name, currentPres.theme);
     let slideUpd = await restAPI.updateSlide(selectedSlide.ID, selectedSlide.data);
-    if(presUpd.code === HTTP_CODES.OK && slideUpd.code === HTTP_CODES.OK) {
+    if (presUpd.code === HTTP_CODES.OK && slideUpd.code === HTTP_CODES.OK) {
         //Tell user pres has saved
         console.log("Signal to user that presentation is updated");
     } else {
         //tell user that changes are only local
         console.log("signal to user that presentation did not update?")
+    }
+}
+
+function readURL(input) {
+    if (input.files && input.files[0]) {
+        let reader = new FileReader();
+
+        reader.onload = function (e) {
+            let slideImage = document.getElementById("slideImage");
+            slideImage.setAttribute("src", e.target.result);
+        }
     }
 }
