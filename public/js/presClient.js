@@ -315,12 +315,29 @@ function displaySlide() {
             tmp1.querySelector(".image__link").value = selectedSlide.data.image;
             tmp1.querySelector(".slide__image").src = selectedSlide.data.image;
             tmp1.querySelector(".image__link").addEventListener("change", (e) => {
-                changeImage(selectedSlide, e.target.parentNode.children[3], e.target.value); //doesn't look the cleanest but works
+                changeSlideImage(selectedSlide, e.target.parentNode.children[3], e.target.value); //doesn't look the cleanest but works
             });
 
             divSelectedSlide.appendChild(tmp1);
             break;
         case "C":
+            let counter = 0;
+            for (let point of selectedSlide.data.list) {
+                let tmp2 = document.getElementById("temp-listObject").content.cloneNode(true);
+                let id = counter;
+                tmp2.querySelector(".slide__listText").value = point;
+                tmp2.querySelector(".slide__listText").addEventListener("input", (e) => {
+                    changeSlideList(selectedSlide, e.target, id);
+                });
+
+                tmp2.querySelector(".slide__deleteListObj").addEventListener("click", (e) => {
+                    removeBulletPoint(e, id);
+                });
+
+                tmp1.querySelector(".slide__list").appendChild(tmp2);
+                counter++;
+            }
+            divSelectedSlide.appendChild(tmp1);
             break;
     }
 
@@ -400,10 +417,41 @@ function changeSlideText(slideToChange, slideText) {
     runUpdateTimer();
 }
 
-function changeImage(slideToChange, slideImage, imageLink) {
+function changeSlideImage(slideToChange, slideImage, imageLink) {
     slideToChange.data.image = imageLink;
     slideImage.src = imageLink;
     runUpdateTimer();
+}
+
+function changeSlideList(slideToChange, listObj, listObjID) {
+    slideToChange.data.list[listObjID] = listObj.value;
+    runUpdateTimer();
+}
+
+function addBulletPoint() {
+    let tmp1 = document.getElementById("temp-listObject").content.cloneNode(true);
+    let list = divSelectedSlide.querySelector(".slide__list");
+    selectedSlide.data.list.push(list.value);
+
+    let count = selectedSlide.data.list.length - 1;
+    let id = count;
+
+    tmp1.querySelector(".slide__listText").addEventListener("input", (e) => {
+        changeSlideList(selectedSlide, e.target, id);
+    });
+
+    tmp1.querySelector(".slide__deleteListObj").addEventListener("click", (e) => {
+        removeBulletPoint(e, id);
+    });
+    list.appendChild(tmp1);
+}
+
+function removeBulletPoint(e, id) {
+    e.target.parentNode.parentNode.removeChild(e.target.parentNode);
+
+    console.log(id);
+    selectedSlide.data.list.splice(id, 1);
+    console.log(selectedSlide.data.list);
 }
 
 function hideAllPages(pages, divs) {

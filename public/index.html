@@ -43,9 +43,19 @@
     </template>
 
     <template id="temp-slideC">
-        <div class="slideA-container">
-            <!-- slide type c content -->
+        <div class="slideC-container">
+            <ul class="slide__list">
+
+            </ul>
+            <button clas="slide__listAddPoint" onclick="addBulletPoint()">Add bullet point</button>
         </div>
+    </template>
+
+    <template id="temp-listObject">
+        <li class="slide__listObject">
+            <input type="text" class="slide__listText" placeholder="Enter text">
+            <button class="slide__deleteListObj">&times;</button>
+        </li>
     </template>
 
     <header style="display:none">
