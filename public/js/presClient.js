@@ -1,5 +1,6 @@
 let presToEdit = document.getElementById("presToEdit"); //Do I need this?
 let presName = document.getElementById("presName");
+let savingText = document.getElementById("saving-text");
 
 let txtResultSharing = document.getElementById("txtResultSharing");
 
@@ -18,7 +19,7 @@ const SLIDE_TYPE_DEFAULT = {
     C: { type: "C", list: [], bgColor: "white" }
 }
 
-const WAIT_TO_UPDATE = 5;
+const WAIT_TO_UPDATE = 2;
 
 // ---------------- Presentations ---------------------------
 let userPresentations = [];
@@ -33,7 +34,8 @@ let currentPres = {
     ID: null,
     name: "",
     owner: "",
-    theme: ""
+    theme: "",
+    last_updated: ""
 }
 
 let selectedSlide = {
@@ -472,6 +474,7 @@ function initEditPresentation(e) {
     currentPres.name = userPresentations[index].name;
     currentPres.owner = userPresentations[index].ownerid;
     currentPres.theme = userPresentations[index].theme;
+    currentPres.last_updated = userPresentations[index].last_updated;
     loadEditView(currentPres.ID);
 }
 
@@ -480,6 +483,8 @@ async function loadEditView() {
     showEditView();
     presName.value = currentPres.name;
     document.getElementById('sharing').value="";
+    let last_updated_time = splitTime(currentPres.last_updated);
+    setSaveText(`Last updated: ${last_updated_time.clock}`);
 
     let slides = await restAPI.getSlides(currentPres.ID);
     helperSlides = slides;
@@ -647,6 +652,7 @@ async function updatePresentation() {
     }
 
     for (let task of presUpdateList) {
+        setSaveText("saving changes");
         let presUpd = await restAPI.updatePresentation(task.currentPres.ID, task.currentPres.name, task.currentPres.theme);
         let slideUpd = {};
         if (task.selectedSlide.slideid === null) {
@@ -657,14 +663,19 @@ async function updatePresentation() {
             }
         }
         if (presUpd.code === HTTP_CODES.OK && slideUpd.code === HTTP_CODES.OK) {
-            //Tell user pres has saved
+            setSaveText("All changes saved");
             console.log("Signal to user that presentation is updated");
         } else {
-            //tell user that changes are only local
+            setSaveText("Changes not saved");
             console.log("signal to user that presentation did not update?")
         }
     }
 }
+
+function setSaveText(state) {
+    savingText.innerText = state;
+}
+
 //Sharing functions-----------------------------------
 async function setStatus(){
     let status = document.getElementById('sharing').value;
