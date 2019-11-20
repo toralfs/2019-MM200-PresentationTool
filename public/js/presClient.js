@@ -20,14 +20,14 @@ let updateTimer = {
 }
 
 let currentPres = {
-    ID: "",
+    ID: null,
     name: "",
     owner: "",
     theme: ""
 }
 
 let selectedSlide = {
-    slideid: "",
+    slideid: null,
     data: {}
 }
 
@@ -475,7 +475,12 @@ function runUpdateTimer() {
 async function updatePresentation() {
     //Tell user that pres is saving
     let presUpd = await restAPI.updatePresentation(currentPres.ID, currentPres.name, currentPres.theme);
-    let slideUpd = await restAPI.updateSlide(selectedSlide.slideid, selectedSlide.data);
+    let slideUpd = {};
+    if(selectedSlide.slideid === null) {
+        slideUpd.code = HTTP_CODES.OK;
+    } else {
+        slideUpd = await restAPI.updateSlide(selectedSlide.slideid, selectedSlide.data);
+    }
     if (presUpd.code === HTTP_CODES.OK && slideUpd.code === HTTP_CODES.OK) {
         //Tell user pres has saved
         console.log("Signal to user that presentation is updated");
