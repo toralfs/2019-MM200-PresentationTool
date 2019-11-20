@@ -1,15 +1,3 @@
-// ------------ Pages -------------------------
-let presOverview = document.getElementById("overview");
-let editView = document.getElementById("editview");
-let pageList = [presOverview, editView];
-
-// ------------ divs that should auto clear -----------------
-let divSelectedSlide = document.getElementById("selectedSlide");
-let presContainer = document.getElementById("presContainer");
-let slideList = document.getElementById("slide__list");
-let divList = [divSelectedSlide, presContainer, slideList];
-
-// --------------- other ----------------------------
 let presToEdit = document.getElementById("presToEdit"); //Do I need this?
 let presName = document.getElementById("presName");
 
@@ -243,11 +231,9 @@ const restAPI = {
 
 
 async function loadPresOverview(isShared) {
+    showPresentationOverview();
+
     userPresentations = [];
-
-    hideAllPages(pageList, divList);
-    presOverview.style.display = "block"; //display style subject to change
-
     let presentations = null;
     if (isShared) {
         presentations = await restAPI.getSharedWithMePresentations(3);
@@ -361,10 +347,7 @@ function initEditPresentation(e) {
 
 async function loadEditView() {
     window.location.href = "#editview";
-    hideAllPages(pageList, divList);
-    editView.style.display = "flex";
-    divSelectedSlide.style.display = "flex";
-
+    showEditView();
     presName.value = currentPres.name;
 
     let slides = await restAPI.getSlides(currentPres.ID);
