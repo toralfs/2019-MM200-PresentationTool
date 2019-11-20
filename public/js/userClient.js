@@ -100,7 +100,7 @@ const restAPIUser = {
     deleteUser: async function(url){
         let cfg = {
             method: "DELETE",
-            headers: {"Content-Type":"application/json"}
+            headers: {"Content-Type":"application/json"},
         }
 
         try{
