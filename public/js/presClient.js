@@ -262,8 +262,14 @@ async function loadPresOverview(isShared) {
             }
             let lastUpdated = splitTime(presentation.last_updated);
             tmp1.querySelector(".overview-last-updated").innerText += `${lastUpdated.date}, ${lastUpdated.clock}`;
-            tmp1.querySelector(".overview-delete-button").onclick = async function(evt){
-                await restAPI.deletePresentation(presentation.presentationid);
+            if(isShared){
+                tmp1.querySelector(".overview-delete-button").style = "display:none";
+            }
+            else{
+                tmp1.querySelector(".overview-delete-button").onclick = async function(evt){
+                    await restAPI.deletePresentation(presentation.presentationid);
+                    loadPresOverview();
+                }
             }
             presContainer.appendChild(tmp1);
         }
