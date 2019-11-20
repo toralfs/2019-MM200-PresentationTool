@@ -143,11 +143,17 @@
             <div id="editview" class="page" style="display: none;">
                 <ul id="slide__list"></ul>
                 <div id="editButtons">
-                    <button id="add-slide">Add slide</button>
-                    <button id="remove-slide">Remove slide</button>
+                    <button id="add-slide" onclick="addSlide()">Add slide</button>
+                    <button id="remove-slide" onclick="removeSlide()">Remove slide</button>
                     <label for="theme-selection">Select theme: </label>
                     <select id="theme-selection">
                         <!-- Some options -->
+                    </select>
+                    <label for="slide-type-selection">Select slide type: </label>
+                    <select id="slide-type-selection" onchange="changeSlideType(this)">
+                        <option value="A">Title</option>
+                        <option value="B">Image with text</option>
+                        <option value="C">list</option>
                     </select>
                 </div>
 
