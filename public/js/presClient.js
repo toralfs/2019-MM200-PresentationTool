@@ -22,6 +22,8 @@ const HTTP_CODES = {
     CONFLICT: 409
 }
 
+const WAIT_TO_UPDATE = 5;
+
 // ---------------- Presentations ---------------------------
 let userPresentations = [];
 let updateTimer = {
@@ -447,11 +449,9 @@ function addBulletPoint() {
 }
 
 function removeBulletPoint(e, id) {
-    e.target.parentNode.parentNode.removeChild(e.target.parentNode);
-
-    console.log(id);
     selectedSlide.data.list.splice(id, 1);
-    console.log(selectedSlide.data.list);
+    runUpdateTimer();
+    displaySlide();
 }
 
 function hideAllPages(pages, divs) {
@@ -482,7 +482,7 @@ function runUpdateTimer() {
     updateTimer.interval = setInterval(() => {
         updateTimer.value++;
         console.log(updateTimer.value);
-        if (updateTimer.value === 5) {
+        if (updateTimer.value === WAIT_TO_UPDATE) {
             updatePresentation();
             clearInterval(updateTimer.interval);
         }
