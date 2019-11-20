@@ -34,6 +34,8 @@ function showPresentationOverview(){
 }
 
 function showEditView(){
+    emptyTxtResult();
+    emptyInputs();
     hideAllPages(pageList, divList);
     editView.style = "display:flex";
     divSelectedSlide.style = "display:flex";
@@ -46,6 +48,7 @@ function showPublicPresPage(){
     document.querySelector("header").style = "display:flex";
 }
 
+//-----------------------
 function hideAllPages(pages, divs) {
     for (let page of pages) {
         page.style.display = "none";
@@ -55,4 +58,19 @@ function hideAllPages(pages, divs) {
             div.removeChild(div.firstChild);
         }
     }
+}
+
+//-----------------------
+function emptyInputs() {
+    let inputs = document.querySelectorAll("input");
+    for (let i of inputs) {
+        i.value = "";
+    }
+}
+
+//----------------------
+function emptyTxtResult() {
+    txtResultCreate.innerHTML = "";
+    txtResultLogin.innerHTML = "";
+    txtResultUpdate.innerHTML = "";
 }

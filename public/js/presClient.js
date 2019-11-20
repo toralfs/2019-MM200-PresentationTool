@@ -1,6 +1,8 @@
 let presToEdit = document.getElementById("presToEdit"); //Do I need this?
 let presName = document.getElementById("presName");
 
+let txtResultSharing = document.getElementById("txtResultSharing");
+
 // --------------------------------------------------------------
 const HTTP_CODES = {
     OK: 200,
@@ -302,11 +304,13 @@ async function loadPublicPresentations() {
             tmp1.querySelector(".overview-hiddenid").innerText = presentation.presentationid;
             if (presentation.public == true) {
                 tmp1.querySelector(".overview-public-status").innerText += "Public";
+                //document.getElementById('sharing').options[1].selected = "selected";
             }
             else {
                 tmp1.querySelector(".overview-public-status").innerText += "Private";
+                //document.getElementById('sharing').options[0].selected = "selected";
             }
-
+            console.log(document.getElementById('sharing').value);
             let lastUpdated = splitTime(presentation.last_updated);
             tmp1.querySelector(".overview-last-updated").innerText += `${lastUpdated.date}, ${lastUpdated.clock}`;
             presContainer.appendChild(tmp1);
@@ -392,6 +396,7 @@ async function loadEditView() {
     window.location.href = "#editview";
     showEditView();
     presName.value = currentPres.name;
+    document.getElementById('sharing').value="";
 
     let slides = await restAPI.getSlides(currentPres.ID);
     if (slides.code === HTTP_CODES.OK) {
@@ -421,7 +426,6 @@ async function loadEditView() {
         divSelectedSlide.innerHTML = "This presentation has no slides yet";
     }
 }
-
 
 function splitTime(timestamp) {
     let splitTimestamp = timestamp.split(/[T,.,]+/);
@@ -551,6 +555,26 @@ async function updatePresentation() {
         } else {
             //tell user that changes are only local
             console.log("signal to user that presentation did not update?")
+        }
+    }
+}
+//Sharing functions-----------------------------------
+async function setStatus(){
+    let status = document.getElementById('sharing').value;
+    if(status == "public"){
+        let data = await restAPI.setPublicStatus(currentPres.ID, "true");
+        txtResultSharing.innerHTML = data.msg;
+    }
+    else if(status == "private"){
+        let data = await restAPI.setPublicStatus(currentPres.ID, "false");
+        txtResultSharing.innerHTML = data.msg;
+    }
+    else if(status == "individual"){
+        document.getElementById('sharing').value = "";
+        let user = window.prompt("Insert the username of the user you want to share the presenation with");
+        if(user && user != ""){
+            let data = await restAPI.shareWithUser(currentPres.ID, user);
+            txtResultSharing.innerHTML = data.msg;
         }
     }
     updateTasks = [];

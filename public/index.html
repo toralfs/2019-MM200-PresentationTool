@@ -157,6 +157,17 @@
                         <!-- contains slide from template -->
                     </div>
                 </div>
+
+                <div id="share-options">
+                    <label for="sharing">Sharing: </label>
+                   <select id="sharing" onchange=setStatus()>
+                       <option value="" selected>--</option>
+                       <option value="private">Private</option>
+                       <option value="public">Public</option>
+                       <option value="individual">Custom</option>
+                   </select>
+                   <p id="txtResultSharing"></p>
+                </div>
             </div>
 
             <!--Maybe part of the template(?)
@@ -164,10 +175,6 @@
             <input type="text" minlength="3" id="inpPresNameUpdate" pattern="^[A-Za-z0-9\s-]+$" placeholder="Presentation name">
             <button id="btnUpdatePres" onclick=updatePresentation()>Update presentation</button>
             <h3 id="txtResultUpdatePres">
-        </div>
-
-        <div id="deletePres">
-            <button id="btnDeletePres" onclick=deletePresentation()>Delete presentation</button>
         </div>
     -->
         </main>
@@ -178,5 +185,11 @@
     <script src="js/mobile.js"></script>
     <script src="js/presClient.js"></script>
     <script src="js/userClient.js"></script>
+
 </body>
+
+<script>
+let inputValidation = new InputValidation();
+</script>
+
 </html>
