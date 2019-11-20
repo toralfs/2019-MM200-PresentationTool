@@ -483,7 +483,6 @@ async function loadEditView() {
 
     let slides = await restAPI.getSlides(currentPres.ID);
     helperSlides = slides;
-    console.log(helperSlides);
     if (slides.code === HTTP_CODES.OK) {
         if (slides.data.length > 0) {
             for (let slide of slides.data) {
@@ -496,13 +495,14 @@ async function loadEditView() {
                     }).indexOf(parseInt(e.currentTarget.innerHTML.split(" ")[1]));
 
                     selectedSlide = slides.data[index];
+                    setSlideType(selectedSlide.data.type)
                     displaySlide();
                 });
                 slideList.appendChild(tmp1);
             }
             selectedSlide.slideid = slides.data[0].slideid;
             selectedSlide.data = slides.data[0].data;
-
+            setSlideType(selectedSlide.data.type)
             displaySlide();
         } else {
             console.log("show text");
@@ -540,6 +540,11 @@ function changeSlideType(e) {
     }
     displaySlide();
     runUpdateTimer();
+}
+
+function setSlideType(type) {
+    let slideTypeSelection = document.getElementById("slide-type-selection");
+    slideTypeSelection.value = type;
 }
 
 function changeBgColor(slide, selectedColor) {
