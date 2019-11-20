@@ -18,6 +18,7 @@ let updateTimer = {
     value: 0,
     interval: null
 }
+let updateTasks = [];
 
 let currentPres = {
     ID: null,
@@ -264,11 +265,11 @@ async function loadPresOverview(isShared) {
             }
             let lastUpdated = splitTime(presentation.last_updated);
             tmp1.querySelector(".overview-last-updated").innerText += `${lastUpdated.date}, ${lastUpdated.clock}`;
-            if(isShared){
+            if (isShared) {
                 tmp1.querySelector(".overview-delete-button").style = "display:none";
             }
-            else{
-                tmp1.querySelector(".overview-delete-button").onclick = async function(evt){
+            else {
+                tmp1.querySelector(".overview-delete-button").onclick = async function (evt) {
                     await restAPI.deletePresentation(presentation.presentationid);
                     loadPresOverview();
                 }
@@ -281,7 +282,7 @@ async function loadPresOverview(isShared) {
 
 }
 
-async function loadPublicPresentations(){
+async function loadPublicPresentations() {
     showPublicPresPage();
     userPresentations = [];
     let presentations = await restAPI.getPublicPresentations(currentUser.ID);
@@ -503,6 +504,7 @@ function changePresName() {
 
 function runUpdateTimer() {
     updateTimer.value = 0;
+    updateTasks.push({currentPres, selectedSlide});
     clearInterval(updateTimer.interval);
     updateTimer.interval = setInterval(() => {
         updateTimer.value++;
@@ -515,30 +517,41 @@ function runUpdateTimer() {
 }
 
 async function updatePresentation() {
-    //Tell user that pres is saving
-    let presUpd = await restAPI.updatePresentation(currentPres.ID, currentPres.name, currentPres.theme);
-    let slideUpd = {};
-    if(selectedSlide.slideid === null) {
-        slideUpd.code = HTTP_CODES.OK;
-    } else {
-        slideUpd = await restAPI.updateSlide(selectedSlide.slideid, selectedSlide.data);
+    let presIDsToUpdate = [...new Set(updateTasks.map(item => item.currentPres.ID))];
+    let slideIDStoUpdate = [...new Set(updateTasks.map(item => item.selectedSlide.slideid))];
+    let presUpdateList = [];
+    let slideUpdateList = [];
+    for(id of presIDsToUpdate) {
+        let item = updateTasks.find(obj => {
+            return obj.currentPres.ID === id;
+        });
+        presUpdateList.push(item);
     }
-    if (presUpd.code === HTTP_CODES.OK && slideUpd.code === HTTP_CODES.OK) {
-        //Tell user pres has saved
-        console.log("Signal to user that presentation is updated");
-    } else {
-        //tell user that changes are only local
-        console.log("signal to user that presentation did not update?")
+
+    for(id of slideIDStoUpdate) {
+        let item = updateTasks.find(obj => {
+            return obj.selectedSlide.slideid === id;
+        });
+        slideUpdateList.push(item);
     }
-}
 
-function readURL(input) {
-    if (input.files && input.files[0]) {
-        let reader = new FileReader();
-
-        reader.onload = function (e) {
-            let slideImage = document.getElementById("slideImage");
-            slideImage.setAttribute("src", e.target.result);
+    for (let task of presUpdateList) {
+        let presUpd = await restAPI.updatePresentation(task.currentPres.ID, task.currentPres.name, task.currentPres.theme);
+        let slideUpd = {};
+        if (task.selectedSlide.slideid === null) {
+            slideUpd.code = HTTP_CODES.OK;
+        } else {
+            for(let slide of slideUpdateList) {
+                slideUpd = await restAPI.updateSlide(slide.selectedSlide.slideid, slide.selectedSlide.data);
+            }
+        }
+        if (presUpd.code === HTTP_CODES.OK && slideUpd.code === HTTP_CODES.OK) {
+            //Tell user pres has saved
+            console.log("Signal to user that presentation is updated");
+        } else {
+            //tell user that changes are only local
+            console.log("signal to user that presentation did not update?")
         }
     }
+    updateTasks = [];
 }
