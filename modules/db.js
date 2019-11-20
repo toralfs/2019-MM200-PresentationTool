@@ -265,7 +265,7 @@ const db = function (dbConnectionString) {
             let insertedSlide = await runQuery(`INSERT INTO slides (data, presentationID) VALUES ($1, $2) RETURNING slideID`, [data, presentationID]);
             let slideID = insertedSlide.slideid;
             await runQuery(`UPDATE presentations SET last_updated=current_timestamp, slides = slides || $1::int WHERE presentationID = $2`, [slideID, presentationID]);
-            response = DB_RESPONSES.OK; 
+            response = {dbRes: DB_RESPONSES.OK, slideid: slideID}; 
         } catch (error) {
             console.error(error);
         }
@@ -276,7 +276,7 @@ const db = function (dbConnectionString) {
         let response = null;
         try {
             await runQuery(`DELETE FROM slides WHERE slideID=$1`, [slideID]);
-            await runQuery(`UPDATE  presentations SET slides = array_remove(slides, $1) WHERE presentationID = $2;`, [slideID, presentationID]);
+            await runQuery(`UPDATE presentations SET slides = array_remove(slides, $1) WHERE presentationID = $2;`, [slideID, presentationID]);
             response = DB_RESPONSES.OK;
         } catch (error) {
             console.log(error);

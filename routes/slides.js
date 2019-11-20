@@ -25,9 +25,9 @@ const DB_RESPONSES = {
 // endpoint DELETE -----------------------------
 route.delete('/:slideID', async function(req, res){
     if(req.params.slideID){
-        let deletedSlide = await db.deleteExistingSlide(req.params.slideID);
+        let deletedSlide = await db.deleteExistingSlide(req.params.slideID, req.body.presentationID);
         if(deletedSlide === DB_RESPONSES.OK){
-            res.status(HTTP_CODES.OK).json({msg: `Slide with slideID=${req.params.slideID} deleted.`});
+            res.status(HTTP_CODES.OK).json({code: HTTP_CODES.OK,msg: `Slide with slideID=${req.params.slideID} deleted.`});
         }
         else if(deletedSlide === DB_RESPONSES.NOT_EXIST){
             res.status(HTTP_CODES.NOT_FOUND).json({msg: "This slide does not exist"});
@@ -41,8 +41,8 @@ route.delete('/:slideID', async function(req, res){
 route.post('/', async function(req, res){
     if(req.body.data && req.body.presentationID){
         let insertedSlide = await db.insertNewSlide(req.body.data, req.body.presentationID);
-        if(insertedSlide === DB_RESPONSES.OK) {
-            res.status(HTTP_CODES.CREATED).json({msg: "New slide created!", code: HTTP_CODES.CREATED});   
+        if(insertedSlide.dbRes === DB_RESPONSES.OK) {
+            res.status(HTTP_CODES.CREATED).json({msg: "New slide created!", code: HTTP_CODES.CREATED, slideid: insertedSlide.slideid});   
         }
     }
     else {
