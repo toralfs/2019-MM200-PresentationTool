@@ -19,6 +19,7 @@
             <p class="overview-public-status">Sharing: </p>
             <p class="overview-last-updated">Last updated: </p>
             <div class="overview-hiddenid" hidden="true"></div>
+            <button class="overview-delete-button">Delete</button>
         </div>
     </template>
 
@@ -65,6 +66,7 @@
             <ul class="nav__links">
                 <li><a href="#overview" onclick="loadPresOverview(false)">My presentations</a></li>
                 <li><a href="#overview" onclick="loadPresOverview(true)">Shared with me</a></li>
+                <li><a href="#overview-public" onclick="loadPublicPresentations()">Public presentations</a></li>
             </ul>
         </nav>
         <a class="cta" href="#account" onclick=showUserPage()>User</a>
@@ -77,6 +79,7 @@
         <div class="overlay__content">
             <a href="#overview" onclick="loadPresOverview(false), closeNav()">My presentations</a>
             <a href="#overview" onclick="loadPresOverview(true), closeNav()">Shared with me</a>
+            <a href="#overview-public" onclick="loadPublicPresentations(), closeNav()">Public presentations</a>
         </div>
     </div>
 

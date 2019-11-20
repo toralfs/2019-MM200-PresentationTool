@@ -39,7 +39,7 @@ async function share(req, res) {
             }
         }
         else{
-            res.status(HTTP_CODES.BAD_REQUEST).json({code: HTTP_CODES.BAD_REQUEST, msg: `Error ${code} Bad Request`});
+            res.status(HTTP_CODES.BAD_REQUEST).json({code: HTTP_CODES.BAD_REQUEST, msg: `Error ${HTTP_CODES.BAD_REQUEST} Bad Request`});
         }
     } catch(error) {
         console.log(error);
@@ -125,7 +125,7 @@ async function sharedWithMe(req,res){
 async function getPublicPresentations(req,res){
     let publicPres = await db.publicPresentations();
     if(publicPres && publicPres.length > 0){
-        res.status(HTTP_CODES.OK).json({code: HTTP_CODES.OK, publicPresentations: publicPres});
+        res.status(HTTP_CODES.OK).json({code: HTTP_CODES.OK, presentations: publicPres});
     }
     else{
         res.status(HTTP_CODES.NOT_FOUND).json({code: HTTP_CODES.NOT_FOUND, msg: `No public presentations available.`});
