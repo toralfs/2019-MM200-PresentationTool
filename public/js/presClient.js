@@ -302,14 +302,8 @@ async function loadPublicPresentations() {
             tmp1.querySelector(".overview-slides").innerText += presentation.slides.length;
             tmp1.querySelector(".overview-theme").innerText += presentation.theme;
             tmp1.querySelector(".overview-hiddenid").innerText = presentation.presentationid;
-            if (presentation.public == true) {
-                tmp1.querySelector(".overview-public-status").innerText += "Public";
-                //document.getElementById('sharing').options[1].selected = "selected";
-            }
-            else {
-                tmp1.querySelector(".overview-public-status").innerText += "Private";
-                //document.getElementById('sharing').options[0].selected = "selected";
-            }
+            tmp1.querySelector(".overview-public-status").innerText += "Public";
+            tmp1.querySelector(".overview-delete-button").style = "display:none";
             console.log(document.getElementById('sharing').value);
             let lastUpdated = splitTime(presentation.last_updated);
             tmp1.querySelector(".overview-last-updated").innerText += `${lastUpdated.date}, ${lastUpdated.clock}`;
@@ -557,7 +551,9 @@ async function updatePresentation() {
             console.log("signal to user that presentation did not update?")
         }
     }
+    updateTasks = [];
 }
+
 //Sharing functions-----------------------------------
 async function setStatus(){
     let status = document.getElementById('sharing').value;
@@ -577,5 +573,4 @@ async function setStatus(){
             txtResultSharing.innerHTML = data.msg;
         }
     }
-    updateTasks = [];
 }
