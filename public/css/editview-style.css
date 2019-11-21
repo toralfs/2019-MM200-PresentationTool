@@ -8,7 +8,7 @@
     justify-content: space-evenly;
 }
 
-#editview input{
+#presName{
     margin: 0.5vh;
     font-size: 1.5vw;
     height: 7vh;
@@ -58,6 +58,7 @@
 #selectedSlide{
     flex-basis: 100%;
     width: 60vw;
-    height: 70vh;
-    margin: 1vh;
+    height: 80vh;
+    border: 2px solid black;
+    margin: 2vh;
 }

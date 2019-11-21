@@ -31,15 +31,17 @@
 
     <template id="temp-slideA">
         <div class="slideA-container">
-            <input type="text" class="title" />
+            <textarea rows="4" cols="60" class="title"></textarea>
         </div>
     </template>
 
     <template id="temp-slideB">
         <div class="slideB-container">
-            <input type="text" class="slide__text"/>
-            <label for="imageLink">Image Link: </label>
-            <input id="imageLink" type="text" class="image__link"/>
+            <textarea class="slide__text" rows="4" cols="60"></textarea>
+            <div class="image-insert">
+                <label for="imageLink">Image Link: </label>
+                <input id="imageLink" type="text" class="image__link"/>
+            </div>
             <img id="slideImage" alt="insert image" class="slide__image"/>
         </div>
     </template>
