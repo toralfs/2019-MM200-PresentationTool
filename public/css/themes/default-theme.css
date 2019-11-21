@@ -1,0 +1,17 @@
+.slideA-container{
+    display:flex;
+    width: 40vw;
+    height: 40vh;
+    background-color: rgb(35, 80, 82);
+    font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
+    font-size: 7vw;
+    text-align: center;
+}
+
+.slidaA-container>input{
+    align-self: center;
+    background-color: rgb(35, 80, 82);
+    text-align: center;
+    justify-self: center;
+    color: white;
+}
