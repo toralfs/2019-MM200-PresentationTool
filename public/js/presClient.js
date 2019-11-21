@@ -1,5 +1,6 @@
 let presToEdit = document.getElementById("presToEdit"); //Do I need this?
 let presName = document.getElementById("presName");
+let savingText = document.getElementById("saving-text");
 
 let txtResultSharing = document.getElementById("txtResultSharing");
 
@@ -12,10 +13,17 @@ const HTTP_CODES = {
     CONFLICT: 409
 }
 
-const WAIT_TO_UPDATE = 5;
+const SLIDE_TYPE_DEFAULT = {
+    A: { type: "A", text: "New Slide", bgColor: "white" },
+    B: { type: "B", text: "New Slide", image: "insert image link", bgColor: "white" },
+    C: { type: "C", list: [], bgColor: "white" }
+}
+
+const WAIT_TO_UPDATE = 2;
 
 // ---------------- Presentations ---------------------------
 let userPresentations = [];
+let helperSlides = [];
 let updateTimer = {
     value: 0,
     interval: null
@@ -26,7 +34,8 @@ let currentPres = {
     ID: null,
     name: "",
     owner: "",
-    theme: ""
+    theme: "",
+    last_updated: ""
 }
 
 let selectedSlide = {
@@ -124,6 +133,27 @@ const restAPI = {
         }
     },
 
+    createSlide: async function (slideData, presID) {
+        let updata = {
+            data: slideData,
+            presentationID: presID
+        }
+
+        let cfg = {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(updata)
+        }
+
+        try {
+            let resp = await fetch(`/presentation/slide`, cfg);
+            let data = await resp.json();
+            return data;
+        } catch (err) {
+            console.log(err);
+        }
+    },
+
     updateSlide: async function (slideID, slideData) {
 
         let updata = {
@@ -140,9 +170,28 @@ const restAPI = {
             let resp = await fetch(`/presentation/slide/${slideID}`, cfg);
             let data = await resp.json();
             return data;
-
         }
         catch (err) {
+            console.log(err);
+        }
+    },
+
+    removeSlide: async function (slideID, presID) {
+        let updata = {
+            presentationID: presID
+        }
+
+        let cfg = {
+            method: "DELETE",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(updata)
+        }
+
+        try {
+            let resp = await fetch(`/presentation/slide/${slideID}`, cfg);
+            let data = await resp.json();
+            return data;
+        } catch (err) {
             console.log(err);
         }
     },
@@ -323,6 +372,42 @@ async function createPresentation() {
     }
 }
 
+async function addSlide() {
+    let addedSlide = await restAPI.createSlide(SLIDE_TYPE_DEFAULT.A, currentPres.ID);
+    if (addedSlide.code === HTTP_CODES.CREATED) {
+        selectedSlide.slideid = addedSlide.slideid;
+        selectedSlide.data = SLIDE_TYPE_DEFAULT.A;
+        displaySlide();
+        console.log("slide created"); //need a better way of signaling user
+    }
+}
+
+async function removeSlide() {
+    let removedSlide = await restAPI.removeSlide(selectedSlide.slideid, currentPres.ID);
+    if (removedSlide.code === HTTP_CODES.OK) { // Signal to user what happened, could/should? be changed
+        console.log("slide deleted");
+        let currentIndex = helperSlides.data.map(function (e) {
+            return e.slideid;
+        }).indexOf(selectedSlide.slideid);
+        let newIndex = null;
+        if (currentIndex > 0) {
+            newIndex = currentIndex - 1;
+        } else {
+            newIndex = currentIndex + 1;
+        }
+        try {
+            selectedSlide.slideid = helperSlides.data[newIndex].slideid;
+            selectedSlide.data = helperSlides.data[newIndex].data;
+            displaySlide();
+        } catch {
+            //Better error handling would be nice
+            divSelectedSlide.innerHTML = "This presentation has no slides yet";
+        }
+    } else {
+        console.error(removedSlide.code);
+    }
+}
+
 function displaySlide() {
     clearDiv(divSelectedSlide);
     slideType = selectedSlide.data.type;
@@ -360,7 +445,7 @@ function displaySlide() {
                 });
 
                 tmp2.querySelector(".slide__deleteListObj").addEventListener("click", (e) => {
-                    removeBulletPoint(e, id);
+                    removeBulletPoint(id);
                 });
 
                 tmp1.querySelector(".slide__list").appendChild(tmp2);
@@ -383,6 +468,7 @@ function initEditPresentation(e) {
     currentPres.name = userPresentations[index].name;
     currentPres.owner = userPresentations[index].ownerid;
     currentPres.theme = userPresentations[index].theme;
+    currentPres.last_updated = userPresentations[index].last_updated;
     loadEditView(currentPres.ID);
 }
 
@@ -391,8 +477,11 @@ async function loadEditView() {
     showEditView();
     presName.value = currentPres.name;
     document.getElementById('sharing').value="";
+    let last_updated_time = splitTime(currentPres.last_updated);
+    setSaveText(`Last updated: ${last_updated_time.clock}`);
 
     let slides = await restAPI.getSlides(currentPres.ID);
+    helperSlides = slides;
     if (slides.code === HTTP_CODES.OK) {
         if (slides.data.length > 0) {
             for (let slide of slides.data) {
@@ -405,13 +494,14 @@ async function loadEditView() {
                     }).indexOf(parseInt(e.currentTarget.innerHTML.split(" ")[1]));
 
                     selectedSlide = slides.data[index];
+                    setSlideType(selectedSlide.data.type)
                     displaySlide();
                 });
                 slideList.appendChild(tmp1);
             }
             selectedSlide.slideid = slides.data[0].slideid;
             selectedSlide.data = slides.data[0].data;
-
+            setSlideType(selectedSlide.data.type)
             displaySlide();
         } else {
             console.log("show text");
@@ -432,6 +522,28 @@ function splitTime(timestamp) {
 
 function changeTheme(presentation, selectedTheme) {
     presentation.theme = selectedTheme;
+}
+
+function changeSlideType(e) {
+    let newSlideType = e.value;
+    switch (newSlideType) {
+        case "A":
+            selectedSlide.data = SLIDE_TYPE_DEFAULT.A;
+            break;
+        case "B":
+            selectedSlide.data = SLIDE_TYPE_DEFAULT.B;
+            break;
+        case "C":
+            selectedSlide.data = SLIDE_TYPE_DEFAULT.C;
+            break;
+    }
+    displaySlide();
+    runUpdateTimer();
+}
+
+function setSlideType(type) {
+    let slideTypeSelection = document.getElementById("slide-type-selection");
+    slideTypeSelection.value = type;
 }
 
 function changeBgColor(slide, selectedColor) {
@@ -467,12 +579,12 @@ function addBulletPoint() {
     });
 
     tmp1.querySelector(".slide__deleteListObj").addEventListener("click", (e) => {
-        removeBulletPoint(e, id);
+        removeBulletPoint(id);
     });
     list.appendChild(tmp1);
 }
 
-function removeBulletPoint(e, id) {
+function removeBulletPoint(id) {
     selectedSlide.data.list.splice(id, 1);
     runUpdateTimer();
     displaySlide();
@@ -502,7 +614,7 @@ function changePresName() {
 
 function runUpdateTimer() {
     updateTimer.value = 0;
-    updateTasks.push({currentPres, selectedSlide});
+    updateTasks.push({ currentPres, selectedSlide });
     clearInterval(updateTimer.interval);
     updateTimer.interval = setInterval(() => {
         updateTimer.value++;
@@ -519,14 +631,14 @@ async function updatePresentation() {
     let slideIDStoUpdate = [...new Set(updateTasks.map(item => item.selectedSlide.slideid))];
     let presUpdateList = [];
     let slideUpdateList = [];
-    for(id of presIDsToUpdate) {
+    for (id of presIDsToUpdate) {
         let item = updateTasks.find(obj => {
             return obj.currentPres.ID === id;
         });
         presUpdateList.push(item);
     }
 
-    for(id of slideIDStoUpdate) {
+    for (id of slideIDStoUpdate) {
         let item = updateTasks.find(obj => {
             return obj.selectedSlide.slideid === id;
         });
@@ -534,24 +646,29 @@ async function updatePresentation() {
     }
 
     for (let task of presUpdateList) {
+        setSaveText("saving changes");
         let presUpd = await restAPI.updatePresentation(task.currentPres.ID, task.currentPres.name, task.currentPres.theme);
         let slideUpd = {};
         if (task.selectedSlide.slideid === null) {
             slideUpd.code = HTTP_CODES.OK;
         } else {
-            for(let slide of slideUpdateList) {
+            for (let slide of slideUpdateList) {
                 slideUpd = await restAPI.updateSlide(slide.selectedSlide.slideid, slide.selectedSlide.data);
             }
         }
         if (presUpd.code === HTTP_CODES.OK && slideUpd.code === HTTP_CODES.OK) {
-            //Tell user pres has saved
+            setSaveText("All changes saved");
             console.log("Signal to user that presentation is updated");
         } else {
-            //tell user that changes are only local
+            setSaveText("Changes not saved");
             console.log("signal to user that presentation did not update?")
         }
     }
     updateTasks = [];
+}
+
+function setSaveText(state) {
+    savingText.innerText = state;
 }
 
 //Sharing functions-----------------------------------
