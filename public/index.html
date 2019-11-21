@@ -48,16 +48,17 @@
 
     <template id="temp-slideC">
         <div class="slideC-container">
+            <!--<textarea class="list__title" rows="1" cols="50" placeholder="List title">List title</textarea>-->
             <ul class="slide__list">
 
             </ul>
-            <button clas="slide__listAddPoint" onclick="addBulletPoint()">Add bullet point</button>
+            <button class="slide__listAddPoint" onclick="addBulletPoint()">Add list item</button>
         </div>
     </template>
 
     <template id="temp-listObject">
         <li class="slide__listObject">
-            <input type="text" class="slide__listText" placeholder="Enter text">
+            <textarea rows="1" cols="50" class="slide__listText" placeholder="Enter text"></textarea>
             <button class="slide__deleteListObj">&times;</button>
         </li>
     </template>

@@ -55,9 +55,10 @@
 
 .slide__image{
     flex-basis: 60%;
-    width: 80%;
-    height: 60%;
+    max-width: 80%;
+    max-height: 60%;
     margin: 1vh;
+    flex-grow: 2;
 }
 
 .image-insert input{
@@ -65,3 +66,66 @@
     font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
 }
 
+.slideC-container{
+    flex-direction: column;
+}
+
+.slideC-container textarea{
+    resize: none;
+    font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
+    font-size: 1.5vw;
+    margin: 0.5vh;
+    height: 2vw;
+    background-color: transparent;
+    color: white;
+    border: hidden;
+}
+
+.slideC-container textarea:hover, .slideC-container textarea:focus{
+    border: 0.5px dashed white;
+}
+
+/*
+.list__title{
+    flex-basis: 10%;
+    font-size: 2.5vw;
+    margin: 2vh;
+}*/
+
+.slideC-container li{
+    list-style: none;
+}
+
+.slideC-container li button{
+    cursor: pointer;
+    border: 1px solid white;
+    border-radius: 5px;
+    padding: 0.5vh;
+    margin: 0.5vh;
+    font-size: 1vw;
+    width:2vw;
+    height: 2vw;
+    font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
+    align-self: center;
+    background-color: transparent;
+    color: white;
+}
+
+.slide__listAddPoint{
+    cursor: pointer;
+    border: 1px solid white;
+    border-radius: 5px;
+    padding: 0.5vh;
+    margin: 0.5vh;
+    font-size: 1vw;
+    font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
+    height: 7vh;
+    width: 10vw;
+    align-self: center;
+    background-color: transparent;
+    color: white;
+}
+
+.slide__listAddPoint:hover, .slideC-container li button:hover{
+    background-color: rgb(93, 163, 180);
+}
