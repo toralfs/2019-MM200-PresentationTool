@@ -148,7 +148,7 @@ const restAPI = {
         };
         try {
             let resp = await fetch(`/presentation/${presID}/public`, cfg);
-            let data = resp.json();
+            let data = await resp.json();
             return data;
         }
         catch (error) {
@@ -167,7 +167,7 @@ const restAPI = {
         };
         try {
             let resp = await fetch(`/presentation/${presID}/share`, cfg);
-            let data = resp.json();
+            let data = await resp.json();
             return data;
         }
         catch (error) {
@@ -186,7 +186,7 @@ const restAPI = {
         };
         try {
             let resp = await fetch(`/presentation/${presID}/unshare`, cfg);
-            let data = resp.json();
+            let data = await resp.json();
             return data;
         }
         catch (error) {

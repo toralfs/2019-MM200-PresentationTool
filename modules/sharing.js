@@ -80,7 +80,7 @@ async function shareWithUser(req,res){
 async function unshareWithUser(req,res){
     try{
         if(req.body.userID && req.params.presentationID){
-            let user = await db.getUserByName(req.body.userID);
+            let user = await db.getUser(req.body.userID);
             let presentation = await db.getPresentationByID(req.params.presentationID);
             if(user && user.userid != presentation.ownerid){
                 let unshared = await db.unsharePresentationWithUser(req.params.presentationID, user.userid);
