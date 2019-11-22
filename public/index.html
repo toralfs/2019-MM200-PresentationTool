@@ -8,6 +8,8 @@
     <link rel="stylesheet" type="text/css" href="css/user-style.css">
     <link rel="stylesheet" type="text/css" href="css/navbar.css">
     <link rel="stylesheet" type="text/css" href="css/pres-style.css">
+    <link rel="stylesheet" type="text/css" href="css/themes/default-theme.css">
+    <link rel="stylesheet" type="text/css" href="css/editview-style.css">
 </head>
 
 <body>
@@ -29,31 +31,34 @@
 
     <template id="temp-slideA">
         <div class="slideA-container">
-            <input type="text" class="title" />
+            <textarea rows="4" cols="60" class="title"></textarea>
         </div>
     </template>
 
     <template id="temp-slideB">
         <div class="slideB-container">
-            <input type="text" class="slide__text"/>
-            <label for="imageLink">Image Link: </label>
-            <input id="imageLink" type="text" class="image__link"/>
+            <textarea class="slide__text" rows="4" cols="60"></textarea>
+            <div class="image-insert">
+                <label for="imageLink">Image Link: </label>
+                <input id="imageLink" type="text" class="image__link"/>
+            </div>
             <img id="slideImage" alt="insert image" class="slide__image"/>
         </div>
     </template>
 
     <template id="temp-slideC">
         <div class="slideC-container">
+            <!--<textarea class="list__title" rows="1" cols="50" placeholder="List title">List title</textarea>-->
             <ul class="slide__list">
 
             </ul>
-            <button clas="slide__listAddPoint" onclick="addBulletPoint()">Add bullet point</button>
+            <button class="slide__listAddPoint" onclick="addBulletPoint()">Add list item</button>
         </div>
     </template>
 
     <template id="temp-listObject">
         <li class="slide__listObject">
-            <input type="text" class="slide__listText" placeholder="Enter text">
+            <textarea rows="1" cols="50" class="slide__listText" placeholder="Enter text"></textarea>
             <button class="slide__deleteListObj">&times;</button>
         </li>
     </template>
@@ -141,15 +146,29 @@
             </div>
 
             <div id="editview" class="page" style="display: none;">
+                <input id="presName" type="text" oninput="changePresName()" />
                 <p id="saving-text" class="saving__text"></p>
+                <div id="share-options">
+                        <label for="sharing">Sharing: </label>
+                       <select id="sharing" onchange=setStatus()>
+                           <option value="" selected>--</option>
+                           <option value="private">Private</option>
+                           <option value="public">Public</option>
+                           <option value="individual">Custom</option>
+                       </select>
+                       <p id="txtResultSharing"></p>
+                </div>
                 <ul id="slide__list"></ul>
-                <div id="editButtons">
-                    <button id="add-slide" onclick="addSlide()">Add slide</button>
-                    <button id="remove-slide" onclick="removeSlide()">Remove slide</button>
-                    <label for="theme-selection">Select theme: </label>
+                
+                <button class="editButtons" id="add-slide" onclick="addSlide()">Add slide</button>
+                <button class="editButtons" id="remove-slide" onclick="removeSlide()">Remove slide</button>
+                <div id="theme-select">
+                <label for="theme-selection">Select theme: </label>
                     <select id="theme-selection">
                         <!-- Some options -->
                     </select>
+                </div>
+                <div id="slide-select">
                     <label for="slide-type-selection">Select slide type: </label>
                     <select id="slide-type-selection" onchange="changeSlideType(this)">
                         <option value="A">Title</option>
@@ -157,23 +176,12 @@
                         <option value="C">list</option>
                     </select>
                 </div>
+                
 
                 <div id="presToEdit">
-                    <input id="presName" type="text" oninput="changePresName()" />
                     <div id="selectedSlide">
                         <!-- contains slide from template -->
                     </div>
-                </div>
-
-                <div id="share-options">
-                    <label for="sharing">Sharing: </label>
-                   <select id="sharing" onchange=setStatus()>
-                       <option value="" selected>--</option>
-                       <option value="private">Private</option>
-                       <option value="public">Public</option>
-                       <option value="individual">Custom</option>
-                   </select>
-                   <p id="txtResultSharing"></p>
                 </div>
             </div>
         </main>
