@@ -1,20 +1,4 @@
-let inpNameCreate = document.getElementById('inpNameCreate');
-let inpEmailCreate = document.getElementById('inpEmailCreate');
-let inpPasswordCreate = document.getElementById('inpPasswordCreate');
-let txtResultCreate = document.getElementById('txtResultCreate');
 
-let inpNameLogin = document.getElementById('inpNameLogin');
-let inpPasswordLogin = document.getElementById('inpPasswordLogin');
-let txtResultLogin = document.getElementById('txtResultLogin');
-
-let inpNameUpdate = document.getElementById('inpNameUpdate');
-let inpEmailUpdate = document.getElementById('inpEmailUpdate');
-let inpPasswordUpdate = document.getElementById('inpPasswordUpdate');
-let txtResultUpdate = document.getElementById('txtResultUpdate');
-
-let currentUser = {};
-
-// --------------------------------------------------------------
 const restAPIUser = {
 
     //------------------------
