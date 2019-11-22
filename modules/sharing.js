@@ -114,7 +114,7 @@ async function sharedWithMe(req,res){
             res.status(HTTP_CODES.OK).json({code: HTTP_CODES.OK, presentations: sharedPres});
         }
         else{
-            res.status(HTTP_CODES.NOT_FOUND).json({code: HTTP_CODES.NOT_FOUND, msg: `No shared presentations.`});
+            res.status(HTTP_CODES.NOT_FOUND).json({code: HTTP_CODES.NOT_FOUND, msg: `You don't have any shared presentations.`});
         }
     }
     catch(error){

@@ -45,7 +45,7 @@ async function loadPresOverview(isShared) {
             presContainer.appendChild(tmp1);
         }
     } else {
-        presContainer.innerHTML = `Error ${presentations.code}, ${presentations.msg}`; //Should be a describing error message
+        presContainer.innerHTML = `${presentations.msg}`;
     }
 
 }
@@ -77,7 +77,7 @@ async function loadPublicPresentations() {
             presContainer.appendChild(tmp1);
         }
     } else {
-        presContainer.innerHTML = `Error ${presentations.code}, ${presentations.msg}`;
+        presContainer.innerHTML = `${presentations.msg}`;
     }
 
 }

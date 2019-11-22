@@ -177,7 +177,6 @@ async function deleteUser() {
         removeUserFromShared(currentUser.ID);
         let del = await restAPIUser.deleteUser(`/user/${currentUser.ID}`);
         if (del.code == HTTP_CODES.OK) {
-            console.log(del);
             currentUser = {};
             emptyInputs();
             showStartPage();
