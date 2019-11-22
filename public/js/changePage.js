@@ -73,4 +73,5 @@ function emptyTxtResult() {
     txtResultCreate.innerHTML = "";
     txtResultLogin.innerHTML = "";
     txtResultUpdate.innerHTML = "";
+    txtResultSharing.innerHTML = "";
 }
