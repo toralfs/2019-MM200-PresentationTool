@@ -117,7 +117,7 @@ async function loadEditView() {
     helperSlides = slides;
     if (slides.code === HTTP_CODES.OK) {
         if (slides.data.length > 0) {
-            for (let slide of slides.data) {
+            /*for (let slide of slides.data) {
                 let tmp1 = document.getElementById("edit-slideoverview-temp").content.cloneNode(true);
                 let slideObject = tmp1.querySelector(".edit-slideoverview");
                 slideObject.innerText = `# ${slide.slideid}`;
@@ -131,7 +131,7 @@ async function loadEditView() {
                     displaySlide();
                 });
                 slideList.appendChild(tmp1);
-            }
+            }*/
             selectedSlide.slideid = slides.data[0].slideid;
             selectedSlide.data = slides.data[0].data;
             setSlideType(selectedSlide.data.type)

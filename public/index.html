@@ -148,6 +148,12 @@
             <div id="editview" class="page" style="display: none;">
                 <input id="presName" type="text" oninput="changePresName()" />
                 <p id="saving-text" class="saving__text"></p>
+                <div id="theme-select">
+                    <label for="theme-selection">Select theme: </label>
+                        <select id="theme-selection">
+                            <!-- Some options -->
+                        </select>
+                </div>
                 <div id="share-options">
                         <label for="sharing">Sharing: </label>
                        <select id="sharing" onchange=setStatus()>
@@ -158,16 +164,14 @@
                        </select>
                        <p id="txtResultSharing"></p>
                 </div>
-                <ul id="slide__list"></ul>
+                <ul id="slide__list" style="display: none;"></ul>
+                
+                <button class="editButtons" id="previous-slide" onclick="displayPreviousSlide()">Previous</button>
+                <button class="editButtons" id="next-slide" onclick="displayNextSlide()">Next</button>
                 
                 <button class="editButtons" id="add-slide" onclick="addSlide()">Add slide</button>
                 <button class="editButtons" id="remove-slide" onclick="removeSlide()">Remove slide</button>
-                <div id="theme-select">
-                <label for="theme-selection">Select theme: </label>
-                    <select id="theme-selection">
-                        <!-- Some options -->
-                    </select>
-                </div>
+                
                 <div id="slide-select">
                     <label for="slide-type-selection">Select slide type: </label>
                     <select id="slide-type-selection" onchange="changeSlideType(this)">

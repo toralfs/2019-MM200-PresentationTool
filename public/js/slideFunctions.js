@@ -22,6 +22,8 @@ async function removeSlide() {
             newIndex = currentIndex + 1;
         }
         try {
+            helperSlides.data.splice(selectedSlide.slideid,1);
+            console.log(helperSlides.data);
             selectedSlide.slideid = helperSlides.data[newIndex].slideid;
             selectedSlide.data = helperSlides.data[newIndex].data;
             displaySlide();
@@ -147,4 +149,34 @@ function removeBulletPoint(id) {
     selectedSlide.data.list.splice(id, 1);
     runUpdateTimer();
     displaySlide();
+}
+
+function displayPreviousSlide(){
+    let currentIndex = helperSlides.data.map(function (e) {
+        return e.slideid;
+    }).indexOf(selectedSlide.slideid);
+    let newIndex = null;
+    if (currentIndex > 0) {
+        newIndex = currentIndex - 1;
+    } else {
+        newIndex = 0;
+    }
+    selectedSlide.slideid = helperSlides.data[newIndex].slideid;
+    selectedSlide.data = helperSlides.data[newIndex].data;
+    displaySlide();  
+}
+
+function displayNextSlide(){
+    let currentIndex = helperSlides.data.map(function (e) {
+        return e.slideid;
+    }).indexOf(selectedSlide.slideid);
+    let newIndex = null;
+    if (currentIndex < helperSlides.data.length-1) {
+        newIndex = currentIndex + 1;
+    } else {
+        newIndex = helperSlides.data.length-1;
+    }
+    selectedSlide.slideid = helperSlides.data[newIndex].slideid;
+    selectedSlide.data = helperSlides.data[newIndex].data;
+    displaySlide();  
 }
