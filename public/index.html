@@ -159,7 +159,7 @@
                        <p id="txtResultSharing"></p>
                 </div>
                 <ul id="slide__list"></ul>
-                
+                <button id= "fullbtn" onclick = "startFullScreen()">Enable Full Screen</button>
                 <button class="editButtons" id="add-slide" onclick="addSlide()">Add slide</button>
                 <button class="editButtons" id="remove-slide" onclick="removeSlide()">Remove slide</button>
                 <div id="theme-select">
@@ -179,10 +179,14 @@
                 
 
                 <div id="presToEdit">
-                    <div id="selectedSlide">
+                    <div id="selectedSlide" class= "selectedSlides">
                         <!-- contains slide from template -->
                     </div>
                 </div>
+
+
+                <div id="fullScreenCont"></div>
+
             </div>
         </main>
     </div>

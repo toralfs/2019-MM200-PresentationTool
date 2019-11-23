@@ -109,7 +109,7 @@ async function loadEditView() {
     window.location.href = "#editview";
     showEditView();
     presName.value = currentPres.name;
-    document.getElementById('sharing').value="";
+    document.getElementById('sharing').value = "";
     let last_updated_time = splitTime(currentPres.last_updated);
     setSaveText(`Last updated: ${last_updated_time.clock}`);
 
@@ -195,22 +195,96 @@ async function updatePresentation() {
 }
 
 //Sharing functions-----------------------------------
-async function setStatus(){
+async function setStatus() {
     let status = document.getElementById('sharing').value;
-    if(status == "public"){
+    if (status == "public") {
         let data = await restAPI.setPublicStatus(currentPres.ID, "true");
         txtResultSharing.innerHTML = data.msg;
     }
-    else if(status == "private"){
+    else if (status == "private") {
         let data = await restAPI.setPublicStatus(currentPres.ID, "false");
         txtResultSharing.innerHTML = data.msg;
     }
-    else if(status == "individual"){
+    else if (status == "individual") {
         document.getElementById('sharing').value = "";
         let user = window.prompt("Insert the username of the user you want to share the presenation with");
-        if(user && user != ""){
+        if (user && user != "") {
             let data = await restAPI.shareWithUser(currentPres.ID, user);
             txtResultSharing.innerHTML = data.msg;
         }
     }
 }
+
+
+function startFullScreen() {
+    if (document.fullscreenElement) {
+        document.exitFullscreen()
+    } else {
+       // presToEdit.webkitRequestFullscreen();
+       // presToEdit.mozRequestFullScreen();
+       // presToEdit.msRequestFullscreen();
+        presToEdit.requestFullscreen();
+    }
+};
+
+let cont = document.createElement("div");
+document.getElementById("fullScreenCont").appendChild(cont);
+/*
+let slides = [];
+let index = 0;
+
+//loadSlides(presToEdit);
+
+// ------------------ Slides ----------------------
+
+async function loadSlides(presID) {
+    try {
+        let resp = await fetch(`/presentation/slide/${presID}`);
+        let data = await resp.json();
+
+        slides = data.data;
+        console.log(data);
+
+        showSlides(0);
+
+    } catch (error) {
+        console.error(error);
+    }
+}
+
+function showSlides(i) {
+
+
+    clearDiv(cont);
+    let h1 = document.createElement("h1");
+    cont.appendChild(h1);
+    h1.innerHTML = slides[i].data.text;
+
+
+    if (slides[i].data.type == "B") {
+        let image = document.createElement("img")
+        image.setAttribute("src", `${slides[i].data.image}`);
+        cont.appendChild(image);
+    } else if (slides[i].data.type == "C") {
+        for (let index = 0; index < slides[i].data.list.length; index++) {
+            let list = document.createElement("h2")
+            list.innerHTML = slides[i].data.list[index];
+            cont.appendChild(list);
+
+        }
+
+    }
+    console.log(slides[i].data.list)
+
+
+}
+*/
+
+document.body.addEventListener("keydown", function (evt) {
+
+    if (evt.keyCode == 39) {
+        displayNextSlide();
+    } else if (evt.keyCode == 37) {
+        displayPreviousSlide();
+    }
+})

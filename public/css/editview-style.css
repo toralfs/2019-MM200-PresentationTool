@@ -62,3 +62,6 @@
     border: 2px solid black;
     margin: 2vh;
 }
+:fullscreen .selectedSlides {
+    display: none;
+  }

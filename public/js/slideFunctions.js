@@ -148,3 +148,37 @@ function removeBulletPoint(id) {
     runUpdateTimer();
     displaySlide();
 }
+
+function displayPreviousSlide(){
+    if(helperSlides.data.length>0){
+        let currentIndex = helperSlides.data.map(function (e) {
+            return e.slideid;
+        }).indexOf(selectedSlide.slideid);
+        let newIndex = null;
+        if (currentIndex > 0) {
+            newIndex = currentIndex - 1;
+        } else if(currentIndex == 0){
+            newIndex = 0;
+        }
+        selectedSlide.slideid = helperSlides.data[newIndex].slideid;
+        selectedSlide.data = helperSlides.data[newIndex].data;
+        displaySlide(); 
+    }
+}
+
+function displayNextSlide(){
+    if(helperSlides.data.length>0){
+        let currentIndex = helperSlides.data.map(function (e) {
+            return e.slideid;
+        }).indexOf(selectedSlide.slideid);
+        let newIndex = null;
+        if (currentIndex < helperSlides.data.length-1) {
+            newIndex = currentIndex + 1;
+        } else if (currentIndex == helperSlides.data.length-1){
+            newIndex = helperSlides.data.length-1;
+        }
+        selectedSlide.slideid = helperSlides.data[newIndex].slideid;
+        selectedSlide.data = helperSlides.data[newIndex].data;
+        displaySlide();  
+    }
+}
