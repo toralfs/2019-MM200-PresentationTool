@@ -29,7 +29,7 @@ route.get('/:userID', async function(req, res){
         if(presentations && presentations.length > 0) {
             res.status(HTTP_CODES.OK).json({code: HTTP_CODES.OK, presentations: presentations});
         } else {
-            res.status(HTTP_CODES.NOT_FOUND).json({code: HTTP_CODES.NOT_FOUND, msg: "This user does not have any presentations"});
+            res.status(HTTP_CODES.NOT_FOUND).json({code: HTTP_CODES.NOT_FOUND, msg: "You don't have any presentations"});
         }
     }
     else{
@@ -56,7 +56,7 @@ route.delete('/:presentationID', async function(req, res) {
     if(req.params.presentationID) {
         let deletedPresentation = await db.deleteExistingPresentation(req.params.presentationID);
         if(deletedPresentation === DB_RESPONSES.OK) {
-            res.status(HTTP_CODES.OK).json({code: HTTP_CODES.OK, msg: `Presentation with presentationID=${req.params.presentationID} deleted.`});
+            res.status(HTTP_CODES.OK).json({code: HTTP_CODES.OK, msg: `Presentation deleted.`});
         } else if(deletedPresentation === DB_RESPONSES.NOT_EXIST) {
             res.status(HTTP_CODES.NOT_FOUND).json({code: HTTP_CODES.NOT_FOUND, msg: "This presentation does not exist"});
         }

@@ -171,14 +171,38 @@ async function updateUser() {
 }
 
 //------------------------------------------
-function deleteUser() {
+async function deleteUser() {
     if (window.confirm("Are you sure you want to delete this account?")) {
-        let del = restAPIUser.deleteUser(`/user/${currentUser.ID}`);
+        delPresByUser(currentUser.ID);
+        removeUserFromShared(currentUser.ID);
+        let del = await restAPIUser.deleteUser(`/user/${currentUser.ID}`);
         if (del.code == HTTP_CODES.OK) {
             currentUser = {};
             emptyInputs();
             showStartPage();
             localStorage.clear();
+        }
+    }
+}
+
+//Delete presentations created by a specific user
+
+async function delPresByUser(userID){
+    let pres = await restAPI.getPresentations(userID);
+    if(pres.code == HTTP_CODES.OK){
+        for (presentation of pres.presentations){
+            await restAPI.deletePresentation(presentation.presentationid);
+        }
+    }
+}
+
+//Remove user from the sharedusers array of all presentations shared with him
+
+async function removeUserFromShared(userID){
+    let pres = await restAPI.getSharedWithMePresentations(userID);
+    if(pres.code == HTTP_CODES.OK){
+        for (presentation of pres.presentations){
+            let data = await restAPI.unshareWithUser(presentation.presentationid, userID);
         }
     }
 }
@@ -189,19 +213,4 @@ function logoutUser() {
     emptyInputs();
     showStartPage();
     localStorage.clear();
-}
-
-//-----------------------
-function emptyInputs() {
-    let inputs = document.querySelectorAll("input");
-    for (let i of inputs) {
-        i.value = "";
-    }
-}
-
-//----------------------
-function emptyTxtResult() {
-    txtResultCreate.innerHTML = "";
-    txtResultLogin.innerHTML = "";
-    txtResultUpdate.innerHTML = "";
 }

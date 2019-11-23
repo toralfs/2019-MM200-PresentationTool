@@ -45,7 +45,7 @@ async function loadPresOverview(isShared) {
             presContainer.appendChild(tmp1);
         }
     } else {
-        presContainer.innerHTML = `Error ${presentations.code}, ${presentations.msg}`; //Should be a describing error message
+        presContainer.innerHTML = `${presentations.msg}`;
     }
 
 }
@@ -77,7 +77,7 @@ async function loadPublicPresentations() {
             presContainer.appendChild(tmp1);
         }
     } else {
-        presContainer.innerHTML = `Error ${presentations.code}, ${presentations.msg}`;
+        presContainer.innerHTML = `${presentations.msg}`;
     }
 
 }
@@ -86,7 +86,7 @@ async function createPresentation() {
     let createdPres = await restAPI.createPresentation("New presentation", currentUser.ID, "default");
     console.log(createdPres);
     if (createdPres.code === HTTP_CODES.CREATED) {
-        loadEditView();
+        loadPresOverview();
     }
 }
 
@@ -110,14 +110,18 @@ async function loadEditView() {
     showEditView();
     presName.value = currentPres.name;
     document.getElementById('sharing').value="";
+    document.getElementById('slide-type-selection').value="";
+    document.getElementById('theme-selection').value=currentPres.theme;
+    loadTheme();
     let last_updated_time = splitTime(currentPres.last_updated);
     setSaveText(`Last updated: ${last_updated_time.clock}`);
 
     let slides = await restAPI.getSlides(currentPres.ID);
-    helperSlides = slides;
     if (slides.code === HTTP_CODES.OK) {
+        helperSlides.code = slides.code;
+        helperSlides.data = slides.data;
         if (slides.data.length > 0) {
-            for (let slide of slides.data) {
+            /*for (let slide of slides.data) {
                 let tmp1 = document.getElementById("edit-slideoverview-temp").content.cloneNode(true);
                 let slideObject = tmp1.querySelector(".edit-slideoverview");
                 slideObject.innerText = `# ${slide.slideid}`;
@@ -131,10 +135,9 @@ async function loadEditView() {
                     displaySlide();
                 });
                 slideList.appendChild(tmp1);
-            }
+            }*/
             selectedSlide.slideid = slides.data[0].slideid;
             selectedSlide.data = slides.data[0].data;
-            setSlideType(selectedSlide.data.type)
             displaySlide();
         } else {
             console.log("show text");
@@ -144,8 +147,29 @@ async function loadEditView() {
     }
 }
 
-function changeTheme(presentation, selectedTheme) {
-    presentation.theme = selectedTheme;
+function loadTheme(){
+    if(currentPres.theme == "default"){
+        loadCSSFile("css/themes/default-theme.css", "default-theme");
+        removeCSSFile("orange-theme");
+    }
+    else if(currentPres.theme == "orange"){
+        loadCSSFile("css/themes/orange-theme.css", "orange-theme");
+        removeCSSFile("default-theme");
+    }
+}
+
+async function setTheme(){
+    let currentTheme = document.getElementById("theme-selection").value;
+    if(currentTheme == "default"){
+        currentPres.theme = "default";
+        await restAPI.updatePresentation(currentPres.ID, currentPres.name, currentPres.theme);
+    }
+    else if(currentTheme == "orange"){
+        loadCSSFile("css/themes/orange-theme.css");
+        currentPres.theme = "orange";
+        await restAPI.updatePresentation(currentPres.ID, currentPres.name, currentPres.theme);
+    }
+    loadTheme();
 }
 
 function changePresName() {
@@ -205,11 +229,19 @@ async function setStatus(){
         let data = await restAPI.setPublicStatus(currentPres.ID, "false");
         txtResultSharing.innerHTML = data.msg;
     }
-    else if(status == "individual"){
+    else if(status == "individual-share"){
         document.getElementById('sharing').value = "";
-        let user = window.prompt("Insert the username of the user you want to share the presenation with");
+        let user = window.prompt("Share with user: (insert username)");
         if(user && user != ""){
             let data = await restAPI.shareWithUser(currentPres.ID, user);
+            txtResultSharing.innerHTML = data.msg;
+        }
+    }
+    else if(status == "individual-unshare"){
+        document.getElementById('sharing').value = "";
+        let user = window.prompt("Unshare with user: (insert username)");
+        if(user && user != ""){
+            let data = await restAPI.unshareWithUser(currentPres.ID, user);
             txtResultSharing.innerHTML = data.msg;
         }
     }

@@ -40,6 +40,9 @@
     flex-direction: column;
     position: relative;
     align-items: center;
+    font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+    font-size: 2vw;
+    margin-top: 2vw;
 }
 h1{
     font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
@@ -52,18 +55,25 @@ h1{
 
 .overview-presname{
     font-size: 2vw;
-    margin-bottom: 5vm;
+    margin-bottom: 2vw;
 }
 
-#overview-create-pres-btn{
+#overview-create-pres-btn, .overview-delete-button{
     cursor: pointer;
     border: none;
     padding: 0.5vh;
-    margin: 0.5vh;
+    margin: 1vh;
     font-size: 1.5vw;
     height: 6vh;
-    width: 20vw;
     align-self: center;
     background-color: black;
     color: burlywood;
+}
+
+#overview-create-pres-btn{
+    width: 10vw;
+}
+
+.overview-delete-button{
+    width: 20vw;
 }

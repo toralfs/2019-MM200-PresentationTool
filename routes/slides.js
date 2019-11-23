@@ -27,7 +27,7 @@ route.delete('/:slideID', async function(req, res){
     if(req.params.slideID){
         let deletedSlide = await db.deleteExistingSlide(req.params.slideID, req.body.presentationID);
         if(deletedSlide === DB_RESPONSES.OK){
-            res.status(HTTP_CODES.OK).json({code: HTTP_CODES.OK,msg: `Slide with slideID=${req.params.slideID} deleted.`});
+            res.status(HTTP_CODES.OK).json({code: HTTP_CODES.OK,msg: `Slide deleted.`});
         }
         else if(deletedSlide === DB_RESPONSES.NOT_EXIST){
             res.status(HTTP_CODES.NOT_FOUND).json({msg: "This slide does not exist"});
@@ -63,7 +63,7 @@ route.put('/:slideID', async function(req, res) {
     if(req.params.slideID && req.body.data){
         let updatedSlide = await db.updateExitingSlide(req.params.slideID, req.body.data);
         if(updatedSlide === DB_RESPONSES.OK) {
-            res.status(HTTP_CODES.OK).json({code: HTTP_CODES.OK, msg: `Slide with slideID=${req.params.slideID} updated`, data: updatedSlide});
+            res.status(HTTP_CODES.OK).json({code: HTTP_CODES.OK, msg: `Slide updated`, data: updatedSlide});
         }else{
             res.status(HTTP_CODES.BAD_REQUEST).json({code: HTTP_CODES.BAD_REQUEST, msg: `Bad request`});
         }

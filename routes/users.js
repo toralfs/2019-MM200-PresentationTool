@@ -64,7 +64,7 @@ route.delete('/:userID', async function(req, res) {
     if(req.params.userID) {
         let deletedUser = await db.deleteExistingUser(req.params.userID);
         if(deletedUser === DB_RESPONSES.OK) {
-            res.status(HTTP_CODES.OK).json({code: HTTP_CODES.OK, msg: `User with userID=${req.params.userID} deleted.`});
+            res.status(HTTP_CODES.OK).json({code: HTTP_CODES.OK, msg: `User deleted.`});
         } else if(deletedUser === DB_RESPONSES.NOT_EXIST) {
             res.status(HTTP_CODES.NOT_FOUND).json({code: HTTP_CODES.NOT_FOUND, msg: "This user does not exist"});
         }

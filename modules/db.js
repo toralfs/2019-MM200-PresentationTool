@@ -235,7 +235,7 @@ const db = function (dbConnectionString) {
             let shared = null; 
             shared = await runQuery(`SELECT * FROM presentations WHERE $2=ANY(sharedUsers) AND presentationID = $1`, [presentationID, userID]);
             if(shared){
-                await runQuery(`UPDATE  presentations SET sharedusers = array_remove(sharedusers, $1) WHERE presentationID = $2;`, [userID, presentationID]);
+                await runQuery(`UPDATE presentations SET sharedusers = array_remove(sharedusers, $1) WHERE presentationID = $2;`, [userID, presentationID]);
                 response = DB_RESPONSES.OK;
             }
             else{

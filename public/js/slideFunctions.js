@@ -1,37 +1,49 @@
 async function addSlide() {
     let addedSlide = await restAPI.createSlide(SLIDE_TYPE_DEFAULT.A, currentPres.ID);
     if (addedSlide.code === HTTP_CODES.CREATED) {
+        let currentIndex = helperSlides.data.map(function (e) {
+            return e.slideid;
+        }).indexOf(selectedSlide.slideid);
         selectedSlide.slideid = addedSlide.slideid;
         selectedSlide.data = SLIDE_TYPE_DEFAULT.A;
-        displaySlide();
+        if(helperSlides.data.length>0){            
+            displaySlide();
+            helperSlides.data.splice(currentIndex + 1, 0, {slideid: addedSlide.slideid, data: selectedSlide.data, presentationid: currentPres.ID});
+        }
+        else{
+            loadEditView();
+        }
         console.log("slide created"); //need a better way of signaling user
     }
 }
 
 async function removeSlide() {
-    let removedSlide = await restAPI.removeSlide(selectedSlide.slideid, currentPres.ID);
-    if (removedSlide.code === HTTP_CODES.OK) { // Signal to user what happened, could/should? be changed
-        console.log("slide deleted");
-        let currentIndex = helperSlides.data.map(function (e) {
-            return e.slideid;
-        }).indexOf(selectedSlide.slideid);
-        let newIndex = null;
-        if (currentIndex > 0) {
-            newIndex = currentIndex - 1;
+    if(helperSlides.data.length>0){
+        let removedSlide = await restAPI.removeSlide(selectedSlide.slideid, currentPres.ID);
+        if (removedSlide.code === HTTP_CODES.OK) {
+            console.log("slide deleted");
+            let currentIndex = helperSlides.data.map(function (e) {
+                return e.slideid;
+            }).indexOf(selectedSlide.slideid);
+            let newIndex = null;
+            if (currentIndex > 0) {
+                newIndex = currentIndex - 1;
+            } else {
+                newIndex = currentIndex + 1;
+            }
+            try {
+                helperSlides.data.splice(currentIndex,1);
+                selectedSlide.slideid = helperSlides.data[newIndex].slideid;
+                selectedSlide.data = helperSlides.data[newIndex].data;
+                displaySlide();
+            } catch {
+                //Better error handling would be nice
+                divSelectedSlide.innerHTML = "This presentation has no slides yet";
+            }
         } else {
-            newIndex = currentIndex + 1;
+            console.error(removedSlide.code);
         }
-        try {
-            selectedSlide.slideid = helperSlides.data[newIndex].slideid;
-            selectedSlide.data = helperSlides.data[newIndex].data;
-            displaySlide();
-        } catch {
-            //Better error handling would be nice
-            divSelectedSlide.innerHTML = "This presentation has no slides yet";
-        }
-    } else {
-        console.error(removedSlide.code);
-    }
+    }    
 }
 
 function displaySlide() {
@@ -55,7 +67,7 @@ function displaySlide() {
             tmp1.querySelector(".image__link").value = selectedSlide.data.image;
             tmp1.querySelector(".slide__image").src = selectedSlide.data.image;
             tmp1.querySelector(".image__link").addEventListener("change", (e) => {
-                changeSlideImage(selectedSlide, e.target.parentNode.children[3], e.target.value); //doesn't look the cleanest but works
+                changeSlideImage(selectedSlide, selectedSlide.data.image, e.target.value);
             });
 
             divSelectedSlide.appendChild(tmp1);
@@ -83,8 +95,8 @@ function displaySlide() {
 
 }
 
-function changeSlideType(e) {
-    let newSlideType = e.value;
+function changeSlideType() {
+    let newSlideType = document.getElementById("slide-type-selection").value;
     switch (newSlideType) {
         case "A":
             selectedSlide.data = SLIDE_TYPE_DEFAULT.A;
@@ -96,13 +108,9 @@ function changeSlideType(e) {
             selectedSlide.data = SLIDE_TYPE_DEFAULT.C;
             break;
     }
+    console.log(selectedSlide.data);
     displaySlide();
     runUpdateTimer();
-}
-
-function setSlideType(type) {
-    let slideTypeSelection = document.getElementById("slide-type-selection");
-    slideTypeSelection.value = type;
 }
 
 function changeBgColor(slide, selectedColor) {
@@ -118,6 +126,7 @@ function changeSlideImage(slideToChange, slideImage, imageLink) {
     slideToChange.data.image = imageLink;
     slideImage.src = imageLink;
     runUpdateTimer();
+    displaySlide();
 }
 
 function changeSlideList(slideToChange, listObj, listObjID) {
@@ -147,4 +156,38 @@ function removeBulletPoint(id) {
     selectedSlide.data.list.splice(id, 1);
     runUpdateTimer();
     displaySlide();
+}
+
+function displayPreviousSlide(){
+    if(helperSlides.data.length>0){
+        let currentIndex = helperSlides.data.map(function (e) {
+            return e.slideid;
+        }).indexOf(selectedSlide.slideid);
+        let newIndex = null;
+        if (currentIndex > 0) {
+            newIndex = currentIndex - 1;
+        } else if(currentIndex == 0){
+            newIndex = 0;
+        }
+        selectedSlide.slideid = helperSlides.data[newIndex].slideid;
+        selectedSlide.data = helperSlides.data[newIndex].data;
+        displaySlide(); 
+    }
+}
+
+function displayNextSlide(){
+    if(helperSlides.data.length>0){
+        let currentIndex = helperSlides.data.map(function (e) {
+            return e.slideid;
+        }).indexOf(selectedSlide.slideid);
+        let newIndex = null;
+        if (currentIndex < helperSlides.data.length-1) {
+            newIndex = currentIndex + 1;
+        } else if (currentIndex == helperSlides.data.length-1){
+            newIndex = helperSlides.data.length-1;
+        }
+        selectedSlide.slideid = helperSlides.data[newIndex].slideid;
+        selectedSlide.data = helperSlides.data[newIndex].data;
+        displaySlide();  
+    }
 }
