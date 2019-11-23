@@ -37,10 +37,10 @@
 
     <template id="temp-slideB">
         <div class="slideB-container">
-            <textarea class="slide__text" rows="4" cols="60"></textarea>
+            <textarea placeholder="Image slide" class="slide__text" rows="4" cols="60"></textarea>
             <div class="image-insert">
                 <label for="imageLink">Image Link: </label>
-                <input id="imageLink" type="text" class="image__link"/>
+                <input placeholder="Image link" id="imageLink" type="text" class="image__link"/>
             </div>
             <img id="slideImage" alt="insert image" class="slide__image"/>
         </div>
@@ -155,14 +155,14 @@
                         </select>
                 </div>
                 <div id="share-options">
-                        <label for="sharing">Sharing: </label>
-                       <select id="sharing" onchange=setStatus()>
-                           <option value="" selected>--</option>
-                           <option value="private">Private</option>
-                           <option value="public">Public</option>
-                           <option value="individual">Custom</option>
-                       </select>
-                       <p id="txtResultSharing"></p>
+                    <label for="sharing">Sharing: </label>
+                    <select id="sharing" onchange=setStatus()>
+                        <option value="" selected>--</option>
+                        <option value="private">Private</option>
+                        <option value="public">Public</option>
+                        <option value="individual">Custom</option>
+                    </select>
+                    <p id="txtResultSharing"></p>
                 </div>
                 <ul id="slide__list" style="display: none;"></ul>
                 
@@ -174,7 +174,8 @@
                 
                 <div id="slide-select">
                     <label for="slide-type-selection">Select slide type: </label>
-                    <select id="slide-type-selection" onchange="changeSlideType(this)">
+                    <select id="slide-type-selection" onchange=changeSlideType()>
+                        <option value="" selected>--</option>
                         <option value="A">Title</option>
                         <option value="B">Image with text</option>
                         <option value="C">list</option>

@@ -110,6 +110,7 @@ async function loadEditView() {
     showEditView();
     presName.value = currentPres.name;
     document.getElementById('sharing').value="";
+    document.getElementById('slide-type-selection').value="";
     let last_updated_time = splitTime(currentPres.last_updated);
     setSaveText(`Last updated: ${last_updated_time.clock}`);
 
@@ -135,7 +136,6 @@ async function loadEditView() {
             }*/
             selectedSlide.slideid = slides.data[0].slideid;
             selectedSlide.data = slides.data[0].data;
-            setSlideType(selectedSlide.data.type)
             displaySlide();
         } else {
             console.log("show text");

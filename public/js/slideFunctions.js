@@ -7,10 +7,8 @@ async function addSlide() {
         selectedSlide.slideid = addedSlide.slideid;
         selectedSlide.data = SLIDE_TYPE_DEFAULT.A;
         if(helperSlides.data.length>0){            
-            console.log(helperSlides.data)
             displaySlide();
             helperSlides.data.splice(currentIndex + 1, 0, {slideid: addedSlide.slideid, data: selectedSlide.data, presentationid: currentPres.ID});
-            console.log(helperSlides.data);
         }
         else{
             loadEditView();
@@ -97,8 +95,8 @@ function displaySlide() {
 
 }
 
-function changeSlideType(e) {
-    let newSlideType = e.value;
+function changeSlideType() {
+    let newSlideType = document.getElementById("slide-type-selection").value;
     switch (newSlideType) {
         case "A":
             selectedSlide.data = SLIDE_TYPE_DEFAULT.A;
@@ -110,13 +108,9 @@ function changeSlideType(e) {
             selectedSlide.data = SLIDE_TYPE_DEFAULT.C;
             break;
     }
+    console.log(selectedSlide.data);
     displaySlide();
     runUpdateTimer();
-}
-
-function setSlideType(type) {
-    let slideTypeSelection = document.getElementById("slide-type-selection");
-    slideTypeSelection.value = type;
 }
 
 function changeBgColor(slide, selectedColor) {
