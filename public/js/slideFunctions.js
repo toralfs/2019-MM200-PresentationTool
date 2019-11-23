@@ -1,14 +1,16 @@
 async function addSlide() {
     let addedSlide = await restAPI.createSlide(SLIDE_TYPE_DEFAULT.A, currentPres.ID);
     if (addedSlide.code === HTTP_CODES.CREATED) {
+        let currentIndex = helperSlides.data.map(function (e) {
+            return e.slideid;
+        }).indexOf(selectedSlide.slideid);
         selectedSlide.slideid = addedSlide.slideid;
         selectedSlide.data = SLIDE_TYPE_DEFAULT.A;
-        if(helperSlides.data.length>0){
-            let currentIndex = helperSlides.data.map(function (e) {
-                return e.slideid;
-            }).indexOf(selectedSlide.slideid);
-            helperSlides.data.splice(currentIndex, 0, {slideid: addedSlide.slideid, data: SLIDE_TYPE_DEFAULT.A, presentationid: currentPres.ID});
+        if(helperSlides.data.length>0){            
+            console.log(helperSlides.data)
             displaySlide();
+            helperSlides.data.splice(currentIndex + 1, 0, {slideid: addedSlide.slideid, data: selectedSlide.data, presentationid: currentPres.ID});
+            console.log(helperSlides.data);
         }
         else{
             loadEditView();
@@ -67,7 +69,7 @@ function displaySlide() {
             tmp1.querySelector(".image__link").value = selectedSlide.data.image;
             tmp1.querySelector(".slide__image").src = selectedSlide.data.image;
             tmp1.querySelector(".image__link").addEventListener("change", (e) => {
-                changeSlideImage(selectedSlide, e.target.parentNode.children[3], e.target.value); //doesn't look the cleanest but works
+                changeSlideImage(selectedSlide, selectedSlide.data.image, e.target.value);
             });
 
             divSelectedSlide.appendChild(tmp1);
@@ -130,6 +132,7 @@ function changeSlideImage(slideToChange, slideImage, imageLink) {
     slideToChange.data.image = imageLink;
     slideImage.src = imageLink;
     runUpdateTimer();
+    displaySlide();
 }
 
 function changeSlideList(slideToChange, listObj, listObjID) {

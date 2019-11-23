@@ -86,7 +86,7 @@ async function createPresentation() {
     let createdPres = await restAPI.createPresentation("New presentation", currentUser.ID, "default");
     console.log(createdPres);
     if (createdPres.code === HTTP_CODES.CREATED) {
-        loadEditView();
+        loadPresOverview();
     }
 }
 
