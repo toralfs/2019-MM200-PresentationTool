@@ -111,6 +111,8 @@ async function loadEditView() {
     presName.value = currentPres.name;
     document.getElementById('sharing').value="";
     document.getElementById('slide-type-selection').value="";
+    document.getElementById('theme-selection').value=currentPres.theme;
+    loadTheme();
     let last_updated_time = splitTime(currentPres.last_updated);
     setSaveText(`Last updated: ${last_updated_time.clock}`);
 
@@ -145,8 +147,29 @@ async function loadEditView() {
     }
 }
 
-function changeTheme(presentation, selectedTheme) {
-    presentation.theme = selectedTheme;
+function loadTheme(){
+    if(currentPres.theme == "default"){
+        loadCSSFile("css/themes/default-theme.css", "default-theme");
+        removeCSSFile("orange-theme");
+    }
+    else if(currentPres.theme == "orange"){
+        loadCSSFile("css/themes/orange-theme.css", "orange-theme");
+        removeCSSFile("default-theme");
+    }
+}
+
+async function setTheme(){
+    let currentTheme = document.getElementById("theme-selection").value;
+    if(currentTheme == "default"){
+        currentPres.theme = "default";
+        await restAPI.updatePresentation(currentPres.ID, currentPres.name, currentPres.theme);
+    }
+    else if(currentTheme == "orange"){
+        loadCSSFile("css/themes/orange-theme.css");
+        currentPres.theme = "orange";
+        await restAPI.updatePresentation(currentPres.ID, currentPres.name, currentPres.theme);
+    }
+    loadTheme();
 }
 
 function changePresName() {
@@ -172,8 +195,6 @@ async function updatePresentation() {
         });
         slideUpdateList.push(item);
     }
-    console.log(presUpdateList);
-    console.log(slideUpdateList);
 
     for (let task of presUpdateList) {
         setSaveText("saving changes");

@@ -8,7 +8,7 @@
     <link rel="stylesheet" type="text/css" href="css/user-style.css">
     <link rel="stylesheet" type="text/css" href="css/navbar.css">
     <link rel="stylesheet" type="text/css" href="css/pres-style.css">
-    <link rel="stylesheet" type="text/css" href="css/themes/default-theme.css">
+    <link id="default-theme" rel="stylesheet" type="text/css" href="css/themes/default-theme.css">
     <link rel="stylesheet" type="text/css" href="css/editview-style.css">
 </head>
 
@@ -149,9 +149,10 @@
                 <p id="saving-text" class="saving__text"></p>
                 <div id="theme-select">
                     <label for="theme-selection">Select theme: </label>
-                    <select id="theme-selection">
+                    <select id="theme-selection" onchange=setTheme()>
                         <option value="" selected>--</option>
                         <option value="default">Default</option>
+                        <option value="orange">Orange</option>
                         <!--more options to come-->
                     </select>
                 </div>

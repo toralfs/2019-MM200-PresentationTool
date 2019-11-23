@@ -30,3 +30,22 @@ function clearDiv(div) {
         div.removeChild(div.firstChild);
     }
 }
+
+function loadCSSFile(filename, id){
+    let file=document.createElement("link")
+    file.setAttribute("rel", "stylesheet")
+    file.setAttribute("type", "text/css")
+    file.setAttribute("href", filename)
+    file.setAttribute("id", id)
+    if (file && file.id!="undefined"){
+        document.getElementsByTagName("head")[0].appendChild(file);
+    }
+}
+
+function removeCSSFile(id){
+    let file = document.getElementById(id);
+    if(file){
+        document.getElementsByTagName("head")[0].removeChild(file);
+    }
+    
+}
