@@ -172,6 +172,8 @@ async function updatePresentation() {
         });
         slideUpdateList.push(item);
     }
+    console.log(presUpdateList);
+    console.log(slideUpdateList);
 
     for (let task of presUpdateList) {
         setSaveText("saving changes");
@@ -206,11 +208,19 @@ async function setStatus(){
         let data = await restAPI.setPublicStatus(currentPres.ID, "false");
         txtResultSharing.innerHTML = data.msg;
     }
-    else if(status == "individual"){
+    else if(status == "individual-share"){
         document.getElementById('sharing').value = "";
-        let user = window.prompt("Insert the username of the user you want to share the presenation with");
+        let user = window.prompt("Share with user: (insert username)");
         if(user && user != ""){
             let data = await restAPI.shareWithUser(currentPres.ID, user);
+            txtResultSharing.innerHTML = data.msg;
+        }
+    }
+    else if(status == "individual-unshare"){
+        document.getElementById('sharing').value = "";
+        let user = window.prompt("Unshare with user: (insert username)");
+        if(user && user != ""){
+            let data = await restAPI.unshareWithUser(currentPres.ID, user);
             txtResultSharing.innerHTML = data.msg;
         }
     }

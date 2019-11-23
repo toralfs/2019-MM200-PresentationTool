@@ -175,9 +175,9 @@ const restAPI = {
         }
     },
 
-    unshareWithUser: async function (presID, userID) {
+    unshareWithUser: async function (presID, username) {
         let updata = {
-            userID: userID
+            username: username
         };
         let cfg = {
             method: "PUT",
