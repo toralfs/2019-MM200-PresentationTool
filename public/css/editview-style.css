@@ -15,15 +15,16 @@
     width: 10vw;
 }
 
-#presName, #saving-text, #share-options{
+#presName, #saving-text, #share-options, #theme-select{
     margin: 1vh;
-    flex-basis: 25%;
+    flex-basis: 22%;
+    align-self: baseline
 }
 
 
-#add-slide, #remove-slide, #theme-select, #slide-select{
+#slide-select{
     margin: 1vh;
-    flex-basis: 20%;
+    flex-basis: 18%;
     align-self: center;
     justify-self: center;
 }
@@ -35,15 +36,22 @@
 .editButtons{
     cursor: pointer;
     border: none;
+    flex-basis: 18%;
     padding: 0.5vh;
-    margin: 0.5vh;
+    margin: 1vh;
     font-size: 1.5vw;
     font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
     height: 8vh;
-    width: 10vw;
+    width: 8vw;
     align-self: center;
+    justify-self: center;
     background-color: black;
     color: burlywood;
+}
+
+.editButtons:disabled{
+    background-color: rgb(71, 71, 71);
+    color: white;
 }
 
 #presToEdit{

@@ -8,8 +8,8 @@ const HTTP_CODES = {
 
 //---------------------------------------------------
 const SLIDE_TYPE_DEFAULT = {
-    A: { type: "A", text: "New Slide", bgColor: "white" },
-    B: { type: "B", text: "New Slide", image: "insert image link", bgColor: "white" },
+    A: { type: "A", text: "New Title Slide", bgColor: "white" },
+    B: { type: "B", text: "New Image Slide", image: "insert image link", bgColor: "white" },
     C: { type: "C", list: [], bgColor: "white" }
 }
 
@@ -40,7 +40,7 @@ let currentUser = {};
 let presName = document.getElementById("presName");
 
 let userPresentations = [];
-let helperSlides = [];
+let helperSlides = {code: null, data: []};
 let updateTimer = {
     value: 0,
     interval: null

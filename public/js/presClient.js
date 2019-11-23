@@ -114,8 +114,9 @@ async function loadEditView() {
     setSaveText(`Last updated: ${last_updated_time.clock}`);
 
     let slides = await restAPI.getSlides(currentPres.ID);
-    helperSlides = slides;
     if (slides.code === HTTP_CODES.OK) {
+        helperSlides.code = slides.code;
+        helperSlides.data = slides.data;
         if (slides.data.length > 0) {
             /*for (let slide of slides.data) {
                 let tmp1 = document.getElementById("edit-slideoverview-temp").content.cloneNode(true);
