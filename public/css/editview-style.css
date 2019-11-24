@@ -33,6 +33,16 @@
     width: 40%;
 }
 
+#goFullscreen{
+    flex-basis: 100%;
+    display: flex;
+    justify-content: center;
+}
+
+#fullbtn{
+    flex-basis: 30%;
+}
+
 .editButtons{
     cursor: pointer;
     border: none;
@@ -61,7 +71,12 @@
 #selectedSlide{
     flex-basis: 100%;
     width: 60vw;
-    height: 80vh;
+    height: 85vh;
     border: 2px solid black;
     margin: 2vh;
+}
+
+
+#selectedSlide:fullscreen{
+    height: 100vh;
 }

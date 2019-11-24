@@ -204,13 +204,13 @@ async function updatePresentation() {
 }
 
 //Sharing functions-----------------------------------
-async function setStatus(){
+async function setStatus() {
     let status = document.getElementById('sharing').value;
-    if(status == "public"){
+    if (status == "public") {
         let data = await restAPI.setPublicStatus(currentPres.ID, "true");
         txtResultSharing.innerHTML = data.msg;
     }
-    else if(status == "private"){
+    else if (status == "private") {
         let data = await restAPI.setPublicStatus(currentPres.ID, "false");
         txtResultSharing.innerHTML = data.msg;
     }
@@ -231,3 +231,22 @@ async function setStatus(){
         }
     }
 }
+
+function startFullScreen() {
+    if (document.fullscreenElement) {
+        document.exitFullscreen()
+    } else {
+        presToEdit.requestFullscreen();
+    }
+};
+
+document.body.addEventListener("keydown", function (evt) {
+
+    if (evt.keyCode == 39) {
+        displayNextSlide();
+    } else if (evt.keyCode == 37) {
+        displayPreviousSlide();
+    } else if (evt.keyCode == 27){
+        endFullScreen();
+    }
+});

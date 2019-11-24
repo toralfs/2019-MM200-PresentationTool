@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>ghjghjghjgghjgv</title>
+
+</head>
+
+<body>
+	<div id="element">
+		<button id="fullbtn" onclick="startFullScreen()">Enable Full Screen</button>
+	</div>
+
+	<div id="container"></div>
+
+
+</body>
+
+
+<script>
+
+	function startFullScreen(event) {
+		if (document.fullscreenElement) {
+			document.exitFullscreen()
+		} else {
+			document.documentElement.requestFullscreen()
+		}
+	};
+
+	let cont = document.getElementById("container");
+	let slides = [];
+	let index = 0;
+
+	loadSlides(1);
+
+	// ------------------ Slides ----------------------
+	async function loadSlides(presID) {
+		try {
+			let resp = await fetch(`/presentation/slide/${presID}`);
+			let data = await resp.json();
+
+			slides = data.data;
+			showSlides(0);
+
+		} catch (error) {
+			console.error(error);
+		}
+	}
+
+	function showSlides(i) {
+
+		console.log(slides);
+
+		cont.innerHTML = "";
+		let h1 = document.createElement("h1");
+		h1.innerHTML = slides[i].data.text;
+		cont.appendChild(h1);
+
+		if (slides[i].data.type == "B") {
+			let image = document.createElement("img")
+			image.setAttribute("src", `${slides[i].data.image}`);
+			cont.appendChild(image);
+		} else if (slides[i].data.type == "C") {
+			for (let index = 0; index < slides[i].data.list.length; index++) {
+				let list = document.createElement("h2")
+				list.innerHTML = slides[i].data.list[index];
+				cont.appendChild(list);
+
+			}
+
+		}
+		console.log(slides[i].data.list)
+
+
+
+
+	}
+
+
+	document.body.addEventListener("keydown", function (evt) {
+
+
+
+		if (evt.keyCode == 39) {
+
+			index++;
+			showSlides(index);
+		} else if (evt.keyCode == 37) {
+			index--;
+			showSlides(index);
+		}
+	})
+
+
+
+
+
+
+	/*
+	
+	window.addEventListener("keydown", moveKeys)
+	
+	function startFullScreen (event) {
+	  if (document.fullscreenElement) {
+		document.exitFullscreen()
+	  } else {
+		document.documentElement.requestFullscreen()
+	  }
+	};
+	
+	function nextSlide() {
+		let element = document.getElementById("element");
+			element.style.top = parseInt(element.style.top) - 5 + 'px';
+			console.log(nextSlide)
+	}
+	
+	function previusSlide() {
+		let element = document.getElementById("element");
+			element.style.top = parseInt(element.style.top) + 5 + 'px';
+			console.log(previusSlide)
+	}
+	
+	
+	function moveKeys (evt) {
+		console.log (evt)
+		let key = evt.keycode
+		switch(key) {
+			case 37: nextSlide(); break; //left
+			case 39: previusSlide(); break; //right
+	
+		}
+	}
+	
+	*/
+</script>
+
+
+
+</html>
