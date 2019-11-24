@@ -217,69 +217,24 @@ async function setStatus() {
 
 
 function startFullScreen() {
-    if (document.fullscreenElement) {
-        document.exitFullscreen()
+    let something = document.getElementById ("selectedSlide")
+    if (!document.fullscreenElement) {
+    presToEdit.requestFullscreen();
+     something.setAttribute("id", "selectedSlides")
+
+    } else if (document.fullscreenElement){
+        something.setAttribute("id", "selectedSlide")
+        document.exitFullscreen() 
     } else {
-       // presToEdit.webkitRequestFullscreen();
-       // presToEdit.mozRequestFullScreen();
-       // presToEdit.msRequestFullscreen();
-        presToEdit.requestFullscreen();
+        something.setAttribute("id", "selectedSlide")
     }
 };
 
-let cont = document.createElement("div");
-document.getElementById("fullScreenCont").appendChild(cont);
-/*
-let slides = [];
-let index = 0;
-
-//loadSlides(presToEdit);
-
-// ------------------ Slides ----------------------
-
-async function loadSlides(presID) {
-    try {
-        let resp = await fetch(`/presentation/slide/${presID}`);
-        let data = await resp.json();
-
-        slides = data.data;
-        console.log(data);
-
-        showSlides(0);
-
-    } catch (error) {
-        console.error(error);
-    }
-}
-
-function showSlides(i) {
-
-
-    clearDiv(cont);
-    let h1 = document.createElement("h1");
-    cont.appendChild(h1);
-    h1.innerHTML = slides[i].data.text;
-
-
-    if (slides[i].data.type == "B") {
-        let image = document.createElement("img")
-        image.setAttribute("src", `${slides[i].data.image}`);
-        cont.appendChild(image);
-    } else if (slides[i].data.type == "C") {
-        for (let index = 0; index < slides[i].data.list.length; index++) {
-            let list = document.createElement("h2")
-            list.innerHTML = slides[i].data.list[index];
-            cont.appendChild(list);
-
-        }
-
-    }
-    console.log(slides[i].data.list)
-
-
-}
-*/
-
+function endFullScreen() {
+    let something = document.getElementById ("selectedSlides")
+    document.exitFullscreen() 
+    something.setAttribute("id", "selectedSlide")
+    };
 document.body.addEventListener("keydown", function (evt) {
 
     if (evt.keyCode == 39) {
