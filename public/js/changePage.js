@@ -14,6 +14,8 @@ let divList = [divSelectedSlide, presContainer, slideList];
 //Functions to switch between pages--------------------------
 function showUserPage() {
     emptyTxtResult();
+    inpNameUpdate = currentUser.username;
+    inpEmailUpdate = currentUser.email;
     hideAllPages(pageList, divList);
     userPage.style = "display:flex";
     document.querySelector("header").style = "display:flex";

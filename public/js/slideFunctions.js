@@ -1,41 +1,54 @@
 async function addSlide() {
     let addedSlide = await restAPI.createSlide(SLIDE_TYPE_DEFAULT.A, currentPres.ID);
     if (addedSlide.code === HTTP_CODES.CREATED) {
+        let currentIndex = helperSlides.data.map(function (e) {
+            return e.slideid;
+        }).indexOf(selectedSlide.slideid);
         selectedSlide.slideid = addedSlide.slideid;
         selectedSlide.data = SLIDE_TYPE_DEFAULT.A;
-        displaySlide();
-        console.log("slide created"); //need a better way of signaling user
+        if(helperSlides.data.length>0){            
+            displaySlide();
+            helperSlides.data.splice(currentIndex + 1, 0, {slideid: addedSlide.slideid, data: selectedSlide.data, presentationid: currentPres.ID});
+        }
+        else{
+            loadEditView();
+        }
+        console.log("slide created");
     }
 }
 
 async function removeSlide() {
-    let removedSlide = await restAPI.removeSlide(selectedSlide.slideid, currentPres.ID);
-    if (removedSlide.code === HTTP_CODES.OK) { // Signal to user what happened, could/should? be changed
-        console.log("slide deleted");
-        let currentIndex = helperSlides.data.map(function (e) {
-            return e.slideid;
-        }).indexOf(selectedSlide.slideid);
-        let newIndex = null;
-        if (currentIndex > 0) {
-            newIndex = currentIndex - 1;
+    if(helperSlides.data.length>0){
+        let removedSlide = await restAPI.removeSlide(selectedSlide.slideid, currentPres.ID);
+        if (removedSlide.code === HTTP_CODES.OK) {
+            console.log("slide deleted");
+            let currentIndex = helperSlides.data.map(function (e) {
+                return e.slideid;
+            }).indexOf(selectedSlide.slideid);
+            let newIndex = null;
+            if (currentIndex > 0) {
+                newIndex = currentIndex - 1;
+            } else {
+                newIndex = currentIndex + 1;
+            }
+            try {
+                helperSlides.data.splice(currentIndex,1);
+                selectedSlide.slideid = helperSlides.data[newIndex].slideid;
+                selectedSlide.data = helperSlides.data[newIndex].data;
+                displaySlide();
+            } catch {
+                //Better error handling would be nice
+                divSelectedSlide.innerHTML = "This presentation has no slides yet";
+            }
         } else {
-            newIndex = currentIndex + 1;
+            console.error(removedSlide.code);
         }
-        try {
-            selectedSlide.slideid = helperSlides.data[newIndex].slideid;
-            selectedSlide.data = helperSlides.data[newIndex].data;
-            displaySlide();
-        } catch {
-            //Better error handling would be nice
-            divSelectedSlide.innerHTML = "This presentation has no slides yet";
-        }
-    } else {
-        console.error(removedSlide.code);
-    }
+    }    
 }
 
 function displaySlide() {
     clearDiv(divSelectedSlide);
+    document.getElementById("slide-type-selection").value = "";
     slideType = selectedSlide.data.type;
     let tmp1 = document.getElementById(`temp-slide${slideType}`).content.cloneNode(true);
     switch (slideType) {
@@ -55,7 +68,7 @@ function displaySlide() {
             tmp1.querySelector(".image__link").value = selectedSlide.data.image;
             tmp1.querySelector(".slide__image").src = selectedSlide.data.image;
             tmp1.querySelector(".image__link").addEventListener("change", (e) => {
-                changeSlideImage(selectedSlide, e.target.parentNode.children[3], e.target.value); //doesn't look the cleanest but works
+                changeSlideImage(selectedSlide, selectedSlide.data.image, e.target.value);
             });
 
             divSelectedSlide.appendChild(tmp1);
@@ -79,12 +92,23 @@ function displaySlide() {
             }
             divSelectedSlide.appendChild(tmp1);
             break;
+        case "D":
+            tmp1.querySelector(".youtube__link").value = selectedSlide.data.link;
+            if(selectedSlide.data.link){
+                tmp1.querySelector(".youtube__video").src += getYoutubeId(selectedSlide.data.link);
+                tmp1.querySelector(".youtube__video").style = "display:auto";
+            }
+            tmp1.querySelector(".youtube__link").addEventListener("change", (e) => {
+                changeSlideYoutubeLink(selectedSlide, e.target.value);
+            });
+            divSelectedSlide.appendChild(tmp1);
+            break;
     }
 
 }
 
-function changeSlideType(e) {
-    let newSlideType = e.value;
+function changeSlideType() {
+    let newSlideType = document.getElementById("slide-type-selection").value;
     switch (newSlideType) {
         case "A":
             selectedSlide.data = SLIDE_TYPE_DEFAULT.A;
@@ -95,18 +119,11 @@ function changeSlideType(e) {
         case "C":
             selectedSlide.data = SLIDE_TYPE_DEFAULT.C;
             break;
+        case "D":
+            selectedSlide.data = SLIDE_TYPE_DEFAULT.D;
     }
     displaySlide();
     runUpdateTimer();
-}
-
-function setSlideType(type) {
-    let slideTypeSelection = document.getElementById("slide-type-selection");
-    slideTypeSelection.value = type;
-}
-
-function changeBgColor(slide, selectedColor) {
-    slide.data.bgColor = selectedColor;
 }
 
 function changeSlideText(slideToChange, slideText) {
@@ -118,11 +135,18 @@ function changeSlideImage(slideToChange, slideImage, imageLink) {
     slideToChange.data.image = imageLink;
     slideImage.src = imageLink;
     runUpdateTimer();
+    displaySlide();
 }
 
 function changeSlideList(slideToChange, listObj, listObjID) {
     slideToChange.data.list[listObjID] = listObj.value;
     runUpdateTimer();
+}
+
+function changeSlideYoutubeLink(slideToChange, youtubeLink){
+    slideToChange.data.link = youtubeLink;
+    runUpdateTimer();
+    displaySlide();
 }
 
 function addBulletPoint() {
@@ -147,6 +171,11 @@ function removeBulletPoint(id) {
     selectedSlide.data.list.splice(id, 1);
     runUpdateTimer();
     displaySlide();
+}
+
+function getYoutubeId(link){
+    let id = link.split("=")[1].split("&")[0];
+    return id;
 }
 
 function displayPreviousSlide(){

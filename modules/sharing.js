@@ -27,12 +27,12 @@ async function share(req, res) {
             if(updateShare == DB_RESPONSES.OK){
                 let status = "";
                 if(req.body.public == "true"){
-                    status = "publicly shared";
+                    status = "public";
                 }
                 else if(req.body.public == "false"){
-                    status = "unshared";
+                    status = "private";
                 }
-                res.status(HTTP_CODES.OK).json({code: HTTP_CODES.OK, msg: `Presentation with ID=${req.params.presentationID} ${status}`});
+                res.status(HTTP_CODES.OK).json({code: HTTP_CODES.OK, msg: `Presentation is ${status}`});
             }
             else{
                 res.status(HTTP_CODES.NOT_FOUND).json({code: HTTP_CODES.NOT_FOUND, msg: `Presentation not found`});
@@ -55,7 +55,7 @@ async function shareWithUser(req,res){
             if(user && user.userid != presentation.ownerid){
                 let shared = await db.sharePresentationWithUser(req.params.presentationID, user.userid);
                 if(shared == DB_RESPONSES.OK){
-                    res.status(HTTP_CODES.OK).json({code: HTTP_CODES.OK, msg: `Presentation with ID=${req.params.presentationID} shared with ${user.name}`});
+                    res.status(HTTP_CODES.OK).json({code: HTTP_CODES.OK, msg: `Presentation shared with ${user.name}`});
                 }
                 else if(shared == DB_RESPONSES.ALREADY_EXIST){
                     res.status(HTTP_CODES.CONFLICT).json({code: HTTP_CODES.CONFLICT, msg: `Presentation already shared with ${user.name}`});
@@ -79,13 +79,13 @@ async function shareWithUser(req,res){
 
 async function unshareWithUser(req,res){
     try{
-        if(req.body.userID && req.params.presentationID){
-            let user = await db.getUserByName(req.body.userID);
+        if(req.body.username && req.params.presentationID){
+            let user = await db.getUserByName(req.body.username);
             let presentation = await db.getPresentationByID(req.params.presentationID);
             if(user && user.userid != presentation.ownerid){
                 let unshared = await db.unsharePresentationWithUser(req.params.presentationID, user.userid);
                 if(unshared == DB_RESPONSES.OK){
-                    res.status(HTTP_CODES.OK).json({code: HTTP_CODES.OK, msg: `Presentation with ID=${req.params.presentationID} unshared with ${user.name}`});
+                    res.status(HTTP_CODES.OK).json({code: HTTP_CODES.OK, msg: `Presentation unshared with ${user.name}`});
                 }
                 else if(unshared == DB_RESPONSES.ALREADY_EXIST){
                     res.status(HTTP_CODES.CONFLICT).json({code: HTTP_CODES.CONFLICT, msg: `Presentation not shared with ${user.name}. Cannot unshare.`});
@@ -114,7 +114,7 @@ async function sharedWithMe(req,res){
             res.status(HTTP_CODES.OK).json({code: HTTP_CODES.OK, presentations: sharedPres});
         }
         else{
-            res.status(HTTP_CODES.NOT_FOUND).json({code: HTTP_CODES.NOT_FOUND, msg: `No shared presentations.`});
+            res.status(HTTP_CODES.NOT_FOUND).json({code: HTTP_CODES.NOT_FOUND, msg: `You don't have any shared presentations.`});
         }
     }
     catch(error){

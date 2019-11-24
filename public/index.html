@@ -8,7 +8,7 @@
     <link rel="stylesheet" type="text/css" href="css/user-style.css">
     <link rel="stylesheet" type="text/css" href="css/navbar.css">
     <link rel="stylesheet" type="text/css" href="css/pres-style.css">
-    <link rel="stylesheet" type="text/css" href="css/themes/default-theme.css">
+    <link id="default-theme" rel="stylesheet" type="text/css" href="css/themes/default-theme.css">
     <link rel="stylesheet" type="text/css" href="css/editview-style.css">
 </head>
 
@@ -31,24 +31,23 @@
 
     <template id="temp-slideA">
         <div class="slideA-container">
-            <textarea rows="4" cols="60" class="title"></textarea>
+            <textarea placeholder="Title slide" rows="4" cols="60" class="title"></textarea>
         </div>
     </template>
 
     <template id="temp-slideB">
         <div class="slideB-container">
-            <textarea class="slide__text" rows="4" cols="60"></textarea>
+            <textarea placeholder="Image slide" class="slide__text" rows="4" cols="60"></textarea>
             <div class="image-insert">
                 <label for="imageLink">Image Link: </label>
-                <input id="imageLink" type="text" class="image__link"/>
+                <input placeholder="Image link" id="imageLink" type="text" class="image__link"/>
             </div>
-            <img id="slideImage" alt="insert image" class="slide__image"/>
+            <img id="slideImage" alt="insert image here" class="slide__image"/>
         </div>
     </template>
 
     <template id="temp-slideC">
         <div class="slideC-container">
-            <!--<textarea class="list__title" rows="1" cols="50" placeholder="List title">List title</textarea>-->
             <ul class="slide__list">
 
             </ul>
@@ -61,6 +60,13 @@
             <textarea rows="1" cols="50" class="slide__listText" placeholder="Enter text"></textarea>
             <button class="slide__deleteListObj">&times;</button>
         </li>
+    </template>
+
+    <template id="temp-slideD">
+        <div class="slideD-container">
+            <input placeholder="Link for youtube video" id="youtubeLink" type="text" class="youtube__link">
+            <iframe style="display:none" class="youtube__video" src="https://www.youtube.com/embed/"></iframe> 
+        </div>
     </template>
 
     <header style="display:none">
@@ -148,31 +154,41 @@
             <div id="editview" class="page" style="display: none;">
                 <input id="presName" type="text" oninput="changePresName()" />
                 <p id="saving-text" class="saving__text"></p>
-                <div id="share-options">
-                        <label for="sharing">Sharing: </label>
-                       <select id="sharing" onchange=setStatus()>
-                           <option value="" selected>--</option>
-                           <option value="private">Private</option>
-                           <option value="public">Public</option>
-                           <option value="individual">Custom</option>
-                       </select>
-                       <p id="txtResultSharing"></p>
-                </div>
-                <ul id="slide__list"></ul>
-                <button class="editButtons" id="add-slide" onclick="addSlide()">Add slide</button>
-                <button class="editButtons" id="remove-slide" onclick="removeSlide()">Remove slide</button>
                 <div id="theme-select">
-                <label for="theme-selection">Select theme: </label>
-                    <select id="theme-selection">
-                        <!-- Some options -->
+                    <label for="theme-selection">Select theme: </label>
+                    <select id="theme-selection" onchange=setTheme()>
+                        <option value="" selected>--</option>
+                        <option value="default">Default</option>
+                        <option value="orange">Orange</option>
                     </select>
                 </div>
+                <div id="share-options">
+                    <label for="sharing">Sharing: </label>
+                    <select id="sharing" onchange=setStatus()>
+                        <option value="" selected>--</option>
+                        <option value="private">Private</option>
+                        <option value="public">Public</option>
+                        <option value="individual-share">Share individually</option>
+                        <option value="individual-unshare">Unshare individually</option>
+                    </select>
+                    <p id="txtResultSharing"></p>
+                </div>
+                <ul id="slide__list" style="display: none;"></ul>
+                
+                <button class="editButtons" id="previous-slide" onclick="displayPreviousSlide()">Previous</button>
+                <button class="editButtons" id="next-slide" onclick="displayNextSlide()">Next</button>
+                
+                <button class="editButtons" id="add-slide" onclick="addSlide()">Add slide</button>
+                <button class="editButtons" id="remove-slide" onclick="removeSlide()">Remove slide</button>
+                
                 <div id="slide-select">
                     <label for="slide-type-selection">Select slide type: </label>
-                    <select id="slide-type-selection" onchange="changeSlideType(this)">
+                    <select id="slide-type-selection" onchange=changeSlideType()>
+                        <option value="" selected>--</option>
                         <option value="A">Title</option>
                         <option value="B">Image with text</option>
-                        <option value="C">list</option>
+                        <option value="C">List</option>
+                        <option value="D">Youtube video</option>
                     </select>
                 </div>                
 

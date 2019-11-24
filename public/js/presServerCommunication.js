@@ -148,7 +148,7 @@ const restAPI = {
         };
         try {
             let resp = await fetch(`/presentation/${presID}/public`, cfg);
-            let data = resp.json();
+            let data = await resp.json();
             return data;
         }
         catch (error) {
@@ -167,7 +167,7 @@ const restAPI = {
         };
         try {
             let resp = await fetch(`/presentation/${presID}/share`, cfg);
-            let data = resp.json();
+            let data = await resp.json();
             return data;
         }
         catch (error) {
@@ -175,9 +175,9 @@ const restAPI = {
         }
     },
 
-    unshareWithUser: async function (presID, userID) {
+    unshareWithUser: async function (presID, username) {
         let updata = {
-            userID: userID
+            username: username
         };
         let cfg = {
             method: "PUT",
@@ -186,7 +186,7 @@ const restAPI = {
         };
         try {
             let resp = await fetch(`/presentation/${presID}/unshare`, cfg);
-            let data = resp.json();
+            let data = await resp.json();
             return data;
         }
         catch (error) {
