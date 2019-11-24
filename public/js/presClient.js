@@ -215,18 +215,13 @@ async function setStatus() {
     }
 }
 
-
 function startFullScreen() {
-    let something = document.getElementById ("selectedSlide")
-    presToEdit.requestFullscreen();
-    something.setAttribute("id", "selectedSlides")
+    if (document.fullscreenElement) {
+        document.exitFullscreen()
+    } else {
+        presToEdit.requestFullscreen();
+    }
 };
-
-function endFullScreen() {
-    let something = document.getElementById ("selectedSlides") 
-    something.setAttribute("id", "selectedSlide")
-    document.exitFullscreen()
-    };
 
 document.body.addEventListener("keydown", function (evt) {
 
