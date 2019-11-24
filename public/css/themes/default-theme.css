@@ -1,4 +1,4 @@
-.slideA-container, .slideB-container, .slideC-container{
+.slideA-container, .slideB-container, .slideC-container, .slideD-container{
     display:flex;
     background-image: linear-gradient(rgb(69, 120, 155),rgb(145, 182, 174));
     text-align: center;
@@ -26,7 +26,7 @@
     border: 1.5px dashed white;
 }
 
-.slideB-container{
+.slideB-container, .slideD-container{
     flex-direction: column;
 }
 
@@ -121,4 +121,18 @@
 
 .slide__listAddPoint:hover, .slideC-container li button:hover{
     background-color: rgb(93, 163, 180);
+}
+
+.slideD-container input{
+    flex-basis: 10%;
+    width: 50%;
+    border: hidden;
+    font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
+}
+
+.youtube__video{
+    flex-basis: 80%;
+    width: 50vw;
+    height: 50vh;
+    margin: 1vh;
 }
