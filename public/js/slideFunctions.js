@@ -13,7 +13,7 @@ async function addSlide() {
         else{
             loadEditView();
         }
-        console.log("slide created"); //need a better way of signaling user
+        console.log("slide created");
     }
 }
 
@@ -48,6 +48,7 @@ async function removeSlide() {
 
 function displaySlide() {
     clearDiv(divSelectedSlide);
+    document.getElementById("slide-type-selection").value = "";
     slideType = selectedSlide.data.type;
     let tmp1 = document.getElementById(`temp-slide${slideType}`).content.cloneNode(true);
     switch (slideType) {
@@ -108,13 +109,8 @@ function changeSlideType() {
             selectedSlide.data = SLIDE_TYPE_DEFAULT.C;
             break;
     }
-    console.log(selectedSlide.data);
     displaySlide();
     runUpdateTimer();
-}
-
-function changeBgColor(slide, selectedColor) {
-    slide.data.bgColor = selectedColor;
 }
 
 function changeSlideText(slideToChange, slideText) {
