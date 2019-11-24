@@ -10,7 +10,8 @@ const HTTP_CODES = {
 const SLIDE_TYPE_DEFAULT = {
     A: { type: "A", text: ""},
     B: { type: "B", text: "", image: ""},
-    C: { type: "C", list: []}
+    C: { type: "C", list: []},
+    D: { type: "D", link: ""}
 }
 
 const WAIT_TO_UPDATE = 2;

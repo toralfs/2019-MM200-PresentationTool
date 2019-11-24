@@ -92,6 +92,17 @@ function displaySlide() {
             }
             divSelectedSlide.appendChild(tmp1);
             break;
+        case "D":
+            tmp1.querySelector(".youtube__link").value = selectedSlide.data.link;
+            if(selectedSlide.data.link){
+                tmp1.querySelector(".youtube__video").src += getYoutubeId(selectedSlide.data.link);
+                tmp1.querySelector(".youtube__video").style = "display:auto";
+            }
+            tmp1.querySelector(".youtube__link").addEventListener("change", (e) => {
+                changeSlideYoutubeLink(selectedSlide, e.target.value);
+            });
+            divSelectedSlide.appendChild(tmp1);
+            break;
     }
 
 }
@@ -108,6 +119,8 @@ function changeSlideType() {
         case "C":
             selectedSlide.data = SLIDE_TYPE_DEFAULT.C;
             break;
+        case "D":
+            selectedSlide.data = SLIDE_TYPE_DEFAULT.D;
     }
     displaySlide();
     runUpdateTimer();
@@ -128,6 +141,12 @@ function changeSlideImage(slideToChange, slideImage, imageLink) {
 function changeSlideList(slideToChange, listObj, listObjID) {
     slideToChange.data.list[listObjID] = listObj.value;
     runUpdateTimer();
+}
+
+function changeSlideYoutubeLink(slideToChange, youtubeLink){
+    slideToChange.data.link = youtubeLink;
+    runUpdateTimer();
+    displaySlide();
 }
 
 function addBulletPoint() {
@@ -152,6 +171,11 @@ function removeBulletPoint(id) {
     selectedSlide.data.list.splice(id, 1);
     runUpdateTimer();
     displaySlide();
+}
+
+function getYoutubeId(link){
+    let id = link.split("=")[1].split("&")[0];
+    return id;
 }
 
 function displayPreviousSlide(){

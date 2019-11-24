@@ -62,6 +62,13 @@
         </li>
     </template>
 
+    <template id="temp-slideD">
+        <div class="slideD-container">
+            <input placeholder="Link for youtube video" id="youtubeLink" type="text" class="youtube__link">
+            <iframe style="display:none" class="youtube__video" src="https://www.youtube.com/embed/"></iframe> 
+        </div>
+    </template>
+
     <header style="display:none">
         <a href="#overview" class="logo">
             <img class="logo" src="images/logo.svg" alt="logo" onclick="loadPresOverview(false)">
@@ -181,6 +188,7 @@
                         <option value="A">Title</option>
                         <option value="B">Image with text</option>
                         <option value="C">List</option>
+                        <option value="D">Youtube video</option>
                     </select>
                 </div>
                 
