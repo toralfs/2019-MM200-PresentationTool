@@ -177,6 +177,8 @@ const db = function (dbConnectionString) {
         return response;
     }
 
+    //---------------Sharing options--------------------
+
     const getPublicPresentations = async function(){
         let presentationData = null;
         try {
@@ -308,6 +310,7 @@ const db = function (dbConnectionString) {
         updateExitingPresentation: udpatePresentation,
         getPresentationsByUser: getPresentationsByUserID,
         getPresentationByID: getPresentationByID,
+
         publicPresentations: getPublicPresentations,
         getSharedWithMe: getSharedWithMePresentations,
         sharePresentation: sharePresentationPublicly,
