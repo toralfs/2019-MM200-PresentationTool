@@ -68,14 +68,18 @@
     height: 100vh;
 }
 
+#presToEdit:fullscreen{
+    flex-direction: column;
+}
+
 .endFull{
     cursor: pointer;
     border: none;
     padding: 0.5vh;
     margin: 0.5vh;
-    font-size: 1.5vw;
+    font-size: 1vw;
     font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
-    height: 8vh;
+    height: 6vh;
     width: 10vw;
     align-self: center;
     background-color: black;

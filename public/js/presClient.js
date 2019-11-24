@@ -218,28 +218,23 @@ async function setStatus() {
 
 function startFullScreen() {
     let something = document.getElementById ("selectedSlide")
-    if (!document.fullscreenElement) {
     presToEdit.requestFullscreen();
-     something.setAttribute("id", "selectedSlides")
-
-    } else if (document.fullscreenElement){
-        something.setAttribute("id", "selectedSlide")
-        document.exitFullscreen() 
-    } else {
-        something.setAttribute("id", "selectedSlide")
-    }
+    something.setAttribute("id", "selectedSlides")
 };
 
 function endFullScreen() {
-    let something = document.getElementById ("selectedSlides")
-    document.exitFullscreen() 
+    let something = document.getElementById ("selectedSlides") 
     something.setAttribute("id", "selectedSlide")
+    document.exitFullscreen()
     };
+
 document.body.addEventListener("keydown", function (evt) {
 
     if (evt.keyCode == 39) {
         displayNextSlide();
     } else if (evt.keyCode == 37) {
         displayPreviousSlide();
+    } else if (evt.keyCode == 27){
+        endFullScreen();
     }
 })
