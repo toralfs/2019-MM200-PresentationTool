@@ -79,6 +79,16 @@ const restAPI = {
         }
     },
 
+    getSlideByID: async function(slideID) {
+        try {
+            let resp = await fetch(`/presentation/slide/slides/${slideID}`);
+            let data = await resp.json();
+            return data;
+        } catch (error) {
+            console.error(error);
+        }
+    },
+
     createSlide: async function (slideData, presID) {
         let updata = {
             data: slideData,

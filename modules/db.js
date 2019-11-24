@@ -297,6 +297,17 @@ const db = function (dbConnectionString) {
         return response;
     }
 
+    const getSlideByID = async function(slideID){
+        let slide = null;
+        try{
+            slide = await runQuery(`SELECT * FROM slides WHERE slideid=$1`, [slideID]);
+        }
+        catch(error){
+            console.log(error);
+        }
+        return slide;
+    }
+
     
     return {
         getUser: getUserByID,
@@ -320,7 +331,8 @@ const db = function (dbConnectionString) {
         updateExitingSlide: updateSlide,
         insertNewSlide: insertSlide,
         deleteExistingSlide: deleteSlide,
-        getSlides: getSlidesByPresID
+        getSlides: getSlidesByPresID,
+        getSlidebyID: getSlideByID
     }
 }
 

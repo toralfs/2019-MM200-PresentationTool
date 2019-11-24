@@ -72,4 +72,15 @@ route.put('/:slideID', async function(req, res) {
         res.status(HTTP_CODES.BAD_REQUEST).json({code: HTTP_CODES.BAD_REQUEST, msg: `Wrong credentials.`});
     }
 });
+
+//GET slide by slideID
+route.get('/slides/:slideID', async function(req, res){
+    let slide = await db.getSlidebyID(req.params.slideID);
+    if(slide) {
+        res.status(HTTP_CODES.OK).json({data: slide, code: HTTP_CODES.OK});
+    } else {
+        res.status(HTTP_CODES.NOT_FOUND).json({code: HTTP_CODES.NOT_FOUND, msg: `This slide does not exist`});
+    }
+});
+
 module.exports = route;

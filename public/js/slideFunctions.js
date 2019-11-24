@@ -9,6 +9,10 @@ async function addSlide() {
         if(helperSlides.data.length>0){            
             displaySlide();
             helperSlides.data.splice(currentIndex + 1, 0, {slideid: addedSlide.slideid, data: selectedSlide.data, presentationid: currentPres.ID});
+            selectedSlide.data = helperSlides.data[currentIndex + 1].data;
+            selectedSlide.slideid = helperSlides.data[currentIndex + 1].slideid;
+            console.log(selectedSlide);
+            displaySlide();
         }
         else{
             loadEditView();
@@ -37,7 +41,6 @@ async function removeSlide() {
                 selectedSlide.data = helperSlides.data[newIndex].data;
                 displaySlide();
             } catch {
-                //Better error handling would be nice
                 divSelectedSlide.innerHTML = "This presentation has no slides yet";
             }
         } else {
@@ -109,6 +112,10 @@ function changeSlideType() {
             selectedSlide.data = SLIDE_TYPE_DEFAULT.C;
             break;
     }
+    let currentIndex = helperSlides.data.map(function (e) {
+        return e.slideid;
+    }).indexOf(selectedSlide.slideid);
+    helperSlides.data[currentIndex].data = selectedSlide.data;
     displaySlide();
     runUpdateTimer();
 }
