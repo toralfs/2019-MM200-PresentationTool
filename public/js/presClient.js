@@ -1,4 +1,4 @@
-//Own presentations / "shared with me" presentation overview
+//Displays own and/or "shared with me" presentation overview
 async function loadPresOverview(isShared) {
     showPresentationOverview();
 
@@ -232,12 +232,9 @@ async function setStatus() {
     }
 }
 
+
 function startFullScreen() {
-    if (document.fullscreenElement) {
-        document.exitFullscreen()
-    } else {
-        presToEdit.requestFullscreen();
-    }
+        presToEdit.requestFullscreen(); 
 };
 
 document.body.addEventListener("keydown", function (evt) {
@@ -246,7 +243,5 @@ document.body.addEventListener("keydown", function (evt) {
         displayNextSlide();
     } else if (evt.keyCode == 37) {
         displayPreviousSlide();
-    } else if (evt.keyCode == 27){
-        endFullScreen();
     }
 });

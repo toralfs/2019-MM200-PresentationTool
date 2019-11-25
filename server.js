@@ -12,7 +12,7 @@ app.set('port', (process.env.PORT || DEFAULT_PORT));
 app.use('/', express.static('public'));
 app.use(bodyParser.json());
 app.use('/user', userRoutes);
-app.use('/presentation/slide', slideRoutes); //exact url to be discussed
+app.use('/presentation/slide', slideRoutes);
 app.use('/presentation', presentationRoutes);
 app.use('/',express.static('public'));
 
