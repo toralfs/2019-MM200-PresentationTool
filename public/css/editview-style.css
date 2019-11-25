@@ -75,8 +75,3 @@
     border: 2px solid black;
     margin: 2vh;
 }
-
-
-#selectedSlide:fullscreen{
-    height: 100vh;
-}

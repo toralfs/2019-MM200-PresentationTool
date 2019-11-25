@@ -202,7 +202,7 @@ async function removeUserFromShared(userID){
     let pres = await restAPI.getSharedWithMePresentations(userID);
     if(pres.code == HTTP_CODES.OK){
         for (presentation of pres.presentations){
-            let data = await restAPI.unshareWithUser(presentation.presentationid, userID);
+            await restAPI.unshareWithUser(presentation.presentationid, userID);
         }
     }
 }
