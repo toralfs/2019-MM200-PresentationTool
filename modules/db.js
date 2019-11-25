@@ -29,6 +29,7 @@ const db = function (dbConnectionString) {
 
     // ------------------------ Users --------------------------------
     
+    // Returns user credentials based on username -------------------    
     const getUserByName = async function (userName) {
         let userData = null;
         try {
@@ -39,16 +40,18 @@ const db = function (dbConnectionString) {
         return userData;
     }
 
-    const getUserByEmail = async function (userName) {
+    // Returns user credentials based on email -------------------
+    const getUserByEmail = async function (email) {
         let userData = null;
         try {
-            userData = await runQuery('SELECT * FROM users WHERE email=$1', [userName]);
+            userData = await runQuery('SELECT * FROM users WHERE email=$1', [email]);
         } catch (error) {
             console.error(error);
         }
         return userData;
     }
 
+    // Returns user credentials based on ID -------------------
     const getUserByID = async function (userID) {
         let userData = null;
         try {
@@ -59,6 +62,7 @@ const db = function (dbConnectionString) {
         return userData;
     }
 
+    // Creates new user in DB -------------------
     const insertUser = async function (userName, userEmail, userPassword) {
         let response = null;
         if (await getUserByName(userName) || await getUserByEmail(userEmail)) {
@@ -74,6 +78,7 @@ const db = function (dbConnectionString) {
         return response;
     }
 
+    // Deletes user from DB -------------------
     const deleteUser = async function (userID) {
         let response = null;
         if (await getUserByID(userID)) {
@@ -89,7 +94,7 @@ const db = function (dbConnectionString) {
         return response;
     }
 
-
+    // Updates user credentials in DB -------------------
     const updateUser = async function (userID, userName, userEmail, userPassword) {
         let response = null;
         let userToUpdate = await getUserByID(userID);
@@ -117,6 +122,8 @@ const db = function (dbConnectionString) {
 
 
     // ----------------------- Presentations ---------------------------------
+
+    // Returns presentations created by a specific user -------------------    
     const getPresentationsByUserID = async function (ownerID) {
         let presentationData = null;
         try {
@@ -127,6 +134,7 @@ const db = function (dbConnectionString) {
         return presentationData;
     }
 
+    // Returns presentations based on presentationID -------------------
     const getPresentationByID = async function(presentationID){
         let presentationData = null;
         try{
@@ -138,6 +146,7 @@ const db = function (dbConnectionString) {
         return presentationData;
     }
 
+    // Inserts presentation in the DB -------------------
     const insertPresentation = async function (presentationName, ownerID, theme) {
         let response = null;
         try {
@@ -150,6 +159,7 @@ const db = function (dbConnectionString) {
         return response;
     }
 
+    // Deletes presentation from the DB -------------------
     const deletePresentation = async function (presentationID) {
         let response = null;
         try {
@@ -166,6 +176,7 @@ const db = function (dbConnectionString) {
         return response;
     }
 
+    // Updates presentation information in the DB -------------------
     const udpatePresentation = async function (presentationName, theme, presentationID) {
         let response = null;
         try {
@@ -179,6 +190,7 @@ const db = function (dbConnectionString) {
 
     //---------------Sharing options--------------------
 
+    // Returns presentations that are public ---------------
     const getPublicPresentations = async function(){
         let presentationData = null;
         try {
@@ -189,6 +201,7 @@ const db = function (dbConnectionString) {
         return presentationData;
     }
 
+    // Returns presentations that are shared with a specific user ---------
     const getSharedWithMePresentations = async function(userID){
         let presentationData = null;
         try{
@@ -200,6 +213,7 @@ const db = function (dbConnectionString) {
         return presentationData;
     }
 
+    // Sets a presentation status to public or private ----------- 
     const sharePresentationPublicly = async function(presentationID, public){
         let response = null;
         try{
@@ -212,6 +226,7 @@ const db = function (dbConnectionString) {
         return response;
     }
 
+    // Shares a presentation with a user based on his ID -----------
     const sharePresentationWithUser = async function(presentationID, userID){
         let response = null;
         try{
@@ -231,6 +246,7 @@ const db = function (dbConnectionString) {
         return response;
     }
 
+    // Unshares a presentation with a user based on his ID -----------
     const unsharePresentationWithUser = async function(presentationID, userID){
         let response = null;
         try{
@@ -251,6 +267,8 @@ const db = function (dbConnectionString) {
     }
 
     // -------------------- Slides --------------------
+
+    // Returns the slides contained in a presentation -----------
     const getSlidesByPresID = async function (presentationID) {
         let slideData = null;
         try {
@@ -261,6 +279,7 @@ const db = function (dbConnectionString) {
         return slideData;
     }
     
+    // Adds a slide to the DB -----------
     const insertSlide = async function (data, presentationID) {
         let response = null;
         try {
@@ -274,6 +293,7 @@ const db = function (dbConnectionString) {
         return response;
     }
 
+    // Deletes a slide from the DB -----------
     const deleteSlide = async function (slideID, presentationID) {
         let response = null;
         try {
@@ -286,6 +306,7 @@ const db = function (dbConnectionString) {
         return response;
     }
     
+    // Updates slide information in the DB -----------
     const updateSlide = async function (slideID, data){
         let response = null;
         try{

@@ -1,3 +1,4 @@
+//Formats the timestamp --------------
 function splitTime(timestamp) {
     let splitTimestamp = timestamp.split(/[T,.,]+/);
     let time = {
@@ -7,6 +8,7 @@ function splitTime(timestamp) {
     return time;
 }
 
+//Calls updatePresentation() after WAIT_TO_UPDATE seconds elapse --------------
 function runUpdateTimer() {
     updateTimer.value = 0;
     updateTasks.push({ currentPres, selectedSlide });
@@ -21,16 +23,20 @@ function runUpdateTimer() {
     }, 1000);
 }
 
+//Edits the saving text --------------
 function setSaveText(state) {
     savingText.innerText = state;
 }
 
+
+//Clears a div --------------
 function clearDiv(div) {
     while (div.firstChild) {
         div.removeChild(div.firstChild);
     }
 }
 
+//Loads CSS file in the <head> of index.html --------------
 function loadCSSFile(filename, id){
     let file=document.createElement("link")
     file.setAttribute("rel", "stylesheet")
@@ -42,6 +48,7 @@ function loadCSSFile(filename, id){
     }
 }
 
+//Removes file from <head> of index.html ---------------
 function removeCSSFile(id){
     let file = document.getElementById(id);
     if(file){

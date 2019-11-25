@@ -15,7 +15,7 @@ const HTTP_CODES = {
     CONFLICT: 409
 }
  
-async function auth(req, res, next) {
+async function auth(req, res) {
     try  {
         if (req.body.password && req.body.name) {
             let user = await db.getUserByName(req.body.name);

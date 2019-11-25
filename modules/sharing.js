@@ -20,6 +20,7 @@ const DB_RESPONSES = {
     ALREADY_EXIST: "ALREADY_EXIST"
 };
 
+// Makes presentation public/private -----------
 async function share(req, res) {
     try  {
         if (req.body.public && req.params.presentationID) {
@@ -47,6 +48,7 @@ async function share(req, res) {
     
 }
 
+// Shares presentation with specific user -----------
 async function shareWithUser(req,res){
     try{
         if(req.body.username && req.params.presentationID){
@@ -77,6 +79,7 @@ async function shareWithUser(req,res){
     }
 }
 
+// Unshares presentation with specific user -----------
 async function unshareWithUser(req,res){
     try{
         if(req.body.username && req.params.presentationID){
@@ -107,6 +110,7 @@ async function unshareWithUser(req,res){
     }
 }
 
+// Returns presentations shared with specific user -----------
 async function sharedWithMe(req,res){
     try{
         let sharedPres = await db.getSharedWithMe(req.params.userID);
@@ -122,6 +126,7 @@ async function sharedWithMe(req,res){
     }
 }
 
+// Returns public presentations -----------
 async function getPublicPresentations(req,res){
     let publicPres = await db.publicPresentations();
     if(publicPres && publicPres.length > 0){

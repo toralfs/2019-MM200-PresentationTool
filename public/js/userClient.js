@@ -102,11 +102,12 @@ const userServerReq = {
 //Automatically login if the user did not logout from the previous session
 retrieveCredentials();
 
-//Store user credentials in Local Storage-------------------------------
+//Store user credentials in Local Storage -------------------------------
 function saveCredentials() {
     localStorage.setItem("userCredentials", JSON.stringify(currentUser));
 }
 
+// Gets the user credentials from Local Storage (if they exist) ---------
 function retrieveCredentials() {
     let data = localStorage.getItem("userCredentials");
     if (data) {
@@ -121,7 +122,7 @@ function retrieveCredentials() {
     }
 }
 
-//------------------------------------------
+// Creates a new user ------------------
 async function createUser() {
     if (inputValidation.validName(txtResultCreate, inpNameCreate) && inputValidation.validEmail(txtResultCreate, inpEmailCreate)
         && inputValidation.validPassword(txtResultCreate, inpPasswordCreate)) {
@@ -139,7 +140,7 @@ async function createUser() {
     }
 }
 
-//----------------------------------------
+// Logs in user based on username and password ------------
 async function loginUser() {
     let currentData = await userServerReq.loginUser(txtResultLogin, "/user/auth", inpNameLogin.value, inpPasswordLogin.value);
     if (currentData.code == HTTP_CODES.OK) {
@@ -154,7 +155,7 @@ async function loginUser() {
     }
 }
 
-//---------------------------------------
+// Updates user credentials in DB --------------------
 async function updateUser() {
     if (inputValidation.validName(txtResultUpdate, inpNameUpdate) && inputValidation.validEmail(txtResultUpdate, inpEmailUpdate)
         && inputValidation.validPassword(txtResultUpdate, inpPasswordUpdate)) {
@@ -170,7 +171,7 @@ async function updateUser() {
     }
 }
 
-//------------------------------------------
+// Deletes the user from the DB -------------------
 async function deleteUser() {
     if (window.confirm("Are you sure you want to delete this account?")) {
         delPresByUser(currentUser.ID);
@@ -185,8 +186,7 @@ async function deleteUser() {
     }
 }
 
-//Delete presentations created by a specific user
-
+//Delete presentations created by a specific user ---------------
 async function delPresByUser(userID){
     let pres = await presServerReq.getPresentations(userID);
     if(pres.code == HTTP_CODES.OK){
@@ -196,8 +196,7 @@ async function delPresByUser(userID){
     }
 }
 
-//Remove user from the sharedusers array of all presentations shared with him
-
+// Remove user from the sharedusers array of all presentations shared with him ------------
 async function removeUserFromShared(userID){
     let pres = await presServerReq.getSharedWithMePresentations(userID);
     if(pres.code == HTTP_CODES.OK){
@@ -207,7 +206,7 @@ async function removeUserFromShared(userID){
     }
 }
 
-//-----------------------------------------
+// Logs out user ---------------------------------
 function logoutUser() {
     currentUser = {};
     emptyInputs();

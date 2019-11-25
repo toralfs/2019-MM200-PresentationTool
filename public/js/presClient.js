@@ -1,4 +1,4 @@
-//Displays own and/or "shared with me" presentation overview
+//Displays own or "shared with me" presentation overview
 async function loadPresOverview(isShared) {
     showPresentationOverview();
 
@@ -50,7 +50,7 @@ async function loadPresOverview(isShared) {
 
 }
 
-//List public presentations
+//Lists public presentations
 async function loadPublicPresentations() {
     showPublicPresPage();
     userPresentations = [];
@@ -82,6 +82,7 @@ async function loadPublicPresentations() {
 
 }
 
+//Creates a new presentation
 async function createPresentation() {
     let createdPres = await presServerReq.createPresentation("New presentation", currentUser.ID, "default");
     console.log(createdPres);
@@ -90,6 +91,7 @@ async function createPresentation() {
     }
 }
 
+// Initializes currentPres with the information of the current presentation ----------
 function initEditPresentation(e) {
     let presID = parseInt(e.currentTarget.querySelector("div").innerText);
 
@@ -105,6 +107,7 @@ function initEditPresentation(e) {
     loadEditView(currentPres.ID);
 }
 
+// Displays the edit view---------------
 async function loadEditView() {
     window.location.href = "#editview";
     showEditView();
@@ -132,6 +135,7 @@ async function loadEditView() {
     }
 }
 
+//Loads the selected theme ---------------------
 function loadTheme(){
     if(currentPres.theme == "default"){
         loadCSSFile("css/themes/default-theme.css", "default-theme");
@@ -143,6 +147,7 @@ function loadTheme(){
     }
 }
 
+//Sets a theme ---------------------
 async function setTheme(){
     let currentTheme = document.getElementById("theme-selection").value;
     if(currentTheme == "default"){
@@ -157,11 +162,13 @@ async function setTheme(){
     loadTheme();
 }
 
+//Changes the presentation name ---------------------
 function changePresName() {
     currentPres.name = presName.value;
     runUpdateTimer()
 }
 
+//Updates presentation and slides --------------------
 async function updatePresentation() {
     let presIDsToUpdate = [...new Set(updateTasks.map(item => item.currentPres.ID))];
     let slideIDStoUpdate = [...new Set(updateTasks.map(item => item.selectedSlide.slideid))];
@@ -203,7 +210,7 @@ async function updatePresentation() {
     updateTasks = [];
 }
 
-//Sharing functions-----------------------------------
+//Sharing options -----------------------------------
 async function setStatus() {
     let status = document.getElementById('sharing').value;
     if (status == "public") {
@@ -232,16 +239,17 @@ async function setStatus() {
     }
 }
 
-
+// Goes into full screen ---------------
 function startFullScreen() {
-        presToEdit.requestFullscreen(); 
+    presToEdit.requestFullscreen();
+    document.body.addEventListener("keydown", function (evt) {
+
+        if (evt.keyCode == 39) {
+            displayNextSlide();
+        } else if (evt.keyCode == 37) {
+            displayPreviousSlide();
+        }
+    }); 
 };
 
-document.body.addEventListener("keydown", function (evt) {
 
-    if (evt.keyCode == 39) {
-        displayNextSlide();
-    } else if (evt.keyCode == 37) {
-        displayPreviousSlide();
-    }
-});

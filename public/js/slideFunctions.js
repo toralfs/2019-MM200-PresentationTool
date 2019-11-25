@@ -1,3 +1,4 @@
+//Adds a new slide -----------------------
 async function addSlide() {
     let addedSlide = await presServerReq.createSlide(SLIDE_TYPE_DEFAULT.A, currentPres.ID);
     if (addedSlide.code === HTTP_CODES.CREATED) {
@@ -17,6 +18,7 @@ async function addSlide() {
     }
 }
 
+//Removes a slide -----------------------
 async function removeSlide() {
     if(helperSlides.data.length>0){
         let removedSlide = await presServerReq.removeSlide(selectedSlide.slideid, currentPres.ID);
@@ -45,6 +47,7 @@ async function removeSlide() {
     }    
 }
 
+//Displays the current slide -----------------------
 function displaySlide() {
     clearDiv(divSelectedSlide);
     document.getElementById("slide-type-selection").value = "";
@@ -106,6 +109,7 @@ function displaySlide() {
 
 }
 
+//Changes the slide type -----------------------
 function changeSlideType() {
     let newSlideType = document.getElementById("slide-type-selection").value;
     switch (newSlideType) {
@@ -125,11 +129,13 @@ function changeSlideType() {
     runUpdateTimer();
 }
 
+//Changes the text on the slide -----------------------
 function changeSlideText(slideToChange, slideText) {
     slideToChange.data.text = slideText;
     runUpdateTimer();
 }
 
+//Changes the image on the slide -----------------------
 function changeSlideImage(slideToChange, slideImage, imageLink) {
     slideToChange.data.image = imageLink;
     slideImage.src = imageLink;
@@ -137,17 +143,20 @@ function changeSlideImage(slideToChange, slideImage, imageLink) {
     displaySlide();
 }
 
+//Changes the list on the slide -----------------------
 function changeSlideList(slideToChange, listObj, listObjID) {
     slideToChange.data.list[listObjID] = listObj.value;
     runUpdateTimer();
 }
 
+//Changes the youtube link on the slide -----------------------
 function changeSlideYoutubeLink(slideToChange, youtubeLink){
     slideToChange.data.link = youtubeLink;
     runUpdateTimer();
     displaySlide();
 }
 
+//Adds bullet point to the list -----------------------
 function addBulletPoint() {
     let tmp1 = document.getElementById("temp-listObject").content.cloneNode(true);
     let list = divSelectedSlide.querySelector(".slide__list");
@@ -166,17 +175,20 @@ function addBulletPoint() {
     list.appendChild(tmp1);
 }
 
+// Removes a bullet point from the list -----------------------
 function removeBulletPoint(id) {
     selectedSlide.data.list.splice(id, 1);
     runUpdateTimer();
     displaySlide();
 }
 
+// Gets the id of the link to the youtube video
 function getYoutubeId(link){
     let id = link.split("=")[1].split("&")[0];
     return id;
 }
 
+// displays the slide before the current slide
 function displayPreviousSlide(){
     if(helperSlides.data.length>0){
         let currentIndex = helperSlides.data.map(function (e) {
@@ -194,6 +206,7 @@ function displayPreviousSlide(){
     }
 }
 
+// displays the slide after the current slide
 function displayNextSlide(){
     if(helperSlides.data.length>0){
         let currentIndex = helperSlides.data.map(function (e) {

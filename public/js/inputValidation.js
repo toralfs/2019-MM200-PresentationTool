@@ -1,6 +1,6 @@
 function InputValidation(){
 
-    //------------------------------------------
+    // Checks that the name is valid (only letters/digits, min. 3 character)
     this.validName = function (txt,name){
         
         if(!name.value){
@@ -18,7 +18,7 @@ function InputValidation(){
         return true;
     }
 
-    //-----------------------------------------
+    // Checks that the email is valid (email format)
     this.validEmail = function(txt,email){
         
         if(!email.value){
@@ -36,7 +36,7 @@ function InputValidation(){
         return true;
     }
 
-    //--------------------------------------
+    // Checks that the name is valid (min. 4 character)
     this.validPassword = function(txt,password){
         
         if(!password.value){
