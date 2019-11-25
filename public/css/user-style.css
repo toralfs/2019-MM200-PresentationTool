@@ -42,10 +42,15 @@ body{
     border: 2px solid black;
 }
 
-#startPage h3, #userPage h3{
+#userPage h3{
     font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
     text-align: center;
     font-size: 1.5vw;
+}
+
+#startPage h3{
+    font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+    text-align: center;
 }
 
 .start{
@@ -90,4 +95,54 @@ body{
 
 #logout{
     float: right;
+}
+
+@media only screen and (max-width: 800px){
+
+    #accountPageTitle{
+        font-size: 7vw;
+        align-self: center;
+        margin-bottom: 10vh;
+    }
+    
+    #userPage, #startPage{
+        flex-direction: column;
+    }
+
+    .userEdit{
+        width: 80vw;
+        align-self: center;
+    }
+
+    #userPage h3, #userPage label, #userPage input{
+        font-size: 5vw;
+    }
+
+    .userButtons{
+        font-size: 4vw;
+    }
+
+    .start{
+        width: 80vw;
+        border: 0.7vw dashed burlywood;
+        border-radius: 1vw;
+        align-self: center;
+    }
+
+    #startPageTitle{
+        font-size: 8vw;
+        align-self: center;
+        margin: 2vh;
+    } 
+
+    #startWelcomeMessage{
+        font-size: 4vw;
+        align-self: center;
+        margin: 2vh;
+    }
+
+    #startPage input{
+        font-size: 4vw;
+    }
+
 }

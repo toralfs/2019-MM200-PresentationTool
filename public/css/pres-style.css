@@ -23,7 +23,7 @@
     flex-direction: column;
     border: 0.3vw dashed burlywood;
     border-radius: 0.5vw;
-    width: 25vw;
+    width: 40vw;
     background-color: bisque;
 }
 
@@ -76,4 +76,37 @@ h1{
 
 .overview-delete-button{
     width: 20vw;
+}
+
+@media only screen and (max-width: 800px){
+
+    h1{
+        font-size: 7vw;
+    }
+
+    .overview-presname{
+        font-size: 6vw;
+    }
+
+    #presContainer{
+        font-size: 5vw;
+    }
+
+    .overview-clickablediv{
+        border: 0.7vw dashed burlywood;
+        border-radius: 1vw;
+        width: 60vw;
+        font-size: 5vw;
+    }
+
+    #overview-create-pres-btn{
+        width: 25vw;
+        font-size: 4vw;
+    }
+    
+    .overview-delete-button{
+        width: 40vw;
+        font-size: 4vw;
+    }
+
 }

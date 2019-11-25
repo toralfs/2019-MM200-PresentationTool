@@ -91,6 +91,8 @@
             <a href="#overview" onclick="loadPresOverview(false), closeNav()">My presentations</a>
             <a href="#overview" onclick="loadPresOverview(true), closeNav()">Shared with me</a>
             <a href="#overview-public" onclick="loadPublicPresentations(), closeNav()">Public presentations</a>
+            <a href="#account" onclick="showUserPage(), closeNav()">User</a>
+            <a href="#logout" onclick="logoutUser(), closeNav()">Logout</a>
         </div>
     </div>
 
@@ -175,11 +177,6 @@
                 </div>
                 <ul id="slide__list" style="display: none;"></ul>
                 
-                <button class="editButtons" id="previous-slide" onclick="displayPreviousSlide()">Previous</button>
-                <button class="editButtons" id="next-slide" onclick="displayNextSlide()">Next</button>
-                <button class="editButtons" id="add-slide" onclick="addSlide()">Add slide</button>
-                <button class="editButtons" id="remove-slide" onclick="removeSlide()">Remove slide</button>
-                
                 <div id="slide-select">
                     <label for="slide-type-selection">Select slide type: </label>
                     <select id="slide-type-selection" onchange=changeSlideType()>
@@ -189,7 +186,12 @@
                         <option value="C">List</option>
                         <option value="D">Youtube video</option>
                     </select>
-                </div>                
+                </div>
+                
+                <button class="editButtons" id="previous-slide" onclick="displayPreviousSlide()">Previous</button>
+                <button class="editButtons" id="next-slide" onclick="displayNextSlide()">Next</button>
+                <button class="editButtons" id="add-slide" onclick="addSlide()">Add slide</button>
+                <button class="editButtons" id="remove-slide" onclick="removeSlide()">Remove slide</button>                
 
                 <div id="presToEdit">
                     <div id="selectedSlide">

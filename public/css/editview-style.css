@@ -35,7 +35,7 @@
 }
 
 #theme-selection, #slide-type-selection{
-    width: 40%;
+    width: 30%;
 }
 
 #goFullscreen{
@@ -64,11 +64,6 @@
     color: burlywood;
 }
 
-.editButtons:disabled{
-    background-color: rgb(71, 71, 71);
-    color: white;
-}
-
 #presToEdit{
     display: flex;
 }
@@ -79,4 +74,38 @@
     height: 85vh;
     border: 2px solid black;
     margin: 2vh;
+}
+
+@media only screen and (max-width: 800px){
+
+    #presName, #saving-text{
+        flex-basis: 45%;
+        font-size: 4vw;
+    }
+
+    #share-options, #theme-select, #slide-select{
+        flex-basis: 30%;
+        font-size: 3vw;
+    }
+
+    #sharing, #theme-selection, #slide-type-selection{
+        width: 20vw;
+    }
+
+    #editview select{
+        font-size: 3vw;
+    }
+
+    .editButtons{
+        font-size: 3vw;
+        margin: 0.5vw;
+        flex-basis: 22%;
+    }
+
+    #selectedSlide{
+        width: 95vw;
+        height: 50vh;
+        align-self: center;
+    }
+
 }
