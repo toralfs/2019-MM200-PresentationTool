@@ -8,6 +8,11 @@
     justify-content: space-evenly;
 }
 
+#editview select{
+    height: 4vh;
+    font-size: 1.5vw;
+}
+
 #presName{
     margin: 0.5vh;
     font-size: 1.5vw;

@@ -1,5 +1,5 @@
 
-const restAPI = {
+const presServerReq = {
     
     createPresentation: async function (name, ownerID, theme) {
         let updata = {

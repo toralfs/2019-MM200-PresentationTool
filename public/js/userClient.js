@@ -1,5 +1,5 @@
 
-const restAPIUser = {
+const userServerReq = {
 
     //------------------------
     createUser: async function(result, url, username, email, password){
@@ -125,7 +125,7 @@ function retrieveCredentials() {
 async function createUser() {
     if (inputValidation.validName(txtResultCreate, inpNameCreate) && inputValidation.validEmail(txtResultCreate, inpEmailCreate)
         && inputValidation.validPassword(txtResultCreate, inpPasswordCreate)) {
-        let currentData = await restAPIUser.createUser(txtResultCreate, "/user", inpNameCreate.value, inpEmailCreate.value, inpPasswordCreate.value);
+        let currentData = await userServerReq.createUser(txtResultCreate, "/user", inpNameCreate.value, inpEmailCreate.value, inpPasswordCreate.value);
         if (currentData.code == HTTP_CODES.CREATED) {
             currentUser.ID = currentData.userID;
             currentUser.username = currentData.userName;
@@ -141,7 +141,7 @@ async function createUser() {
 
 //----------------------------------------
 async function loginUser() {
-    let currentData = await restAPIUser.loginUser(txtResultLogin, "/user/auth", inpNameLogin.value, inpPasswordLogin.value);
+    let currentData = await userServerReq.loginUser(txtResultLogin, "/user/auth", inpNameLogin.value, inpPasswordLogin.value);
     if (currentData.code == HTTP_CODES.OK) {
         currentUser.ID = currentData.userID;
         currentUser.username = currentData.userName;
@@ -158,7 +158,7 @@ async function loginUser() {
 async function updateUser() {
     if (inputValidation.validName(txtResultUpdate, inpNameUpdate) && inputValidation.validEmail(txtResultUpdate, inpEmailUpdate)
         && inputValidation.validPassword(txtResultUpdate, inpPasswordUpdate)) {
-        let currentData = await restAPIUser.updateUser(txtResultUpdate, `/user/${currentUser.ID}`, inpNameUpdate.value, inpEmailUpdate.value, inpPasswordUpdate.value);
+        let currentData = await userServerReq.updateUser(txtResultUpdate, `/user/${currentUser.ID}`, inpNameUpdate.value, inpEmailUpdate.value, inpPasswordUpdate.value);
         if (currentData.code == HTTP_CODES.OK) {
             currentUser.username = currentData.userName;
             currentUser.email = currentData.userEmail;
@@ -175,7 +175,7 @@ async function deleteUser() {
     if (window.confirm("Are you sure you want to delete this account?")) {
         delPresByUser(currentUser.ID);
         removeUserFromShared(currentUser.ID);
-        let del = await restAPIUser.deleteUser(`/user/${currentUser.ID}`);
+        let del = await userServerReq.deleteUser(`/user/${currentUser.ID}`);
         if (del.code == HTTP_CODES.OK) {
             currentUser = {};
             emptyInputs();
@@ -188,10 +188,10 @@ async function deleteUser() {
 //Delete presentations created by a specific user
 
 async function delPresByUser(userID){
-    let pres = await restAPI.getPresentations(userID);
+    let pres = await presServerReq.getPresentations(userID);
     if(pres.code == HTTP_CODES.OK){
         for (presentation of pres.presentations){
-            await restAPI.deletePresentation(presentation.presentationid);
+            await presServerReq.deletePresentation(presentation.presentationid);
         }
     }
 }
@@ -199,10 +199,10 @@ async function delPresByUser(userID){
 //Remove user from the sharedusers array of all presentations shared with him
 
 async function removeUserFromShared(userID){
-    let pres = await restAPI.getSharedWithMePresentations(userID);
+    let pres = await presServerReq.getSharedWithMePresentations(userID);
     if(pres.code == HTTP_CODES.OK){
         for (presentation of pres.presentations){
-            await restAPI.unshareWithUser(presentation.presentationid, userID);
+            await presServerReq.unshareWithUser(presentation.presentationid, userID);
         }
     }
 }

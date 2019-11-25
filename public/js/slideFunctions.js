@@ -1,5 +1,5 @@
 async function addSlide() {
-    let addedSlide = await restAPI.createSlide(SLIDE_TYPE_DEFAULT.A, currentPres.ID);
+    let addedSlide = await presServerReq.createSlide(SLIDE_TYPE_DEFAULT.A, currentPres.ID);
     if (addedSlide.code === HTTP_CODES.CREATED) {
         let currentIndex = helperSlides.data.map(function (e) {
             return e.slideid;
@@ -19,7 +19,7 @@ async function addSlide() {
 
 async function removeSlide() {
     if(helperSlides.data.length>0){
-        let removedSlide = await restAPI.removeSlide(selectedSlide.slideid, currentPres.ID);
+        let removedSlide = await presServerReq.removeSlide(selectedSlide.slideid, currentPres.ID);
         if (removedSlide.code === HTTP_CODES.OK) {
             console.log("slide deleted");
             let currentIndex = helperSlides.data.map(function (e) {

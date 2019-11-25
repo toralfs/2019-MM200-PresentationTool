@@ -9,13 +9,14 @@ header {
     display: flex;
     justify-content: flex-end;
     align-items: center;
-    padding: 15px 10%;
+    padding: 2vh 10%;
     background-color: #24252a;
 }
 
 .logo {
     cursor: pointer;
     margin-right: auto;
+    width: 10vw;
 }
 
 .nav__links {
@@ -28,6 +29,7 @@ header {
 .overlay__content a {
     font-family: Arial, Helvetica, sans-serif;
     font-weight: 500;
+    font-size: 1.5vw;
     color: #edf0f1;
     text-decoration: none;
 }
@@ -119,6 +121,14 @@ header {
   }
   
   @media only screen and (max-width: 800px) {
+    .nav__links a,
+    .cta,
+    .overlay__content a{
+        font-size: 3vw;
+    }
+    .logo{
+        width: 20vw;
+    }
     .nav__links,
     .cta {
         display: none;

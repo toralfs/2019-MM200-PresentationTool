@@ -5,11 +5,11 @@ async function loadPresOverview(isShared) {
     userPresentations = [];
     let presentations = null;
     if (isShared) {
-        presentations = await restAPI.getSharedWithMePresentations(currentUser.ID);
+        presentations = await presServerReq.getSharedWithMePresentations(currentUser.ID);
         presOverview.querySelector("h1").innerHTML = "Shared with me"
         document.getElementById("overview-create-pres-btn").style = "display:none";
     } else {
-        presentations = await restAPI.getPresentations(currentUser.ID);
+        presentations = await presServerReq.getPresentations(currentUser.ID);
         presOverview.querySelector("h1").innerHTML = "My Presentations"
         document.getElementById("overview-create-pres-btn").style = "display:auto";
     }
@@ -38,7 +38,7 @@ async function loadPresOverview(isShared) {
             }
             else {
                 tmp1.querySelector(".overview-delete-button").onclick = async function (evt) {
-                    await restAPI.deletePresentation(presentation.presentationid);
+                    await presServerReq.deletePresentation(presentation.presentationid);
                     loadPresOverview();
                 }
             }
@@ -54,7 +54,7 @@ async function loadPresOverview(isShared) {
 async function loadPublicPresentations() {
     showPublicPresPage();
     userPresentations = [];
-    let presentations = await restAPI.getPublicPresentations(currentUser.ID);
+    let presentations = await presServerReq.getPublicPresentations(currentUser.ID);
     presOverview.querySelector("h1").innerHTML = "Public Presentations"
     document.getElementById("overview-create-pres-btn").style = "display:none";
     if (presentations.code === HTTP_CODES.OK) {
@@ -83,7 +83,7 @@ async function loadPublicPresentations() {
 }
 
 async function createPresentation() {
-    let createdPres = await restAPI.createPresentation("New presentation", currentUser.ID, "default");
+    let createdPres = await presServerReq.createPresentation("New presentation", currentUser.ID, "default");
     console.log(createdPres);
     if (createdPres.code === HTTP_CODES.CREATED) {
         loadPresOverview();
@@ -116,7 +116,7 @@ async function loadEditView() {
     let last_updated_time = splitTime(currentPres.last_updated);
     setSaveText(`Last updated: ${last_updated_time.clock}`);
 
-    let slides = await restAPI.getSlides(currentPres.ID);
+    let slides = await presServerReq.getSlides(currentPres.ID);
     if (slides.code === HTTP_CODES.OK) {
         helperSlides.code = slides.code;
         helperSlides.data = slides.data;
@@ -147,12 +147,12 @@ async function setTheme(){
     let currentTheme = document.getElementById("theme-selection").value;
     if(currentTheme == "default"){
         currentPres.theme = "default";
-        await restAPI.updatePresentation(currentPres.ID, currentPres.name, currentPres.theme);
+        await presServerReq.updatePresentation(currentPres.ID, currentPres.name, currentPres.theme);
     }
     else if(currentTheme == "orange"){
         loadCSSFile("css/themes/orange-theme.css");
         currentPres.theme = "orange";
-        await restAPI.updatePresentation(currentPres.ID, currentPres.name, currentPres.theme);
+        await presServerReq.updatePresentation(currentPres.ID, currentPres.name, currentPres.theme);
     }
     loadTheme();
 }
@@ -183,13 +183,13 @@ async function updatePresentation() {
 
     for (let task of presUpdateList) {
         setSaveText("saving changes");
-        let presUpd = await restAPI.updatePresentation(task.currentPres.ID, task.currentPres.name, task.currentPres.theme);
+        let presUpd = await presServerReq.updatePresentation(task.currentPres.ID, task.currentPres.name, task.currentPres.theme);
         let slideUpd = {};
         if (task.selectedSlide.slideid === null) {
             slideUpd.code = HTTP_CODES.OK;
         } else {
             for (let slide of slideUpdateList) {
-                slideUpd = await restAPI.updateSlide(slide.selectedSlide.slideid, slide.selectedSlide.data);
+                slideUpd = await presServerReq.updateSlide(slide.selectedSlide.slideid, slide.selectedSlide.data);
             }
         }
         if (presUpd.code === HTTP_CODES.OK && slideUpd.code === HTTP_CODES.OK) {
@@ -207,18 +207,18 @@ async function updatePresentation() {
 async function setStatus() {
     let status = document.getElementById('sharing').value;
     if (status == "public") {
-        let data = await restAPI.setPublicStatus(currentPres.ID, "true");
+        let data = await presServerReq.setPublicStatus(currentPres.ID, "true");
         txtResultSharing.innerHTML = data.msg;
     }
     else if (status == "private") {
-        let data = await restAPI.setPublicStatus(currentPres.ID, "false");
+        let data = await presServerReq.setPublicStatus(currentPres.ID, "false");
         txtResultSharing.innerHTML = data.msg;
     }
     else if(status == "individual-share"){
         document.getElementById('sharing').value = "";
         let user = window.prompt("Share with user: (insert username)");
         if(user && user != ""){
-            let data = await restAPI.shareWithUser(currentPres.ID, user);
+            let data = await presServerReq.shareWithUser(currentPres.ID, user);
             txtResultSharing.innerHTML = data.msg;
         }
     }
@@ -226,7 +226,7 @@ async function setStatus() {
         document.getElementById('sharing').value = "";
         let user = window.prompt("Unshare with user: (insert username)");
         if(user && user != ""){
-            let data = await restAPI.unshareWithUser(currentPres.ID, user);
+            let data = await presServerReq.unshareWithUser(currentPres.ID, user);
             txtResultSharing.innerHTML = data.msg;
         }
     }
