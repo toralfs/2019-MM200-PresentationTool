@@ -37,7 +37,6 @@ async function removeSlide() {
                 selectedSlide.data = helperSlides.data[newIndex].data;
                 displaySlide();
             } catch {
-                //Better error handling would be nice
                 divSelectedSlide.innerHTML = "This presentation has no slides yet";
             }
         } else {

@@ -50,7 +50,7 @@ function showPublicPresPage(){
     document.querySelector("header").style = "display:flex";
 }
 
-//-----------------------
+//Hides all pages by changing the style to "display:none"---
 function hideAllPages(pages, divs) {
     for (let page of pages) {
         page.style.display = "none";
@@ -62,7 +62,7 @@ function hideAllPages(pages, divs) {
     }
 }
 
-//-----------------------
+//empties all the inputs in the document-------------------
 function emptyInputs() {
     let inputs = document.querySelectorAll("input");
     for (let i of inputs) {
@@ -70,7 +70,7 @@ function emptyInputs() {
     }
 }
 
-//----------------------
+//empties the text field that contains message-------------
 function emptyTxtResult() {
     txtResultCreate.innerHTML = "";
     txtResultLogin.innerHTML = "";
